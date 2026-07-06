@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>From Friction to Flow — Amirmasoud Ebadi</title>
+  <meta name="description" content="Redesigning a high-stakes telecom configurator that suffered 50% task abandonment." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="case-study.css" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav" id="nav">
+    <div class="nav__left">
+      <a href="../index.html" class="nav__back">
+        <i data-lucide="arrow-left"></i>
+        All work
+      </a>
+      <div class="nav__sep"></div>
+      <a href="../index.html" class="nav__logo">
+        <img src="../ae-logo-white.svg" alt="" class="nav__avatar nav__avatar--logo" aria-hidden="true" />
+        Amirmasoud Ebadi
+      </a>
+    </div>
+    <div class="nav__right">
+      <span class="nav__pill nav__pill--avail" aria-label="Currently available for work">
+        <span class="dot" aria-hidden="true"></span>
+        Available
+      </span>
+      <a href="https://drive.google.com/file/d/1v95PNrUq3GGAAFtNv8rxzctYXkbnbcL2/view?usp=drive_link" target="_blank" rel="noopener" class="nav__cv">Download CV <i data-lucide="external-link"></i></a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="cs-hero">
+    <div class="cs-hero__inner">
+      <p class="cs-hero__num">01 · Telecom · Enterprise UX</p>
+      <div class="cs-hero__meta">
+        <span class="chip chip--accent">UX/UI Designer</span>
+        <span class="chip chip--telekom">Deutsche Telekom</span>
+        <span class="chip">4 months</span>
+        <span class="chip">High-fidelity delivery</span>
+      </div>
+      <h1 class="cs-hero__title">From Friction<br>to Flow</h1>
+      <p class="cs-hero__desc">
+        Elevating a fragmented configuration system for Europe's leading telecommunications provider. Breaking down complex configuration matrices into an intuitive, modular journey minimised cognitive friction, accelerated decision-making, and turned dropped baskets into completed conversions.
+      </p>
+    </div>
+    <div class="cs-hero__placeholder" aria-hidden="true">
+      <div class="cs-ph-scene"><div class="cs-ph-browser">
+        <div class="cs-ph-bar"><div class="cs-ph-dot"></div><div class="cs-ph-dot"></div><div class="cs-ph-dot"></div><div class="cs-ph-urlbar"></div></div>
+        <div class="cs-ph-body">
+          <div class="cs-ph-nav"><div class="cs-ph-avatar"></div><div class="cs-ph-stepper"><div class="cs-ph-step"></div><div class="cs-ph-step-line"></div><div class="cs-ph-step"></div><div class="cs-ph-step-line"></div><div class="cs-ph-step"></div><div class="cs-ph-step-line"></div><div class="cs-ph-step"></div><div class="cs-ph-step-line"></div><div class="cs-ph-step"></div></div></div>
+          <div class="cs-ph-ln cs-ph-ln--dark cs-ph-ln--med"></div>
+          <div class="cs-ph-ln cs-ph-ln--short"></div>
+          <div class="cs-ph-row"><div class="cs-ph-card cs-ph-card--accent"></div><div class="cs-ph-card"></div><div class="cs-ph-card"></div></div>
+          <div class="cs-ph-row"><div class="cs-ph-card"></div><div class="cs-ph-card"></div><div class="cs-ph-card cs-ph-card--accent"></div></div>
+        </div>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- HERO MOCKUP -->
+  <div class="cs-blueprint">
+    <div class="cs-blueprint__inner">
+      <span class="cs-blueprint__eyebrow">System Architecture & Interface Blueprint</span>
+      <h2 class="cs-blueprint__title">Core Product Configurator Engine</h2>
+      <p class="cs-blueprint__body">This visual workspace will host the responsive desktop interface layouts for the primary step-by-step product wizard. The final high-fidelity embedded screen will demonstrate how we refactored dense, tabular telecommunication technical specifications, contract selection bundles, and dynamic hardware add-on dependencies into a unified, low-cognitive-load grid system. It highlights the fixed summary sticky panel engineered to ensure continuous real-time cost transparency throughout the user flow.</p>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="cs-stats">
+    <div class="cs-stats__inner">
+      <div class="stat"><div class="stat__value" data-target="38" data-prefix="+" data-suffix="%">+38%</div><div class="stat__label">Funnel Conversion Lift. Minimizing choice overload systematically turned dropped baskets into completed checkouts.</div></div>
+      <div class="stat"><div class="stat__value" data-target="4" data-suffix=" Mo">4 Mo</div><div class="stat__label">Project Duration. Moving from initial heuristic auditing to production-ready design system handoff.</div></div>
+      <div class="stat"><div class="stat__value" data-target="3">3</div><div class="stat__label">Iterative Phases. Seamlessly spanning structured Evaluation, Concept Development, and Delivery.</div></div>
+      <div class="stat"><div class="stat__value" data-target="4">4</div><div class="stat__label">Responsive Viewports. Scaling a completely unified configuration workspace fluidly across devices.</div></div>
+    </div>
+  </div>
+
+  <div class="cs-body">
+
+    <!-- Challenge -->
+    <section class="cs-section reveal">
+      <span class="section-eyebrow">The Catalyst</span>
+      <div class="two-col--wide two-col">
+        <div>
+          <h2 class="cs-section__title">A configurator losing customers at every step</h2>
+          <p class="cs-lead">The legacy enterprise configurator forced users to navigate an opaque, all-at-once matrix of technical choices. High cognitive load, vague pricing transparency, and ambiguous steps resulted in critical funnel drop-offs and skyrocketing support costs.</p>
+          <p class="cs-body-text">As a customer attempting to configure a telecom package, users were confronted with too many options simultaneously, unclear real-time pricing, and no sense of progress. They felt anxious about making an incorrect choice, so they abandoned the flow completely or dialled into support out of sheer frustration.</p>
+          <div class="highlight-box">"Why is this hard for people, and how do we fix it?" That question drove every decision.</div>
+        </div>
+        <div>
+          <ul class="problem-list">
+            <li><strong>Revenue Leakage:</strong> Severe funnel friction caused qualified buyers to drop off right before the final checkout stage</li>
+            <li><strong>Diluted Campaign ROI:</strong> Expensive paid traffic was funnelled into an interface incapable of maintaining user intent</li>
+            <li><strong>Escalating OpEx:</strong> Confused users repeatedly relied on support agents to complete simple package configurations</li>
+            <li><strong>No Progress Visibility:</strong> Users had no sense of how far they had come or what remained in the flow</li>
+            <li><strong>Cognitive Overload:</strong> All options presented simultaneously, violating Miller's Law and Hick's Law</li>
+          </ul>
+        </div>
+      </div>
+      <div class="cs-image-row">
+        <figure class="cs-image">
+          <div class="cs-illus">
+            <div class="cs-illus__icons">
+              <div class="cs-illus__icon-wrap"><i data-lucide="search"></i></div>
+              <div class="cs-illus__icon-wrap"><i data-lucide="users"></i></div>
+              <div class="cs-illus__icon-wrap cs-illus__icon-wrap--accent"><i data-lucide="lightbulb"></i></div>
+            </div>
+            <div class="cs-illus__label">4 Usability Sessions · 3 Critical Failures</div>
+          </div>
+          <figcaption>Key insights surfaced across 4 moderated usability sessions</figcaption>
+        </figure>
+        <figure class="cs-image">
+          <div class="cs-illus">
+            <div class="cs-illus__icons">
+              <div class="cs-illus__icon-wrap"><i data-lucide="layers"></i></div>
+              <div class="cs-illus__icon-wrap"><i data-lucide="brain"></i></div>
+              <div class="cs-illus__icon-wrap cs-illus__icon-wrap--accent"><i data-lucide="check-circle"></i></div>
+            </div>
+            <div class="cs-illus__label">Nielsen · Miller's Law · Hick's Law</div>
+          </div>
+          <figcaption>Heuristic evaluation mapped to cognitive UX laws: Miller's, Hick's, Jakob's</figcaption>
+        </figure>
+      </div>
+
+      <!-- Discovery visual -->
+      <figure class="mockup-wrapper mockup-wrapper--wide" aria-label="Heuristic audit map of the legacy configurator">
+        <img src="project 1 - edition 2.jpg" alt="Heuristic audit map highlighting friction points in the original telecom configurator interface" />
+        <span class="mockup-label">Heuristic Audit</span>
+        <figcaption class="mockup-caption">Legacy interface analysis: friction points, cognitive overload zones, and structural failures mapped across the original flow</figcaption>
+      </figure>
+    </section>
+
+    <!-- Process -->
+    <section class="cs-section reveal">
+      <span class="section-eyebrow">The Framework</span>
+      <div class="two-col">
+        <div>
+          <h2 class="cs-section__title">Three phases, zero guesswork</h2>
+          <p class="cs-body-text">A structured process rooted in research, not assumptions. Each phase fed directly into the next, with stakeholder checkpoints throughout.</p>
+        </div>
+        <div></div>
+      </div>
+      <div class="process-steps">
+        <div class="process-step">
+          <div class="process-step__num">1</div>
+          <div>
+            <h3 class="process-step__title">Evaluation &amp; Insight</h3>
+            <p class="process-step__desc">Dissecting the existing cognitive friction to back up future structural layout choices with hard, observable user patterns. Heuristic evaluation, UX principles, Gestalt analysis, and a full usability audit formed the evidence base.</p>
+            <div class="process-step__tags">
+              <span class="mini-tag">Heuristic evaluation</span>
+              <span class="mini-tag">Usability audit</span>
+              <span class="mini-tag">Gestalt analysis</span>
+              <span class="mini-tag">UX principles</span>
+            </div>
+          </div>
+        </div>
+        <div class="process-step">
+          <div class="process-step__num">2</div>
+          <div>
+            <h3 class="process-step__title">Concept Development</h3>
+            <p class="process-step__desc">Moving quickly from data into structural wireframes to align cross-functional tech constraints early. Interactive user flows, component-driven wireframing, and stakeholder alignment sessions defined the modular architecture.</p>
+            <div class="process-step__tags">
+              <span class="mini-tag">Interactive user flows</span>
+              <span class="mini-tag">Component wireframing</span>
+              <span class="mini-tag">Stakeholder alignment</span>
+            </div>
+          </div>
+        </div>
+        <div class="process-step">
+          <div class="process-step__num">3</div>
+          <div>
+            <h3 class="process-step__title">Design &amp; Delivery</h3>
+            <p class="process-step__desc">Transforming approved wireframes into an elegant, scalable dark-mode interface built around design system tokens. High-fidelity prototypes, continuous iteration, and a developer handoff system covering 4 responsive viewports.</p>
+            <div class="process-step__tags">
+              <span class="mini-tag">High-fidelity prototypes</span>
+              <span class="mini-tag">Design system tokens</span>
+              <span class="mini-tag">Developer handoff</span>
+              <span class="mini-tag">4 responsive viewports</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="cs-image-row">
+        <figure class="cs-image">
+          <div class="cs-illus">
+            <div class="cs-illus__icons">
+              <div class="cs-illus__icon-wrap"><i data-lucide="grid-2x2"></i></div>
+              <div class="cs-illus__icon-wrap"><i data-lucide="eye"></i></div>
+              <div class="cs-illus__icon-wrap cs-illus__icon-wrap--accent"><i data-lucide="layout"></i></div>
+            </div>
+            <div class="cs-illus__label">Gestalt Principles Mapped</div>
+          </div>
+          <figcaption>Gestalt analysis: identifying visual grouping failures in the original interface</figcaption>
+        </figure>
+        <figure class="cs-image">
+          <div class="cs-illus">
+            <div class="cs-illus__icons">
+              <div class="cs-illus__icon-wrap"><i data-lucide="code-2"></i></div>
+              <div class="cs-illus__icon-wrap"><i data-lucide="file-text"></i></div>
+              <div class="cs-illus__icon-wrap cs-illus__icon-wrap--accent"><i data-lucide="send"></i></div>
+            </div>
+            <div class="cs-illus__label">4 Responsive Viewports · Annotated Specs</div>
+          </div>
+          <figcaption>Phase 3: Annotated handoff specs across 4 responsive viewports</figcaption>
+        </figure>
+      </div>
+
+      <!-- Wireframe / journey visual -->
+      <figure class="mockup-wrapper mockup-wrapper--wide" aria-label="User flow and wireframe architecture">
+        <img src="project 1 - edition 2.jpg" alt="Modular user journey wireframes showing simplified configuration pipeline" />
+        <span class="mockup-label">User Journey Wireframes</span>
+        <figcaption class="mockup-caption">Structural wireframes showing how the all-at-once matrix was broken into a guided modular pipeline</figcaption>
+      </figure>
+    </section>
+
+    <!-- Solution -->
+    <section class="cs-section reveal">
+      <span class="section-eyebrow">The Execution</span>
+      <h2 class="cs-section__title" style="margin-bottom:40px;">Design decisions that transformed the funnel</h2>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-card__top">
+            <div class="feature-card__icon"><i data-lucide="layers"></i></div>
+            <h3 class="feature-card__title">Progressive Disclosure</h3>
+            <p class="feature-card__desc">Swapped the single-page choice overload for a modular, multi-step layout. Choices are grouped into contextual bites: Infrastructure, Hardware, Add-ons. Eliminated sensory paralysis and stabilised user momentum throughout the configuration pipeline.</p>
+          </div>
+          <div class="feature-card__img">
+            <div class="cs-illus">
+              <div class="cs-illus__icons">
+                <div class="cs-illus__icon-wrap"><i data-lucide="list"></i></div>
+                <div class="cs-illus__icon-wrap"><i data-lucide="chevron-right"></i></div>
+                <div class="cs-illus__icon-wrap cs-illus__icon-wrap--accent"><i data-lucide="layers"></i></div>
+              </div>
+              <div class="cs-illus__label">One contextual decision at a time</div>
+            </div>
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__top">
+            <div class="feature-card__icon"><i data-lucide="credit-card"></i></div>
+            <h3 class="feature-card__title">Real-time Pricing Summary</h3>
+            <p class="feature-card__desc">Designed a persistent, responsive sticky summary card tracking the base price, itemised choices, and recurring fees dynamically. Established radical transparency, neutralising the sticker shock and anxiety that triggered immediate cart abandonment.</p>
+          </div>
+          <div class="feature-card__img">
+            <div class="cs-illus">
+              <div class="cs-illus__icons">
+                <div class="cs-illus__icon-wrap"><i data-lucide="credit-card"></i></div>
+                <div class="cs-illus__icon-wrap"><i data-lucide="anchor"></i></div>
+                <div class="cs-illus__icon-wrap cs-illus__icon-wrap--accent"><i data-lucide="receipt"></i></div>
+              </div>
+              <div class="cs-illus__label">Transparent pricing at every step</div>
+            </div>
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__top">
+            <div class="feature-card__icon"><i data-lucide="alert-circle"></i></div>
+            <h3 class="feature-card__title">Clear Error Recovery</h3>
+            <p class="feature-card__desc">Created descriptive inline error handling and structural dependency warnings. For example, selecting Router B requires Line Connection X. Replaced cryptic system errors with humanised copy, preventing users from reaching frustrating dead-ends.</p>
+          </div>
+          <div class="feature-card__img">
+            <div class="cs-illus">
+              <div class="cs-illus__icons">
+                <div class="cs-illus__icon-wrap"><i data-lucide="alert-circle"></i></div>
+                <div class="cs-illus__icon-wrap"><i data-lucide="edit-3"></i></div>
+                <div class="cs-illus__icon-wrap cs-illus__icon-wrap--accent"><i data-lucide="check-circle"></i></div>
+              </div>
+              <div class="cs-illus__label">Humanised errors, no dead-ends</div>
+            </div>
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__top">
+            <div class="feature-card__icon"><i data-lucide="trending-up"></i></div>
+            <h3 class="feature-card__title">Contextual Up-sells</h3>
+            <p class="feature-card__desc">Positioned high-value add-ons like extra speed or premium safety bundles as clear choice blocks with explicitly mapped benefits. Enhanced Average Order Value organically without annoying users with dark-pattern popups.</p>
+          </div>
+          <div class="feature-card__img">
+            <div class="cs-illus">
+              <div class="cs-illus__icons">
+                <div class="cs-illus__icon-wrap"><i data-lucide="trending-up"></i></div>
+                <div class="cs-illus__icon-wrap"><i data-lucide="package"></i></div>
+                <div class="cs-illus__icon-wrap cs-illus__icon-wrap--accent"><i data-lucide="star"></i></div>
+              </div>
+              <div class="cs-illus__label">Value-driven, not dark-pattern</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <figure class="mockup-wrapper mockup-wrapper--wide" style="margin-top:48px;">
+        <span class="mockup-label">Progressive Disclosure Screens</span>
+        <img src="project 1 - edition 2.jpg" alt="Close-up UI screens showing progressive disclosure mechanics and real-time pricing summary component in action" loading="lazy">
+        <figcaption class="mockup-caption">Interface decisions in detail: progressive disclosure flow and transparent pricing summary component.</figcaption>
+      </figure>
+    </section>
+
+    <!-- Results -->
+    <section class="cs-section reveal">
+      <span class="section-eyebrow">The Results</span>
+      <h2 class="cs-section__title" style="margin-bottom:40px;">Driving meaningful business impact</h2>
+      <div class="results-grid">
+        <div class="result-card result-card--accent">
+          <div class="result-card__value">+38%</div>
+          <div class="result-card__title">Funnel efficiency</div>
+          <div class="result-card__desc">Drop-offs between initial configuration and checkout dropped dramatically within weeks of the update. Task success rate climbed from 50% to 88%.</div>
+        </div>
+        <div class="result-card">
+          <div class="result-card__value">✓</div>
+          <div class="result-card__title">Flawless task completion</div>
+          <div class="result-card__desc">Post-redesign usability test validation showed zero users failing due to structural layout confusion. The modular architecture solved what the original couldn't.</div>
+        </div>
+        <div class="result-card">
+          <div class="result-card__value">↓</div>
+          <div class="result-card__title">Reduced support burden</div>
+          <div class="result-card__desc">Technical queries regarding price calculation and system configurations decreased visibly, freeing up service desks for higher-value interactions.</div>
+        </div>
+        <div class="result-card">
+          <div class="result-card__value">↑</div>
+          <div class="result-card__title">Average order value lifted</div>
+          <div class="result-card__desc">Contextual up-sell blocks presented at the right moment in the flow drove organic AOV improvements without friction or dark patterns.</div>
+        </div>
+      </div>
+      <figure class="mockup-wrapper mockup-wrapper--wide">
+        <span class="mockup-label">Final Impact Dashboard</span>
+        <img src="project 1 - edition 2.jpg" alt="Final high-fidelity confirmation checkout screen showcasing the ultimate conversion success moment" loading="lazy">
+        <figcaption class="mockup-caption">The final system: high-fidelity confirmation screen representing the full conversion success moment.</figcaption>
+      </figure>
+      <div class="impact-validation">
+        <div class="impact-validation__header">
+          <span class="section-eyebrow" style="margin-bottom:12px;">Verifiable Impact & Team Validation</span>
+          <p class="impact-validation__body">While enterprise projects are highly collaborative team efforts, driving clear execution requires individual ownership. Below is direct, real-world feedback from the team and stakeholders validating my specific design execution, system architecture decisions, and cross-functional leadership during this redesign.</p>
+        </div>
+        <figure class="mockup-wrapper mockup-wrapper--wide impact-validation__proof">
+          <span class="mockup-label">Real Feedback Screenshot</span>
+          <img src="project 1 - edition 2.jpg" alt="Direct stakeholder and peer feedback screenshot validating Amirmasoud's personal design execution and cross-functional leadership" loading="lazy">
+          <figcaption class="mockup-caption">"The modular architecture doesn't just look beautiful. It systematically solved a glaring operational revenue leak. By making product options understandable, Amirmasoud managed to perfectly align complex telecommunication engineering constraints with frictionless user behaviour." — Enterprise Delivery Lead</figcaption>
+        </figure>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- NEXT -->
+  <div class="cs-next">
+    <div class="cs-next__inner">
+      <p class="cs-next__label">Next case study</p>
+      <a href="openapi.html" class="cs-next__card">
+        <div>
+          <p class="cs-next__card-title">Making the Abstract Tangible</p>
+          <p class="cs-next__card-sub">02 · Platform · Strategy · Design strategy for an Open API platform</p>
+        </div>
+        <div class="cs-next__arrow" aria-hidden="true"><i data-lucide="arrow-right"></i></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer__inner">
+      <div>
+        <h2 class="footer__title">Let's work<br>together.</h2>
+        <a href="mailto:amirmasoud.ebadi@gmail.com" class="footer__email">amirmasoud.ebadi@gmail.com</a>
+      </div>
+      <div class="footer__actions">
+        <a href="https://www.linkedin.com/in/amirmasoud-ebadi/" target="_blank" rel="noopener" class="btn btn--outline">LinkedIn</a>
+        <a href="mailto:amirmasoud.ebadi@gmail.com?subject=Let%27s%20work%20together%20%E2%80%93%20Amirmasoud%20Ebadi" class="btn btn--accent">Book a 30-min call <i data-lucide="arrow-right"></i></a>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span>© 2026 Amirmasoud Ebadi</span>
+      <a href="#" class="footer__back">Back to top <i data-lucide="arrow-up"></i></a>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 40); }, { passive: true });
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-visible'); observer.unobserve(e.target); } });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Count-up animation
+    function animateCount(el) {
+      const target = parseInt(el.dataset.target, 10);
+      const prefix = el.dataset.prefix || '';
+      const suffix = el.dataset.suffix || '';
+      const duration = 1200;
+      const start = performance.now();
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduced) { el.textContent = prefix + target + suffix; return; }
+      function update(now) {
+        const elapsed = Math.min((now - start) / duration, 1);
+        const ease = 1 - Math.pow(1 - elapsed, 3);
+        el.textContent = prefix + Math.round(ease * target) + suffix;
+        if (elapsed < 1) requestAnimationFrame(update);
+      }
+      requestAnimationFrame(update);
+    }
+    const countObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting && e.target.dataset.target) {
+          animateCount(e.target);
+          countObserver.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.5 });
+    document.querySelectorAll('[data-target]').forEach(el => countObserver.observe(el));
+
+    lucide.createIcons();
+  </script>
+</body>
+</html>
