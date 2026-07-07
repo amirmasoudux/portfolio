@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/ae-logo-white.svg" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Amirmasoud Ebadi — UX Designer</title>
   <meta name="description" content="UX Designer with 7 years specializing in complex systems and B2B platforms for Deutsche Telekom, Finnotech, and financial institutions across Europe." />
@@ -712,6 +712,8 @@
     @media (max-width: 1024px) {
       :root { --pad: 28px; }
       .about__grid { grid-template-columns: 1fr 1fr; gap: 48px; }
+      .nav__right { display: none; }
+      .nav__hamburger { display: flex; }
     }
     @media (max-width: 768px) {
       :root { --pad: 20px; }
@@ -730,8 +732,6 @@
       .about__photo { max-width: 340px; }
       .about__grid-facts { grid-template-columns: 1fr; }
       .section-header { flex-direction: column; align-items: flex-start; }
-      .nav__cv { display: none; }
-      .nav__hamburger { display: flex; }
       .contact__title { letter-spacing: -2px; }
     }
   </style>
@@ -745,8 +745,7 @@
 <header>
   <nav class="nav" id="nav" aria-label="Main navigation">
     <a href="index.html" class="nav__logo">
-      <img src="ae-logo-white.svg" alt="" class="nav__avatar nav__avatar--logo" aria-hidden="true" />
-      Amirmasoud Ebadi
+      <img src="ae-logo-white.svg" alt="Amirmasoud Ebadi" class="nav__avatar nav__avatar--logo" />
     </a>
     <div class="nav__right">
       <a href="#work" class="nav__pill">Work</a>
