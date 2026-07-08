@@ -54,31 +54,6 @@
       --pad:       40px;
       --r:         12px;
     }
-    [data-theme="light"] {
-      --bg:        #FFFFFF;
-      --surface:   #F5F5F3;
-      --surface-2: #EBEBEB;
-      --ink:       #111111;
-      --ink-2:     rgba(17,17,17,0.75);
-      --ink-3:     rgba(17,17,17,0.60);
-      --accent:    #4A8F05;
-      --border:    rgba(0,0,0,0.09);
-    }
-    /* Theme toggle button */
-    .theme-toggle {
-      display: inline-flex; align-items: center; justify-content: center;
-      width: 36px; height: 36px; border-radius: 999px;
-      border: 1px solid var(--border); background: transparent;
-      color: var(--ink-2); cursor: pointer;
-      transition: color 0.2s, border-color 0.2s;
-      flex-shrink: 0;
-    }
-    .theme-toggle:hover { color: var(--ink); border-color: rgba(128,128,128,0.3); }
-    .theme-toggle i[data-lucide] { width: 15px; height: 15px; }
-    .theme-toggle .icon-sun { display: none; }
-    .theme-toggle .icon-moon { display: inline-flex; }
-    [data-theme="light"] .theme-toggle .icon-sun { display: inline-flex; }
-    [data-theme="light"] .theme-toggle .icon-moon { display: none; }
     html { scroll-behavior: smooth; }
     body {
       font-family: 'Inter', -apple-system, sans-serif;
@@ -260,8 +235,7 @@
     .btn--accent { background: var(--accent); color: #0A0A0A; border: 1.5px solid transparent; }
     .btn--accent:hover { box-shadow: 0 12px 32px rgba(200,255,87,0.25); }
     .btn--outline { border: 1.5px solid var(--border); color: var(--ink); background: transparent; }
-    [data-theme="light"] .btn--outline { border-color: rgba(0,0,0,0.25); }
-    .btn--outline:hover { border-color: var(--ink-3); background: transparent; }
+.btn--outline:hover { border-color: var(--ink-3); background: transparent; }
 
     /* Scroll indicator */
 
@@ -740,17 +714,7 @@
       .about__grid { grid-template-columns: 1fr 1fr; gap: 48px; }
       .nav__right { display: none; }
       .nav__hamburger { display: flex; }
-      /* On mobile, hide standalone toggle — it lives inside the drawer */
-      .theme-toggle:not(.theme-toggle--drawer) { display: none; }
     }
-    /* Drawer theme toggle row */
-    .theme-toggle--drawer {
-      width: 100%; height: auto; border-radius: 8px;
-      padding: 14px 16px; justify-content: flex-start; gap: 12px;
-      font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 500;
-      border: none; border-top: 1px solid var(--border);
-    }
-    .theme-toggle--drawer .theme-toggle__label { color: var(--ink-2); }
     @media (max-width: 768px) {
       :root { --pad: 20px; }
       .hero__title { letter-spacing: -2px; }
@@ -789,15 +753,9 @@
       <a href="#contact" class="nav__pill">Contact</a>
       <a href="https://drive.google.com/file/d/1v95PNrUq3GGAAFtNv8rxzctYXkbnbcL2/view?usp=drive_link" target="_blank" rel="noopener" class="nav__cv">Download CV <i data-lucide="download"></i></a>
     </div>
-    <div style="display:flex;align-items:center;gap:8px;">
-      <button class="theme-toggle" aria-label="Toggle theme" id="theme-toggle">
-        <i data-lucide="moon" class="icon-moon"></i>
-        <i data-lucide="sun" class="icon-sun"></i>
-      </button>
-      <button class="nav__hamburger" aria-label="Menu" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
+    <button class="nav__hamburger" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
   </nav>
   <div class="nav__drawer">
     <a href="#work">Work</a>
@@ -805,11 +763,6 @@
     <a href="#contact">Contact</a>
     <a href="https://www.linkedin.com/in/amirmasoud-ebadi/" target="_blank" rel="noopener">LinkedIn</a>
     <a href="https://drive.google.com/file/d/1v95PNrUq3GGAAFtNv8rxzctYXkbnbcL2/view?usp=drive_link" target="_blank" rel="noopener">Download CV ↗</a>
-    <button class="theme-toggle theme-toggle--drawer" aria-label="Toggle theme" id="theme-toggle-drawer">
-      <i data-lucide="moon" class="icon-moon"></i>
-      <i data-lucide="sun" class="icon-sun"></i>
-      <span class="theme-toggle__label">Switch to light mode</span>
-    </button>
   </div>
 </header>
 
@@ -1032,27 +985,6 @@
 
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <script>
-  // Theme toggle
-  const root = document.documentElement;
-  const savedTheme = localStorage.getItem('theme');
-  if (savedTheme) root.setAttribute('data-theme', savedTheme);
-  function updateDrawerLabel() {
-    const label = document.querySelector('.theme-toggle--drawer .theme-toggle__label');
-    if (label) label.textContent = root.getAttribute('data-theme') === 'light' ? 'Switch to dark mode' : 'Switch to light mode';
-  }
-  updateDrawerLabel();
-  function applyThemeToggle() {
-    const current = root.getAttribute('data-theme');
-    const next = current === 'light' ? 'dark' : 'light';
-    root.setAttribute('data-theme', next);
-    localStorage.setItem('theme', next);
-    updateDrawerLabel();
-    lucide.createIcons();
-  }
-  document.getElementById('theme-toggle').addEventListener('click', applyThemeToggle);
-  const drawerToggle = document.getElementById('theme-toggle-drawer');
-  if (drawerToggle) drawerToggle.addEventListener('click', applyThemeToggle);
-
   // Nav scroll state
   const nav = document.getElementById('nav');
   window.addEventListener('scroll', () => {

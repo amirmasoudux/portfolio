@@ -35,34 +35,6 @@ i[data-lucide] {
   --r-full:    9999px;
 }
 
-[data-theme="light"] {
-  --bg:        #FFFFFF;
-  --surface:   #F5F5F3;
-  --surface-2: #EBEBEB;
-  --ink:       #111111;
-  --ink-2:     rgba(17,17,17,0.75);
-  --ink-3:     rgba(17,17,17,0.60);
-  --accent:    #4A8F05;
-  --border:    rgba(0,0,0,0.09);
-}
-
-/* Theme toggle */
-.theme-toggle {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 36px; height: 36px; border-radius: 999px;
-  border: 1px solid var(--border); background: transparent;
-  color: var(--ink-2); cursor: pointer;
-  transition: color 0.2s, border-color 0.2s;
-  flex-shrink: 0;
-}
-.theme-toggle:hover { color: var(--ink); border-color: rgba(128,128,128,0.3); }
-.theme-toggle i[data-lucide] { width: 15px; height: 15px; stroke: currentColor; fill: none; }
-.theme-toggle .icon-sun { display: none; }
-.theme-toggle .icon-moon { display: inline-flex; }
-[data-theme="light"] .theme-toggle .icon-sun { display: inline-flex; }
-[data-theme="light"] .theme-toggle .icon-moon { display: none; }
-[data-theme="light"] .nav.scrolled { background: rgba(255,255,255,0.92); }
-
 html { scroll-behavior: smooth; }
 
 body {
