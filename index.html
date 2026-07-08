@@ -59,8 +59,8 @@
       --surface:   #F5F5F3;
       --surface-2: #EBEBEB;
       --ink:       #111111;
-      --ink-2:     rgba(17,17,17,0.68);
-      --ink-3:     rgba(17,17,17,0.42);
+      --ink-2:     rgba(17,17,17,0.75);
+      --ink-3:     rgba(17,17,17,0.60);
       --accent:    #4A8F05;
       --border:    rgba(0,0,0,0.09);
     }
@@ -196,7 +196,7 @@
     .nav__drawer {
       display: none; flex-direction: column; gap: 0;
       position: fixed; inset: 0; top: 61px; z-index: 99;
-      background: rgba(10,10,10,0.98); backdrop-filter: blur(20px);
+      background: var(--bg); backdrop-filter: blur(20px);
       padding: 24px var(--pad); border-top: 1px solid var(--border);
     }
     .nav__drawer.open { display: flex; }
@@ -245,7 +245,7 @@
     }
     .hero__desc {
       font-size: clamp(15px, 1.4vw, 18px);
-      color: rgba(240,238,233,0.75); line-height: 1.7;
+      color: var(--ink-2); line-height: 1.7;
       max-width: 520px;
     }
     .hero__actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
@@ -259,8 +259,9 @@
     .btn:hover { transform: translateY(-2px); }
     .btn--accent { background: var(--accent); color: #0A0A0A; border: 1.5px solid transparent; }
     .btn--accent:hover { box-shadow: 0 12px 32px rgba(200,255,87,0.25); }
-    .btn--outline { border: 1.5px solid rgba(255,255,255,0.3); color: var(--ink); background: transparent; }
-    .btn--outline:hover { border-color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.04); }
+    .btn--outline { border: 1.5px solid var(--border); color: var(--ink); background: transparent; }
+    [data-theme="light"] .btn--outline { border-color: rgba(0,0,0,0.25); }
+    .btn--outline:hover { border-color: var(--ink-3); background: transparent; }
 
     /* Scroll indicator */
 
@@ -351,7 +352,7 @@
     .tag--active {
       background: rgba(255,255,255,0.04);
       border-color: rgba(255,255,255,0.12);
-      color: rgba(240,238,233,0.65);
+      color: var(--ink-2);
     }
     .project__title {
       font-family: 'Space Grotesk', sans-serif;
@@ -613,7 +614,7 @@
     /* ── Telekom brand pill ──────────────────────────────── */
     .tag--telekom {
       border-color: rgba(255,255,255,0.12);
-      color: rgba(240,238,233,0.65);
+      color: var(--ink-2);
       background: rgba(255,255,255,0.04);
     }
 
@@ -739,7 +740,17 @@
       .about__grid { grid-template-columns: 1fr 1fr; gap: 48px; }
       .nav__right { display: none; }
       .nav__hamburger { display: flex; }
+      /* On mobile, hide standalone toggle — it lives inside the drawer */
+      .theme-toggle:not(.theme-toggle--drawer) { display: none; }
     }
+    /* Drawer theme toggle row */
+    .theme-toggle--drawer {
+      width: 100%; height: auto; border-radius: 8px;
+      padding: 14px 16px; justify-content: flex-start; gap: 12px;
+      font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 500;
+      border: none; border-top: 1px solid var(--border);
+    }
+    .theme-toggle--drawer .theme-toggle__label { color: var(--ink-2); }
     @media (max-width: 768px) {
       :root { --pad: 20px; }
       .hero__title { letter-spacing: -2px; }
@@ -778,13 +789,15 @@
       <a href="#contact" class="nav__pill">Contact</a>
       <a href="https://drive.google.com/file/d/1v95PNrUq3GGAAFtNv8rxzctYXkbnbcL2/view?usp=drive_link" target="_blank" rel="noopener" class="nav__cv">Download CV <i data-lucide="download"></i></a>
     </div>
-    <button class="theme-toggle" aria-label="Toggle theme" id="theme-toggle">
-      <i data-lucide="moon" class="icon-moon"></i>
-      <i data-lucide="sun" class="icon-sun"></i>
-    </button>
-    <button class="nav__hamburger" aria-label="Menu" aria-expanded="false">
-      <span></span><span></span><span></span>
-    </button>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <button class="theme-toggle" aria-label="Toggle theme" id="theme-toggle">
+        <i data-lucide="moon" class="icon-moon"></i>
+        <i data-lucide="sun" class="icon-sun"></i>
+      </button>
+      <button class="nav__hamburger" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
   </nav>
   <div class="nav__drawer">
     <a href="#work">Work</a>
@@ -792,6 +805,11 @@
     <a href="#contact">Contact</a>
     <a href="https://www.linkedin.com/in/amirmasoud-ebadi/" target="_blank" rel="noopener">LinkedIn</a>
     <a href="https://drive.google.com/file/d/1v95PNrUq3GGAAFtNv8rxzctYXkbnbcL2/view?usp=drive_link" target="_blank" rel="noopener">Download CV ↗</a>
+    <button class="theme-toggle theme-toggle--drawer" aria-label="Toggle theme" id="theme-toggle-drawer">
+      <i data-lucide="moon" class="icon-moon"></i>
+      <i data-lucide="sun" class="icon-sun"></i>
+      <span class="theme-toggle__label">Switch to light mode</span>
+    </button>
   </div>
 </header>
 
@@ -1016,16 +1034,24 @@
 <script>
   // Theme toggle
   const root = document.documentElement;
-  const themeBtn = document.getElementById('theme-toggle');
   const savedTheme = localStorage.getItem('theme');
   if (savedTheme) root.setAttribute('data-theme', savedTheme);
-  themeBtn.addEventListener('click', () => {
+  function updateDrawerLabel() {
+    const label = document.querySelector('.theme-toggle--drawer .theme-toggle__label');
+    if (label) label.textContent = root.getAttribute('data-theme') === 'light' ? 'Switch to dark mode' : 'Switch to light mode';
+  }
+  updateDrawerLabel();
+  function applyThemeToggle() {
     const current = root.getAttribute('data-theme');
     const next = current === 'light' ? 'dark' : 'light';
     root.setAttribute('data-theme', next);
     localStorage.setItem('theme', next);
+    updateDrawerLabel();
     lucide.createIcons();
-  });
+  }
+  document.getElementById('theme-toggle').addEventListener('click', applyThemeToggle);
+  const drawerToggle = document.getElementById('theme-toggle-drawer');
+  if (drawerToggle) drawerToggle.addEventListener('click', applyThemeToggle);
 
   // Nav scroll state
   const nav = document.getElementById('nav');

@@ -40,8 +40,8 @@ i[data-lucide] {
   --surface:   #F5F5F3;
   --surface-2: #EBEBEB;
   --ink:       #111111;
-  --ink-2:     rgba(17,17,17,0.68);
-  --ink-3:     rgba(17,17,17,0.42);
+  --ink-2:     rgba(17,17,17,0.75);
+  --ink-3:     rgba(17,17,17,0.60);
   --accent:    #4A8F05;
   --border:    rgba(0,0,0,0.09);
 }
