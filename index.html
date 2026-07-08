@@ -54,6 +54,31 @@
       --pad:       40px;
       --r:         12px;
     }
+    [data-theme="light"] {
+      --bg:        #FFFFFF;
+      --surface:   #F5F5F3;
+      --surface-2: #EBEBEB;
+      --ink:       #111111;
+      --ink-2:     rgba(17,17,17,0.68);
+      --ink-3:     rgba(17,17,17,0.42);
+      --accent:    #4A8F05;
+      --border:    rgba(0,0,0,0.09);
+    }
+    /* Theme toggle button */
+    .theme-toggle {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 36px; height: 36px; border-radius: 999px;
+      border: 1px solid var(--border); background: transparent;
+      color: var(--ink-2); cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+      flex-shrink: 0;
+    }
+    .theme-toggle:hover { color: var(--ink); border-color: rgba(128,128,128,0.3); }
+    .theme-toggle i[data-lucide] { width: 15px; height: 15px; }
+    .theme-toggle .icon-sun { display: none; }
+    .theme-toggle .icon-moon { display: inline-flex; }
+    [data-theme="light"] .theme-toggle .icon-sun { display: inline-flex; }
+    [data-theme="light"] .theme-toggle .icon-moon { display: none; }
     html { scroll-behavior: smooth; }
     body {
       font-family: 'Inter', -apple-system, sans-serif;
@@ -753,6 +778,10 @@
       <a href="#contact" class="nav__pill">Contact</a>
       <a href="https://drive.google.com/file/d/1v95PNrUq3GGAAFtNv8rxzctYXkbnbcL2/view?usp=drive_link" target="_blank" rel="noopener" class="nav__cv">Download CV <i data-lucide="download"></i></a>
     </div>
+    <button class="theme-toggle" aria-label="Toggle theme" id="theme-toggle">
+      <i data-lucide="moon" class="icon-moon"></i>
+      <i data-lucide="sun" class="icon-sun"></i>
+    </button>
     <button class="nav__hamburger" aria-label="Menu" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
@@ -985,6 +1014,19 @@
 
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <script>
+  // Theme toggle
+  const root = document.documentElement;
+  const themeBtn = document.getElementById('theme-toggle');
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme) root.setAttribute('data-theme', savedTheme);
+  themeBtn.addEventListener('click', () => {
+    const current = root.getAttribute('data-theme');
+    const next = current === 'light' ? 'dark' : 'light';
+    root.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+    lucide.createIcons();
+  });
+
   // Nav scroll state
   const nav = document.getElementById('nav');
   window.addEventListener('scroll', () => {

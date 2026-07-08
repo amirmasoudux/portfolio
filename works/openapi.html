@@ -25,6 +25,31 @@
       --page-max: 1120px;
       --r:        6px;
     }
+    [data-theme="light"] {
+      --bg:        #FFFFFF;
+      --surface:   #F5F5F3;
+      --surface-2: #EBEBEB;
+      --ink:       #111111;
+      --ink-2:     rgba(17,17,17,0.68);
+      --ink-3:     rgba(17,17,17,0.42);
+      --accent:    #4A8F05;
+      --border:    rgba(0,0,0,0.09);
+    }
+    .theme-toggle {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 36px; height: 36px; border-radius: 999px;
+      border: 1px solid var(--border); background: transparent;
+      color: var(--ink-2); cursor: pointer;
+      transition: color 0.2s, border-color 0.2s; flex-shrink: 0;
+    }
+    .theme-toggle:hover { color: var(--ink); }
+    .theme-toggle i[data-lucide] { width: 15px; height: 15px; stroke: currentColor; fill: none; display: inline-flex; }
+    .theme-toggle .icon-sun { display: none; }
+    .theme-toggle .icon-moon { display: inline-flex; }
+    [data-theme="light"] .theme-toggle .icon-sun { display: inline-flex; }
+    [data-theme="light"] .theme-toggle .icon-moon { display: none; }
+    [data-theme="light"] nav { background: rgba(255,255,255,0.92); }
+
     html { scroll-behavior: smooth; }
     body {
       background: var(--bg); color: var(--ink);
@@ -400,7 +425,8 @@
       <a href="https://drive.google.com/file/d/1v95PNrUq3GGAAFtNv8rxzctYXkbnbcL2/view?usp=drive_link" target="_blank" rel="noopener" class="nav-cv">Download CV ↗</a>
     </div>
   </div>
-</nav>
+  <button class="theme-toggle" aria-label="Toggle theme" id="theme-toggle"><i data-lucide="moon" class="icon-moon"></i><i data-lucide="sun" class="icon-sun"></i></button>
+  </nav>
 
 <main>
 
@@ -656,7 +682,8 @@
   document.querySelectorAll('[data-target]').forEach(el => countObserver.observe(el));
 </script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-<script>lucide.createIcons();</script>
+<script>const root=document.documentElement;const themeBtn=document.getElementById("theme-toggle");const saved=localStorage.getItem("theme");if(saved)root.setAttribute("data-theme",saved);themeBtn.addEventListener("click",()=>{const c=root.getAttribute("data-theme");const n=c==="light"?"dark":"light";root.setAttribute("data-theme",n);localStorage.setItem("theme",n);lucide.createIcons();});
+    lucide.createIcons();</script>
 
 </body>
 </html>
