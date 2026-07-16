@@ -8,7 +8,19 @@
   <meta name="description" content="Redesigning a high-stakes telecom configurator that suffered 50% task abandonment." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500&family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    #ae-c1 div, #ae-c1 span { all: unset; box-sizing: border-box; display: revert; text-decoration: none !important; font-family: 'IBM Plex Sans', sans-serif; }
+    @keyframes ae1-dot0 { 0%,4%{background:#1a1a1a;border-color:#333} 9%,100%{background:#F0EEE9;border-color:#F0EEE9} }
+    @keyframes ae1-dot1 { 0%,37%{background:#1a1a1a;border-color:#333} 42%,100%{background:#F0EEE9;border-color:#F0EEE9} }
+    @keyframes ae1-dot2 { 0%,70%{background:#1a1a1a;border-color:#333} 75%,100%{background:#F0EEE9;border-color:#F0EEE9} }
+    @keyframes ae1-ln0  { 0%,4%{background:#333} 9%,100%{background:#F0EEE9} }
+    @keyframes ae1-ln1  { 0%,37%{background:#333} 42%,100%{background:#F0EEE9} }
+    @keyframes ae1-p0   { 0%,30%{opacity:1;transform:translateY(0)} 36%,100%{opacity:0;transform:translateY(-8px)} }
+    @keyframes ae1-p1   { 0%,33%{opacity:0;transform:translateY(8px)} 39%,63%{opacity:1;transform:translateY(0)} 69%,100%{opacity:0;transform:translateY(-8px)} }
+    @keyframes ae1-p2   { 0%,66%{opacity:0;transform:translateY(8px)} 72%,100%{opacity:1;transform:translateY(0)} }
+    @keyframes ae1-prog { 0%,8%{width:12%} 33%,41%{width:50%} 66%,74%{width:88%} 95%,100%{width:100%} }
+  </style>
   <link rel="stylesheet" href="case-study.css" />
 </head>
 <body>
@@ -46,25 +58,53 @@
       </p>
     </div>
     <div class="cs-hero__placeholder" aria-hidden="true">
-      <div class="cs-ph-scene"><div class="cs-ph-browser">
-        <div class="cs-ph-bar"><div class="cs-ph-dot"></div><div class="cs-ph-dot"></div><div class="cs-ph-dot"></div><div class="cs-ph-urlbar"></div></div>
-        <div class="cs-ph-body">
-          <div class="cs-ph-nav"><div class="cs-ph-avatar"></div><div class="cs-ph-stepper"><div class="cs-ph-step"></div><div class="cs-ph-step-line"></div><div class="cs-ph-step"></div><div class="cs-ph-step-line"></div><div class="cs-ph-step"></div><div class="cs-ph-step-line"></div><div class="cs-ph-step"></div><div class="cs-ph-step-line"></div><div class="cs-ph-step"></div></div></div>
-          <div class="cs-ph-ln cs-ph-ln--dark cs-ph-ln--med"></div>
-          <div class="cs-ph-ln cs-ph-ln--short"></div>
-          <div class="cs-ph-row"><div class="cs-ph-card cs-ph-card--accent"></div><div class="cs-ph-card"></div><div class="cs-ph-card"></div></div>
-          <div class="cs-ph-row"><div class="cs-ph-card"></div><div class="cs-ph-card"></div><div class="cs-ph-card cs-ph-card--accent"></div></div>
+      <div id="ae-c1" style="width:100%;max-width:480px;height:280px;border-radius:10px;overflow:hidden;box-shadow:0 16px 40px rgba(0,0,0,0.5);display:flex;flex-direction:column;">
+        <div style="background:#111;padding:9px 16px;border-bottom:1px solid #222;flex-shrink:0;">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:rgba(240,238,233,0.4);">configurator.telekom.de</span>
         </div>
-      </div></div>
+        <div style="background:#0A0A0A;flex:1;padding:22px 24px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;">
+          <div style="display:flex;align-items:center;">
+            <div style="width:18px;height:18px;border-radius:50%;border:2px solid #333;flex-shrink:0;animation:ae1-dot0 4.8s ease-in-out infinite;"></div>
+            <div style="flex:1;height:2px;margin:0 8px;animation:ae1-ln0 4.8s ease-in-out infinite;"></div>
+            <div style="width:18px;height:18px;border-radius:50%;border:2px solid #333;flex-shrink:0;animation:ae1-dot1 4.8s ease-in-out infinite;"></div>
+            <div style="flex:1;height:2px;margin:0 8px;animation:ae1-ln1 4.8s ease-in-out infinite;"></div>
+            <div style="width:18px;height:18px;border-radius:50%;border:2px solid #333;flex-shrink:0;animation:ae1-dot2 4.8s ease-in-out infinite;"></div>
+          </div>
+          <div style="position:relative;height:90px;overflow:hidden;">
+            <div style="position:absolute;inset:0;animation:ae1-p0 4.8s ease-in-out infinite;">
+              <div style="font-size:9px;letter-spacing:0.09em;color:rgba(240,238,233,0.4);margin-bottom:8px;">STEP 1 · INTERNET</div>
+              <div style="font-size:17px;font-weight:600;color:#F0EEE9;margin-bottom:6px;">Choose your speed</div>
+              <div style="font-size:12px;color:rgba(240,238,233,0.5);">250 MBit/s selected</div>
+            </div>
+            <div style="position:absolute;inset:0;animation:ae1-p1 4.8s ease-in-out infinite;">
+              <div style="font-size:9px;letter-spacing:0.09em;color:rgba(240,238,233,0.4);margin-bottom:8px;">STEP 2 · HARDWARE</div>
+              <div style="font-size:17px;font-weight:600;color:#F0EEE9;margin-bottom:6px;">Pick your router</div>
+              <div style="font-size:12px;color:rgba(240,238,233,0.5);">Speedport Pro added</div>
+            </div>
+            <div style="position:absolute;inset:0;animation:ae1-p2 4.8s ease-in-out infinite;">
+              <div style="font-size:9px;letter-spacing:0.09em;color:rgba(240,238,233,0.4);margin-bottom:8px;">STEP 3 · ADD-ONS</div>
+              <div style="font-size:17px;font-weight:600;color:#F0EEE9;margin-bottom:6px;">Optional extras</div>
+              <div style="font-size:12px;color:rgba(240,238,233,0.5);">MagentaTV added</div>
+            </div>
+          </div>
+          <div style="height:4px;border-radius:3px;background:#1a1a1a;overflow:hidden;">
+            <div style="height:4px;border-radius:3px;background:#C8FF57;animation:ae1-prog 4.8s ease-in-out infinite;"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-radius:8px;background:#111;border:1px solid #222;">
+            <span style="font-size:12px;color:rgba(240,238,233,0.5);">Monthly total</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:15px;color:#F0EEE9;">€24,90</span>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- HERO MOCKUP -->
+  <!-- OVERVIEW STRIP -->
   <div class="cs-blueprint">
     <div class="cs-blueprint__inner">
-      <span class="cs-blueprint__eyebrow">System Architecture & Interface Blueprint</span>
-      <h2 class="cs-blueprint__title">Core Product Configurator Engine</h2>
-      <p class="cs-blueprint__body">This visual workspace will host the responsive desktop interface layouts for the primary step-by-step product wizard. The final high-fidelity embedded screen will demonstrate how we refactored dense, tabular telecommunication technical specifications, contract selection bundles, and dynamic hardware add-on dependencies into a unified, low-cognitive-load grid system. It highlights the fixed summary sticky panel engineered to ensure continuous real-time cost transparency throughout the user flow.</p>
+      <span class="cs-blueprint__eyebrow">Project Overview</span>
+      <h2 class="cs-blueprint__title">From all-at-once chaos to a guided step-by-step flow</h2>
+      <p class="cs-blueprint__body">The legacy Telekom configurator forced users to make every decision simultaneously — contract, hardware, add-ons — with no progress indicator and opaque pricing. The redesign introduced a modular, sequential flow with real-time pricing visibility, a persistent progress indicator, and one contextual decision at a time. The result: a validated reduction in abandonment and a measurable improvement in task completion.</p>
     </div>
   </div>
 
