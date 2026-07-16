@@ -229,18 +229,32 @@ button { font-family: inherit; cursor: pointer; }
 .mockup-wrapper img {
   width: 100%; height: auto; display: block;
   object-fit: cover; object-position: center top;
-  filter: brightness(0.92);
-  transition: filter 0.3s;
+  transition: transform 0.3s;
 }
-.mockup-wrapper:hover img { filter: brightness(1); }
+.mockup-wrapper:hover img { transform: scale(1.005); }
 .mockup-wrapper--hero { margin: 0; border-radius: 0; border-left: none; border-right: none; }
 .mockup-wrapper--hero img { max-height: 600px; object-fit: cover; }
 .mockup-wrapper--wide { border-radius: 12px; }
-.mockup-wrapper--split {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+
+/* Screenshots from a light-theme UI need a dark mat so they read as
+   "screens being presented", not raw image dumps on a dark page */
+.mockup-wrapper--wide img {
+  border-radius: 8px;
+  margin: 20px 20px 0;
+  width: calc(100% - 40px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
 }
-.mockup-wrapper--split img { height: 360px; object-fit: cover; }
-.mockup-wrapper--split img:first-child { border-right: 1px solid rgba(255,255,255,0.08); }
+
+.mockup-wrapper--split {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  padding: 20px;
+}
+.mockup-wrapper--split img {
+  height: 320px; object-fit: cover; object-position: center top;
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  width: 100%;
+}
 .mockup-label {
   position: absolute; top: 16px; left: 16px;
   font-size: 12px; font-weight: 600; letter-spacing: 1.5px;
@@ -400,7 +414,12 @@ button { font-family: inherit; cursor: pointer; }
   background: var(--surface-2); margin: 32px 0;
   border: 1px solid var(--border);
 }
-.cs-image img { width: 100%; height: auto; display: block; }
+.cs-image img {
+  width: calc(100% - 24px); height: auto; display: block;
+  margin: 12px 12px 0;
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
 .cs-image figcaption {
   padding: 14px 20px; font-size: 14px; color: var(--ink-2);
   border-top: 1px solid var(--border); font-style: italic;
