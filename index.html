@@ -11,7 +11,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500&family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet" />
 
   <style>
     /* ── Lucide icons ────────────────────────────────────── */
@@ -361,22 +361,45 @@
       position: relative; overflow: hidden;
       border-left: 1px solid var(--border);
       transition: border-color 0.25s;
+      background: #0A0A0A;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px; min-height: 320px;
     }
     .project:hover .project__image { border-color: rgba(255,255,255,0.14); }
-    .project__image img {
-      width: 100%; height: 100%;
-      object-fit: cover; object-position: center top;
-      transition: transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94);
-      filter: brightness(0.8);
+    .project__image > div { width: 100%; flex-shrink: 0; }
+
+    /* ── Mockup card scoped resets ───────────────────────── */
+    #ae-c1 div, #ae-c1 span,
+    #ae-c2 div, #ae-c2 span,
+    #ae-c3 div, #ae-c3 span {
+      all: unset; box-sizing: border-box; display: revert;
+      text-decoration: none !important;
+      font-family: 'IBM Plex Sans', sans-serif;
     }
-    .project:hover .project__image img { transform: scale(1.04); filter: brightness(0.9); }
-    .project__image-placeholder {
-      width: 100%; height: 100%; min-height: 320px;
-      background: var(--surface-2);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 11px; font-weight: 600; letter-spacing: 2px;
-      text-transform: uppercase; color: var(--ink-3);
-    }
+
+    /* ── Card 1 — Telecom keyframes ──────────────────────── */
+    @keyframes ae1-dot0 { 0%,4%{background:#1a1a1a;border-color:#333} 9%,100%{background:#F0EEE9;border-color:#F0EEE9} }
+    @keyframes ae1-dot1 { 0%,37%{background:#1a1a1a;border-color:#333} 42%,100%{background:#F0EEE9;border-color:#F0EEE9} }
+    @keyframes ae1-dot2 { 0%,70%{background:#1a1a1a;border-color:#333} 75%,100%{background:#F0EEE9;border-color:#F0EEE9} }
+    @keyframes ae1-ln0  { 0%,4%{background:#333} 9%,100%{background:#F0EEE9} }
+    @keyframes ae1-ln1  { 0%,37%{background:#333} 42%,100%{background:#F0EEE9} }
+    @keyframes ae1-p0   { 0%,30%{opacity:1;transform:translateY(0)} 36%,100%{opacity:0;transform:translateY(-8px)} }
+    @keyframes ae1-p1   { 0%,33%{opacity:0;transform:translateY(8px)} 39%,63%{opacity:1;transform:translateY(0)} 69%,100%{opacity:0;transform:translateY(-8px)} }
+    @keyframes ae1-p2   { 0%,66%{opacity:0;transform:translateY(8px)} 72%,100%{opacity:1;transform:translateY(0)} }
+    @keyframes ae1-prog { 0%,8%{width:12%} 33%,41%{width:50%} 66%,74%{width:88%} 95%,100%{width:100%} }
+
+    /* ── Card 2 — OpenAPI keyframes ──────────────────────── */
+    @keyframes ae2-b0 { 0%,100%{height:30%} 50%{height:55%} }
+    @keyframes ae2-b1 { 0%,100%{height:50%} 50%{height:80%} }
+    @keyframes ae2-b2 { 0%,100%{height:40%} 50%{height:68%} }
+    @keyframes ae2-b3 { 0%,100%{height:65%} 50%{height:95%} }
+
+    /* ── Card 3 — Customer Club keyframes ────────────────── */
+    @keyframes ae3-nav0  { 0%,8%{background:#F0EEE9} 33%,100%{background:#2a2a2a} }
+    @keyframes ae3-nav1  { 0%,33%{background:#2a2a2a} 41%,66%{background:#F0EEE9} 74%,100%{background:#2a2a2a} }
+    @keyframes ae3-nav2  { 0%,66%{background:#2a2a2a} 74%,100%{background:#F0EEE9} }
+    @keyframes ae3-donut { 0%{stroke-dasharray:0 97} 60%,100%{stroke-dasharray:61 97} }
+    @keyframes ae3-line  { 0%{stroke-dashoffset:300} 70%,100%{stroke-dashoffset:0} }
 
     /* ── ABOUT ───────────────────────────────────────────── */
     .about { padding: 120px 0; border-top: 1px solid var(--border); }
@@ -837,7 +860,44 @@
           </div>
         </div>
         <div class="project__image">
-          <div class="project__image-placeholder">UI Preview</div>
+          <div id="ae-c1" style="width:100%;height:280px;border-radius:10px;overflow:hidden;box-shadow:0 16px 40px rgba(0,0,0,0.5);display:flex;flex-direction:column;">
+            <div style="background:#111;padding:9px 16px;border-bottom:1px solid #222;flex-shrink:0;">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:rgba(240,238,233,0.4);">configurator.telekom.de</span>
+            </div>
+            <div style="background:#0A0A0A;flex:1;padding:22px 24px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;">
+              <div style="display:flex;align-items:center;">
+                <div style="width:18px;height:18px;border-radius:50%;border:2px solid #333;flex-shrink:0;animation:ae1-dot0 4.8s ease-in-out infinite;"></div>
+                <div style="flex:1;height:2px;margin:0 8px;animation:ae1-ln0 4.8s ease-in-out infinite;"></div>
+                <div style="width:18px;height:18px;border-radius:50%;border:2px solid #333;flex-shrink:0;animation:ae1-dot1 4.8s ease-in-out infinite;"></div>
+                <div style="flex:1;height:2px;margin:0 8px;animation:ae1-ln1 4.8s ease-in-out infinite;"></div>
+                <div style="width:18px;height:18px;border-radius:50%;border:2px solid #333;flex-shrink:0;animation:ae1-dot2 4.8s ease-in-out infinite;"></div>
+              </div>
+              <div style="position:relative;height:90px;overflow:hidden;">
+                <div style="position:absolute;inset:0;animation:ae1-p0 4.8s ease-in-out infinite;">
+                  <div style="font-size:9px;letter-spacing:0.09em;color:rgba(240,238,233,0.4);margin-bottom:8px;">STEP 1 · INTERNET</div>
+                  <div style="font-size:17px;font-weight:600;color:#F0EEE9;margin-bottom:6px;">Choose your speed</div>
+                  <div style="font-size:12px;color:rgba(240,238,233,0.5);">250 MBit/s selected</div>
+                </div>
+                <div style="position:absolute;inset:0;animation:ae1-p1 4.8s ease-in-out infinite;">
+                  <div style="font-size:9px;letter-spacing:0.09em;color:rgba(240,238,233,0.4);margin-bottom:8px;">STEP 2 · HARDWARE</div>
+                  <div style="font-size:17px;font-weight:600;color:#F0EEE9;margin-bottom:6px;">Pick your router</div>
+                  <div style="font-size:12px;color:rgba(240,238,233,0.5);">Speedport Pro added</div>
+                </div>
+                <div style="position:absolute;inset:0;animation:ae1-p2 4.8s ease-in-out infinite;">
+                  <div style="font-size:9px;letter-spacing:0.09em;color:rgba(240,238,233,0.4);margin-bottom:8px;">STEP 3 · ADD-ONS</div>
+                  <div style="font-size:17px;font-weight:600;color:#F0EEE9;margin-bottom:6px;">Optional extras</div>
+                  <div style="font-size:12px;color:rgba(240,238,233,0.5);">MagentaTV added</div>
+                </div>
+              </div>
+              <div style="height:4px;border-radius:3px;background:#1a1a1a;overflow:hidden;">
+                <div style="height:4px;border-radius:3px;background:#C8FF57;animation:ae1-prog 4.8s ease-in-out infinite;"></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-radius:8px;background:#111;border:1px solid #222;">
+                <span style="font-size:12px;color:rgba(240,238,233,0.5);">Monthly total</span>
+                <span style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:15px;color:#F0EEE9;">€24,90</span>
+              </div>
+            </div>
+          </div>
         </div>
       </a>
 
@@ -862,7 +922,41 @@
           </div>
         </div>
         <div class="project__image">
-          <div class="project__image-placeholder">UI Preview</div>
+          <div id="ae-c2" style="width:100%;height:280px;border-radius:10px;overflow:hidden;box-shadow:0 16px 40px rgba(0,0,0,0.5);display:flex;flex-direction:column;">
+            <div style="background:#111;padding:9px 16px;border-bottom:1px solid #222;flex-shrink:0;">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:rgba(240,238,233,0.4);">platform.openapi.io/dashboard</span>
+            </div>
+            <div style="background:#0A0A0A;flex:1;padding:22px 24px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;">
+              <div>
+                <div style="font-size:9px;letter-spacing:0.09em;color:rgba(240,238,233,0.4);margin-bottom:8px;">ENTERPRISE CONVERSIONS</div>
+                <div style="font-size:40px;font-weight:700;color:#F0EEE9;line-height:1;margin-bottom:4px;">+70%</div>
+                <div style="font-size:11px;color:rgba(240,238,233,0.4);">Year-over-year growth</div>
+              </div>
+              <div style="display:flex;align-items:flex-end;gap:12px;height:96px;position:relative;">
+                <div style="position:absolute;bottom:20px;left:0;right:0;height:1px;background:#1f1f1f;"></div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:6px;">
+                  <div style="width:100%;border-radius:3px 3px 0 0;background:#2a2a2a;animation:ae2-b0 3.2s 0s ease-in-out infinite;"></div>
+                  <span style="font-size:10px;color:rgba(240,238,233,0.35);">Q1</span>
+                </div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:6px;">
+                  <div style="width:100%;border-radius:3px 3px 0 0;background:#2a2a2a;animation:ae2-b1 3.2s 0.2s ease-in-out infinite;"></div>
+                  <span style="font-size:10px;color:rgba(240,238,233,0.35);">Q2</span>
+                </div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:6px;">
+                  <div style="width:100%;border-radius:3px 3px 0 0;background:#2a2a2a;animation:ae2-b2 3.2s 0.4s ease-in-out infinite;"></div>
+                  <span style="font-size:10px;color:rgba(240,238,233,0.35);">Q3</span>
+                </div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:6px;">
+                  <div style="width:100%;border-radius:3px 3px 0 0;background:#C8FF57;animation:ae2-b3 3.2s 0.6s ease-in-out infinite;"></div>
+                  <span style="font-size:10px;color:rgba(240,238,233,0.35);">Q4</span>
+                </div>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-radius:8px;background:#111;border:1px solid #222;">
+                <span style="font-size:12px;color:rgba(240,238,233,0.5);">Active enterprise accounts</span>
+                <span style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:15px;color:#F0EEE9;">1,248</span>
+              </div>
+            </div>
+          </div>
         </div>
       </a>
 
@@ -887,7 +981,41 @@
           </div>
         </div>
         <div class="project__image">
-          <div class="project__image-placeholder">UI Preview</div>
+          <div id="ae-c3" style="width:100%;height:280px;border-radius:10px;overflow:hidden;box-shadow:0 16px 40px rgba(0,0,0,0.5);display:flex;flex-direction:column;">
+            <div style="background:#111;padding:9px 16px;border-bottom:1px solid #222;flex-shrink:0;">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:rgba(240,238,233,0.4);">bank.customerclub.app</span>
+            </div>
+            <div style="background:#0A0A0A;flex:1;display:flex;overflow:hidden;">
+              <div style="width:44px;flex-shrink:0;background:#141414;border-right:1px solid #1e1e1e;display:flex;flex-direction:column;align-items:center;padding:18px 0;gap:14px;">
+                <div style="width:20px;height:20px;border-radius:6px;animation:ae3-nav0 4.5s ease-in-out infinite;"></div>
+                <div style="width:20px;height:20px;border-radius:6px;animation:ae3-nav1 4.5s ease-in-out infinite;"></div>
+                <div style="width:20px;height:20px;border-radius:6px;animation:ae3-nav2 4.5s ease-in-out infinite;"></div>
+                <div style="width:20px;height:20px;border-radius:6px;background:#2a2a2a;"></div>
+              </div>
+              <div style="flex:1;padding:16px;display:flex;flex-direction:column;gap:10px;">
+                <div style="display:flex;gap:10px;flex:1;">
+                  <div style="flex:1.4;background:#141414;border:1px solid #222;border-radius:8px;padding:14px;display:flex;flex-direction:column;justify-content:center;">
+                    <div style="font-size:9px;color:rgba(240,238,233,0.4);letter-spacing:0.09em;margin-bottom:8px;">REWARD BALANCE</div>
+                    <div style="font-size:26px;font-weight:700;color:#C8FF57;line-height:1;margin-bottom:5px;">71,800</div>
+                    <div style="font-size:10px;color:rgba(240,238,233,0.45);">+12% this month</div>
+                  </div>
+                  <div style="flex:1;background:#141414;border:1px solid #222;border-radius:8px;display:flex;align-items:center;justify-content:center;">
+                    <svg viewBox="0 0 36 36" style="width:60px;height:auto;transform:rotate(-90deg);display:block;">
+                      <circle cx="18" cy="18" r="15.5" fill="none" stroke="#222" stroke-width="4"/>
+                      <circle cx="18" cy="18" r="15.5" fill="none" stroke="#F0EEE9" stroke-width="4" stroke-linecap="round" style="animation:ae3-donut 4s ease-out infinite;"/>
+                    </svg>
+                  </div>
+                </div>
+                <div style="flex:1;background:#141414;border:1px solid #222;border-radius:8px;padding:12px 14px;">
+                  <div style="font-size:9px;color:rgba(240,238,233,0.4);margin-bottom:8px;">Earning momentum</div>
+                  <svg viewBox="0 0 200 36" style="width:100%;height:32px;display:block;overflow:visible;">
+                    <polyline points="0,32 40,24 80,28 120,14 160,7 200,2" fill="none" stroke="rgba(240,238,233,0.06)" stroke-width="2"/>
+                    <polyline points="0,32 40,24 80,28 120,14 160,7 200,2" fill="none" stroke="#F0EEE9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="stroke-dasharray:300;animation:ae3-line 4s ease-out infinite;"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </a>
 
