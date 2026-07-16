@@ -359,7 +359,6 @@
     }
     .project__image {
       position: relative; overflow: hidden;
-      border-left: 1px solid var(--border);
       transition: border-color 0.25s;
       background: #0A0A0A;
       display: flex; align-items: center; justify-content: center;
@@ -400,6 +399,33 @@
     @keyframes ae3-nav2  { 0%,66%{background:#2a2a2a} 74%,100%{background:#F0EEE9} }
     @keyframes ae3-donut { 0%{stroke-dasharray:0 97} 60%,100%{stroke-dasharray:61 97} }
     @keyframes ae3-line  { 0%{stroke-dashoffset:300} 70%,100%{stroke-dashoffset:0} }
+
+    /* ── Card 4 — Camino keyframes ───────────────────────── */
+    #ae-c4 div, #ae-c4 span { all: unset; box-sizing: border-box; display: revert; text-decoration: none !important; font-family: 'IBM Plex Sans', sans-serif; }
+    @keyframes camRailPulse0 { 0%,100%{opacity:0.35;transform:scale(0.85)} 8%,20%{opacity:1;transform:scale(1)} }
+    @keyframes camRailPulse1 { 0%,100%{opacity:0.35;transform:scale(0.85)} 20%,32%{opacity:1;transform:scale(1)} }
+    @keyframes camRailPulse2 { 0%,100%{opacity:0.35;transform:scale(0.85)} 32%,44%{opacity:1;transform:scale(1)} }
+    @keyframes camRailPulse3 { 0%,100%{opacity:0.35;transform:scale(0.85)} 44%,56%{opacity:1;transform:scale(1)} }
+    @keyframes camRailPulse4 { 0%,100%{opacity:0.35;transform:scale(0.85)} 56%,68%{opacity:1;transform:scale(1)} }
+    @keyframes camRailPulse5 { 0%,100%{opacity:0.35;transform:scale(0.85)} 68%,80%{opacity:1;transform:scale(1)} }
+    @keyframes camCardActive0 { 0%,6%{border-color:#C8FF57;background:#1a1f14} 30%,100%{border-color:#222;background:#141414} }
+    @keyframes camCardActive1 { 0%,36%{border-color:#222;background:#141414} 42%,62%{border-color:#C8FF57;background:#1a1f14} 68%,100%{border-color:#222;background:#141414} }
+    @keyframes camCardActive2 { 0%,68%{border-color:#222;background:#141414} 74%,94%{border-color:#C8FF57;background:#1a1f14} 100%{border-color:#222;background:#141414} }
+    @keyframes camDotActive0 { 0%,6%{background:#C8FF57} 30%,100%{background:#2a2a2a} }
+    @keyframes camDotActive1 { 0%,36%{background:#2a2a2a} 42%,62%{background:#C8FF57} 68%,100%{background:#2a2a2a} }
+    @keyframes camDotActive2 { 0%,68%{background:#2a2a2a} 74%,94%{background:#C8FF57} 100%{background:#2a2a2a} }
+    @keyframes camRouteDraw  { 0%,10%{stroke-dashoffset:240} 90%,100%{stroke-dashoffset:0} }
+    @keyframes camPinDrop0   { 0%,8%{opacity:0;transform:translateY(-10px)} 18%,100%{opacity:1;transform:translateY(0)} }
+    @keyframes camPinDrop1   { 0%,85%{opacity:0;transform:translateY(-10px)} 95%,100%{opacity:1;transform:translateY(0)} }
+    @keyframes camPinPulse   { 0%,100%{transform:scale(1)} 50%{transform:scale(1.15)} }
+    .project--coming-soon { opacity: 0.7; cursor: default; pointer-events: none; }
+    .coming-soon-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 20px; border-radius: 999px;
+      border: 1px solid var(--border);
+      font-size: 13px; font-weight: 600; color: var(--ink-3);
+      letter-spacing: 0.5px; margin-top: 28px;
+    }
 
     /* ── ABOUT ───────────────────────────────────────────── */
     .about { padding: 120px 0; border-top: 1px solid var(--border); }
@@ -843,7 +869,7 @@
       <a href="works/configurator.html" class="project reveal" aria-label="Case study 1: From Friction to Flow — Telecom configurator redesign">
         <div class="project__content">
           <div class="project__top">
-            <p class="project__num" aria-hidden="true">01 / 03</p>
+            <p class="project__num" aria-hidden="true">01 / 04</p>
             <div class="project__tags">
               <span class="tag">Telekom</span>
               <span class="tag">Enterprise App</span>
@@ -905,7 +931,7 @@
       <a href="works/openapi.html" class="project reveal" aria-label="Case study 2: Making the Abstract Tangible — Open API platform redesign">
         <div class="project__content">
           <div class="project__top">
-            <p class="project__num" aria-hidden="true">02 / 03</p>
+            <p class="project__num" aria-hidden="true">02 / 04</p>
             <div class="project__tags">
               <span class="tag">Finnotech</span>
               <span class="tag">B2B Platform</span>
@@ -964,7 +990,7 @@
       <a href="works/customerclub.html" class="project reveal" aria-label="Case study 3: Driving Loyalty — Bank customer club gamification">
         <div class="project__content">
           <div class="project__top">
-            <p class="project__num" aria-hidden="true">03 / 03</p>
+            <p class="project__num" aria-hidden="true">03 / 04</p>
             <div class="project__tags">
               <span class="tag">Regional Bank</span>
               <span class="tag">Loyalty Dashboard</span>
@@ -1018,6 +1044,91 @@
           </div>
         </div>
       </a>
+
+      <!-- Project 04 — Coming Soon -->
+      <div class="project project--coming-soon reveal">
+        <div class="project__content">
+          <div class="project__top">
+            <p class="project__num">04 / 04</p>
+            <div class="project__tags">
+              <span class="tag tag--active">Telecom</span>
+              <span class="tag">Enterprise UX</span>
+              <span class="tag">Workflow</span>
+            </div>
+            <h3 class="project__title">Optimizing<br>Administrative Flow</h3>
+            <p class="project__desc">
+              Designed an end-to-end workflow tool that enables Deutsche Telekom to manage thousands of permit applications across Germany.
+            </p>
+          </div>
+          <div class="project__bottom">
+            <span class="coming-soon-badge">Coming Soon …</span>
+          </div>
+        </div>
+        <div class="project__image">
+          <div id="ae-c4" style="width:100%;height:280px;border-radius:10px;overflow:hidden;box-shadow:0 16px 40px rgba(0,0,0,0.5);display:flex;flex-direction:column;">
+            <div style="background:#111;padding:9px 16px;border-bottom:1px solid #222;flex-shrink:0;">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:rgba(240,238,233,0.4);">camino.app/planner</span>
+            </div>
+            <div style="background:#0A0A0A;flex:1;padding:16px 18px;display:flex;flex-direction:column;gap:12px;overflow:hidden;">
+              <div style="display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+                <div style="display:flex;gap:8px;">
+                  <div style="height:8px;width:50px;border-radius:4px;background:#2a2a2a;"></div>
+                  <div style="height:8px;width:38px;border-radius:4px;background:#2a2a2a;"></div>
+                </div>
+                <div style="height:8px;width:62px;border-radius:4px;background:#F0EEE9;"></div>
+              </div>
+              <div style="display:flex;gap:10px;flex:1;overflow:hidden;">
+                <div style="width:30px;flex-shrink:0;background:#141414;border-radius:7px;padding:10px 0;display:flex;flex-direction:column;align-items:center;justify-content:space-around;">
+                  <div style="width:12px;height:12px;border-radius:50%;background:#F0EEE9;animation:camRailPulse0 4.5s ease-in-out infinite;"></div>
+                  <div style="width:12px;height:12px;border-radius:50%;background:#F0EEE9;animation:camRailPulse1 4.5s ease-in-out infinite;"></div>
+                  <div style="width:12px;height:12px;border-radius:50%;background:#F0EEE9;animation:camRailPulse2 4.5s ease-in-out infinite;"></div>
+                  <div style="width:12px;height:12px;border-radius:50%;background:#F0EEE9;animation:camRailPulse3 4.5s ease-in-out infinite;"></div>
+                  <div style="width:12px;height:12px;border-radius:50%;background:#F0EEE9;animation:camRailPulse4 4.5s ease-in-out infinite;"></div>
+                  <div style="width:12px;height:12px;border-radius:50%;background:#F0EEE9;animation:camRailPulse5 4.5s ease-in-out infinite;"></div>
+                </div>
+                <div style="flex:1;display:flex;flex-direction:column;gap:7px;">
+                  <div style="border:1px solid #222;background:#141414;border-radius:7px;padding:9px 12px;display:flex;align-items:center;justify-content:space-between;flex:1;animation:camCardActive0 4.5s ease-in-out infinite;">
+                    <div style="flex:1;"><div style="height:5px;border-radius:2px;background:#2a2a2a;margin-bottom:6px;"></div><div style="height:4px;border-radius:2px;background:#2a2a2a;width:65%;"></div></div>
+                    <div style="display:flex;gap:4px;margin-left:10px;"><div style="width:6px;height:6px;border-radius:50%;background:#2a2a2a;"></div><div style="width:6px;height:6px;border-radius:50%;animation:camDotActive0 4.5s ease-in-out infinite;"></div></div>
+                  </div>
+                  <div style="border:1px solid #222;background:#141414;border-radius:7px;padding:9px 12px;display:flex;align-items:center;justify-content:space-between;flex:1;animation:camCardActive1 4.5s ease-in-out infinite;">
+                    <div style="flex:1;"><div style="height:5px;border-radius:2px;background:#2a2a2a;margin-bottom:6px;"></div><div style="height:4px;border-radius:2px;background:#2a2a2a;width:55%;"></div></div>
+                    <div style="display:flex;gap:4px;margin-left:10px;"><div style="width:6px;height:6px;border-radius:50%;background:#2a2a2a;"></div><div style="width:6px;height:6px;border-radius:50%;animation:camDotActive1 4.5s ease-in-out infinite;"></div></div>
+                  </div>
+                  <div style="border:1px solid #222;background:#141414;border-radius:7px;padding:9px 12px;display:flex;align-items:center;justify-content:space-between;flex:1;animation:camCardActive2 4.5s ease-in-out infinite;">
+                    <div style="flex:1;"><div style="height:5px;border-radius:2px;background:#2a2a2a;margin-bottom:6px;"></div><div style="height:4px;border-radius:2px;background:#2a2a2a;width:72%;"></div></div>
+                    <div style="display:flex;gap:4px;margin-left:10px;"><div style="width:6px;height:6px;border-radius:50%;background:#2a2a2a;"></div><div style="width:6px;height:6px;border-radius:50%;animation:camDotActive2 4.5s ease-in-out infinite;"></div></div>
+                  </div>
+                </div>
+                <div style="flex:1.2;background:#141414;border-radius:7px;position:relative;overflow:hidden;">
+                  <svg width="100%" height="100%" viewBox="0 0 140 180" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;display:block;">
+                    <line x1="0" y1="44" x2="140" y2="38" stroke="#1e1e1e" stroke-width="7"/>
+                    <line x1="30" y1="0" x2="40" y2="180" stroke="#1e1e1e" stroke-width="6"/>
+                    <line x1="0" y1="108" x2="140" y2="118" stroke="#1e1e1e" stroke-width="5"/>
+                    <line x1="98" y1="0" x2="90" y2="180" stroke="#1e1e1e" stroke-width="5"/>
+                    <rect x="44" y="16" width="16" height="13" rx="2" fill="#242424" transform="rotate(7,44,16)"/>
+                    <rect x="102" y="14" width="14" height="12" rx="2" fill="#242424" transform="rotate(-5,102,14)"/>
+                    <rect x="8" y="66" width="14" height="12" rx="2" fill="#242424" transform="rotate(5,8,66)"/>
+                    <rect x="106" y="72" width="15" height="13" rx="2" fill="#242424" transform="rotate(-7,106,72)"/>
+                    <rect x="50" y="132" width="14" height="12" rx="2" fill="#242424" transform="rotate(4,50,132)"/>
+                    <rect x="110" y="130" width="13" height="11" rx="2" fill="#242424" transform="rotate(-5,110,130)"/>
+                    <path d="M16,24 C44,16 52,72 80,76 C108,80 108,122 128,124" fill="none" stroke="#222" stroke-width="2.5"/>
+                    <path d="M16,24 C44,16 52,72 80,76 C108,80 108,122 128,124" fill="none" stroke="#C8FF57" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="240" style="animation:camRouteDraw 4.5s ease-in-out infinite;"/>
+                    <g style="animation:camPinDrop0 4.5s ease-in-out infinite;">
+                      <path d="M16,11 C11,11 8,15 8,18.5 C8,24 16,31 16,31 C16,31 24,24 24,18.5 C24,15 21,11 16,11Z" fill="#F0EEE9"/>
+                      <circle cx="16" cy="18.5" r="3" fill="#0A0A0A"/>
+                    </g>
+                    <g style="animation:camPinDrop1 4.5s ease-in-out infinite, camPinPulse 1.6s ease-in-out infinite;">
+                      <path d="M128,111 C123,111 120,115 120,118.5 C120,124 128,131 128,131 C128,131 136,124 136,118.5 C136,115 133,111 128,111Z" fill="#C8FF57"/>
+                      <circle cx="128" cy="118.5" r="3" fill="#0A0A0A"/>
+                    </g>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
     </div>
   </section>
