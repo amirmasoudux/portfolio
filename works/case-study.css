@@ -236,24 +236,37 @@ button { font-family: inherit; cursor: pointer; }
 .mockup-wrapper--hero img { max-height: 600px; object-fit: cover; }
 .mockup-wrapper--wide { border-radius: 12px; }
 
-/* Screenshots from a light-theme UI need a dark mat so they read as
-   "screens being presented", not raw image dumps on a dark page */
+/* Light-theme screenshots sit inside a dark mat — shown as framed screens */
 .mockup-wrapper--wide img {
   border-radius: 8px;
-  margin: 20px 20px 0;
-  width: calc(100% - 40px);
+  margin: 24px 24px 0;
+  width: calc(100% - 48px);
+  max-height: 520px;
+  object-fit: cover;
+  object-position: center top;
   box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+
+/* Feedback / smaller screenshots shown centred at a contained width */
+.mockup-wrapper--wide.mockup-wrapper--sm img {
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
 }
 
 .mockup-wrapper--split {
   display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
-  padding: 20px;
+  padding: 20px 20px 0;
 }
 .mockup-wrapper--split img {
-  height: 320px; object-fit: cover; object-position: center top;
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  object-position: center top;
   border-radius: 6px;
   box-shadow: 0 4px 16px rgba(0,0,0,0.4);
-  width: 100%;
+  display: block;
 }
 .mockup-label {
   position: absolute; top: 16px; left: 16px;
@@ -415,7 +428,11 @@ button { font-family: inherit; cursor: pointer; }
   border: 1px solid var(--border);
 }
 .cs-image img {
-  width: calc(100% - 24px); height: auto; display: block;
+  width: calc(100% - 24px);
+  height: 260px;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
   margin: 12px 12px 0;
   border-radius: 6px;
   box-shadow: 0 4px 16px rgba(0,0,0,0.3);
