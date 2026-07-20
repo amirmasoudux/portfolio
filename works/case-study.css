@@ -236,23 +236,21 @@ button { font-family: inherit; cursor: pointer; }
 .mockup-wrapper--hero img { max-height: 600px; object-fit: cover; }
 .mockup-wrapper--wide { border-radius: 12px; }
 
-/* Light-theme screenshots sit inside a dark mat — shown as framed screens */
+/* Light-theme screenshots sit inside a dark mat — shown at natural size */
 .mockup-wrapper--wide img {
   border-radius: 8px;
   margin: 24px 24px 0;
   width: calc(100% - 48px);
-  max-height: 520px;
-  object-fit: cover;
-  object-position: center top;
+  height: auto;
+  display: block;
   box-shadow: 0 8px 32px rgba(0,0,0,0.4);
 }
 
-/* Feedback / smaller screenshots shown centred at a contained width */
+/* Feedback screenshot: narrower so it reads as a quote reference */
 .mockup-wrapper--wide.mockup-wrapper--sm img {
-  max-width: 640px;
+  max-width: 680px;
   margin-left: auto;
   margin-right: auto;
-  display: block;
 }
 
 .mockup-wrapper--split {
@@ -261,12 +259,10 @@ button { font-family: inherit; cursor: pointer; }
 }
 .mockup-wrapper--split img {
   width: 100%;
-  height: 300px;
-  object-fit: cover;
-  object-position: center top;
+  height: auto;
+  display: block;
   border-radius: 6px;
   box-shadow: 0 4px 16px rgba(0,0,0,0.4);
-  display: block;
 }
 .mockup-label {
   position: absolute; top: 16px; left: 16px;
@@ -429,9 +425,7 @@ button { font-family: inherit; cursor: pointer; }
 }
 .cs-image img {
   width: calc(100% - 24px);
-  height: 260px;
-  object-fit: cover;
-  object-position: center top;
+  height: auto;
   display: block;
   margin: 12px 12px 0;
   border-radius: 6px;
