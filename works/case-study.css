@@ -219,51 +219,55 @@ button { font-family: inherit; cursor: pointer; }
 
 /* ── Mockup containers ───────────────────────────────── */
 .mockup-wrapper {
-  width: 100%; margin: 48px 0;
-  border-radius: 16px; overflow: hidden;
+  width: 100%;
+  max-width: 960px;
+  margin: 56px auto;
+  border-radius: 12px;
+  overflow: hidden;
   border: 1px solid rgba(255,255,255,0.08);
   box-shadow: 0 24px 64px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04);
   background: #141414;
   position: relative;
 }
+/* Base img reset — overridden by variant rules below */
 .mockup-wrapper img {
   width: 100%; height: auto; display: block;
-  object-fit: cover; object-position: center top;
-  transition: transform 0.3s;
 }
-.mockup-wrapper:hover img { transform: scale(1.005); }
-.mockup-wrapper--hero { margin: 0; border-radius: 0; border-left: none; border-right: none; }
-.mockup-wrapper--hero img { max-height: 600px; object-fit: cover; }
-.mockup-wrapper--wide { border-radius: 12px; }
+.mockup-wrapper--hero { margin: 0; border-radius: 0; border-left: none; border-right: none; max-width: none; }
+.mockup-wrapper--hero img { max-height: 600px; object-fit: cover; object-position: center top; }
 
-/* Light-theme screenshots sit inside a dark mat — shown at natural size */
+/* Wide: screenshots inset on a dark mat, full natural height */
 .mockup-wrapper--wide img {
-  border-radius: 8px;
-  margin: 24px 24px 0;
   width: calc(100% - 48px);
   height: auto;
   display: block;
+  margin: 24px auto 0;
+  border-radius: 8px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.4);
 }
 
-/* Feedback screenshot: narrower so it reads as a quote reference */
-.mockup-wrapper--wide.mockup-wrapper--sm img {
-  max-width: 680px;
-  margin-left: auto;
-  margin-right: auto;
+/* Zoomable images — cursor hint + subtle hover */
+img[data-zoomable] {
+  cursor: zoom-in;
+  transition: opacity 0.2s;
 }
+img[data-zoomable]:hover { opacity: 0.88; }
 
+/* Feedback screenshot: narrower */
+.mockup-wrapper--sm { max-width: 680px; }
+
+/* Split: two screenshots side by side */
 .mockup-wrapper--split {
   display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
   padding: 20px 20px 0;
+  max-width: 960px;
 }
 .mockup-wrapper--split img {
-  width: 100%;
-  height: auto;
-  display: block;
+  width: 100%; height: auto; display: block;
   border-radius: 6px;
   box-shadow: 0 4px 16px rgba(0,0,0,0.4);
 }
+
 .mockup-label {
   position: absolute; top: 16px; left: 16px;
   font-size: 12px; font-weight: 600; letter-spacing: 1.5px;
@@ -271,12 +275,43 @@ button { font-family: inherit; cursor: pointer; }
   background: rgba(10,10,10,0.8); backdrop-filter: blur(8px);
   padding: 5px 12px; border-radius: 999px;
   border: 1px solid rgba(200,255,87,0.2);
+  pointer-events: none;
 }
 .mockup-caption {
   padding: 16px 24px;
   font-size: 14px; color: var(--ink-3);
   border-top: 1px solid rgba(255,255,255,0.06);
+  margin-top: 24px;
 }
+
+/* ── Lightbox ─────────────────────────────────────────── */
+.lx-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: rgba(0,0,0,0.92);
+  display: flex; align-items: center; justify-content: center;
+  cursor: zoom-out;
+  backdrop-filter: blur(12px);
+  animation: lx-in 0.18s ease;
+}
+@keyframes lx-in { from { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: scale(1); } }
+.lx-overlay img {
+  max-width: 90vw; max-height: 90vh;
+  width: auto; height: auto;
+  border-radius: 8px;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.8);
+  cursor: default;
+}
+.lx-close {
+  position: fixed; top: 20px; right: 24px;
+  width: 36px; height: 36px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 50%; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 20px; line-height: 1;
+  transition: background 0.15s;
+}
+.lx-close:hover { background: rgba(255,255,255,0.2); }
 
 /* ── Hero placeholder ────────────────────────────────── */
 .cs-hero__placeholder {
@@ -420,22 +455,25 @@ button { font-family: inherit; cursor: pointer; }
 /* Case study images */
 .cs-image {
   border-radius: var(--r-xl); overflow: hidden;
-  background: var(--surface-2); margin: 32px 0;
-  border: 1px solid var(--border);
+  background: #141414; margin: 32px 0;
+  border: 1px solid rgba(255,255,255,0.08);
 }
 .cs-image img {
   width: calc(100% - 24px);
   height: auto;
   display: block;
-  margin: 12px 12px 0;
+  margin: 12px auto 0;
   border-radius: 6px;
   box-shadow: 0 4px 16px rgba(0,0,0,0.3);
 }
 .cs-image figcaption {
-  padding: 14px 20px; font-size: 14px; color: var(--ink-2);
-  border-top: 1px solid var(--border); font-style: italic;
+  padding: 14px 20px; font-size: 13px; color: var(--ink-3);
+  border-top: 1px solid rgba(255,255,255,0.06); margin-top: 12px;
 }
-.cs-image-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 32px 0; }
+.cs-image-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  margin: 40px auto; max-width: 960px;
+}
 .cs-image-row .cs-image { margin: 0; }
 
 /* Process steps */

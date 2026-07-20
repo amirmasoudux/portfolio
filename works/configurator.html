@@ -142,7 +142,7 @@
       </div>
       <!-- Heuristic audit — the single defining visual for this section -->
       <figure class="mockup-wrapper mockup-wrapper--wide" aria-label="Heuristic audit map of the legacy configurator">
-        <img src="https://images.squarespace-cdn.com/content/v1/68efa39dafb1cb4730d428a7/f88645f9-a2ad-451a-8488-f095873a3aef/errors.png?format=2500w" alt="Heuristic audit map highlighting friction points in the original telecom configurator interface" loading="lazy" />
+        <img src="https://images.squarespace-cdn.com/content/v1/68efa39dafb1cb4730d428a7/f88645f9-a2ad-451a-8488-f095873a3aef/errors.png?format=2500w" alt="Heuristic audit map highlighting friction points in the original telecom configurator interface" loading="lazy" data-zoomable />
         <span class="mockup-label">Heuristic Audit</span>
         <figcaption class="mockup-caption">Legacy interface analysis: friction points, cognitive overload zones, and structural failures mapped across the original flow</figcaption>
       </figure>
@@ -201,11 +201,11 @@
       <!-- Gestalt + wireframes: two-column images anchoring the research phase -->
       <div class="cs-image-row" style="margin-top:40px;">
         <figure class="cs-image">
-          <img src="https://images.squarespace-cdn.com/content/v1/68efa39dafb1cb4730d428a7/0c1c85bc-1efd-4b29-93f6-0bdca8bbf2c9/gestalt.png?format=1500w" alt="Gestalt analysis identifying visual grouping failures" loading="lazy" />
+          <img src="https://images.squarespace-cdn.com/content/v1/68efa39dafb1cb4730d428a7/0c1c85bc-1efd-4b29-93f6-0bdca8bbf2c9/gestalt.png?format=1500w" alt="Gestalt analysis identifying visual grouping failures" loading="lazy" data-zoomable />
           <figcaption>Gestalt analysis: Proximity, Similarity, and Prägnanz violations mapped in the original interface</figcaption>
         </figure>
         <figure class="cs-image">
-          <img src="https://images.squarespace-cdn.com/content/v1/68efa39dafb1cb4730d428a7/7861e789-5915-4ffd-996a-18860fa682a3/wireframes+sample.png?format=1500w" alt="Modular user journey wireframes" loading="lazy" />
+          <img src="https://images.squarespace-cdn.com/content/v1/68efa39dafb1cb4730d428a7/7861e789-5915-4ffd-996a-18860fa682a3/wireframes+sample.png?format=1500w" alt="Modular user journey wireframes" loading="lazy" data-zoomable />
           <figcaption>Early wireframes: breaking the all-at-once matrix into a guided modular pipeline</figcaption>
         </figure>
       </div>
@@ -213,7 +213,7 @@
       <!-- Handoff — belongs here as the end of the delivery phase -->
       <figure class="mockup-wrapper mockup-wrapper--wide" style="margin-top:40px;">
         <span class="mockup-label">Design Handoff</span>
-        <img src="https://images.squarespace-cdn.com/content/v1/68efa39dafb1cb4730d428a7/c8bd08d2-763d-4466-90be-79ef747fecd1/hand+off.png?format=2500w" alt="Annotated handoff specs for developer implementation across 4 responsive viewports" loading="lazy">
+        <img src="https://images.squarespace-cdn.com/content/v1/68efa39dafb1cb4730d428a7/c8bd08d2-763d-4466-90be-79ef747fecd1/hand+off.png?format=2500w" alt="Annotated handoff specs for developer implementation across 4 responsive viewports" loading="lazy" data-zoomable>
         <figcaption class="mockup-caption">Ready-for-development annotated specs delivered to the in-house engineering team, covering 4 responsive viewports.</figcaption>
       </figure>
     </section>
@@ -424,6 +424,29 @@
     document.querySelectorAll('[data-target]').forEach(el => countObserver.observe(el));
 
     lucide.createIcons();
+
+    // Lightbox for zoomable images
+    document.querySelectorAll('img[data-zoomable]').forEach(img => {
+      img.addEventListener('click', () => {
+        const overlay = document.createElement('div');
+        overlay.className = 'lx-overlay';
+        const clone = new Image();
+        clone.src = img.src;
+        clone.alt = img.alt;
+        const btn = document.createElement('button');
+        btn.className = 'lx-close';
+        btn.innerHTML = '&times;';
+        btn.addEventListener('click', e => { e.stopPropagation(); overlay.remove(); });
+        clone.addEventListener('click', e => e.stopPropagation());
+        overlay.appendChild(clone);
+        overlay.appendChild(btn);
+        overlay.addEventListener('click', () => overlay.remove());
+        document.body.appendChild(overlay);
+        document.addEventListener('keydown', function esc(e) {
+          if (e.key === 'Escape') { overlay.remove(); document.removeEventListener('keydown', esc); }
+        }, { once: true });
+      });
+    });
   </script>
 </body>
 </html>
