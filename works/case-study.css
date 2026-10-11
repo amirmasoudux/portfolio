@@ -263,7 +263,12 @@ button { font-family: inherit; cursor: pointer; }
 }
 /* Screenshot inside the frame */
 .browser-frame__img {
-  width: 100%; height: auto; display: block;
+  width: 100%;
+  height: auto;
+  max-height: 480px;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
   cursor: zoom-in;
   transition: opacity 0.2s;
 }
