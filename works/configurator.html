@@ -3,30 +3,299 @@
 <head>
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>From Friction to Flow — Amirmasoud Ebadi</title>
-  <meta name="description" content="Redesigning a high-stakes telecom configurator that suffered 50% task abandonment." />
+  <meta name="description" content="How I turned a crowded telecom configurator into a guided flow, one decision at a time." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500&family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
   <style>
-    #ae-c1 div, #ae-c1 span { all: unset; box-sizing: border-box; display: revert; text-decoration: none !important; font-family: 'IBM Plex Sans', sans-serif; }
-    @keyframes ae1-dot0 { 0%,4%{background:#1a1a1a;border-color:#333} 9%,100%{background:#F0EEE9;border-color:#F0EEE9} }
-    @keyframes ae1-dot1 { 0%,37%{background:#1a1a1a;border-color:#333} 42%,100%{background:#F0EEE9;border-color:#F0EEE9} }
-    @keyframes ae1-dot2 { 0%,70%{background:#1a1a1a;border-color:#333} 75%,100%{background:#F0EEE9;border-color:#F0EEE9} }
-    @keyframes ae1-ln0  { 0%,4%{background:#333} 9%,100%{background:#F0EEE9} }
-    @keyframes ae1-ln1  { 0%,37%{background:#333} 42%,100%{background:#F0EEE9} }
-    @keyframes ae1-p0   { 0%,30%{opacity:1;transform:translateY(0)} 36%,100%{opacity:0;transform:translateY(-8px)} }
-    @keyframes ae1-p1   { 0%,33%{opacity:0;transform:translateY(8px)} 39%,63%{opacity:1;transform:translateY(0)} 69%,100%{opacity:0;transform:translateY(-8px)} }
-    @keyframes ae1-p2   { 0%,66%{opacity:0;transform:translateY(8px)} 72%,100%{opacity:1;transform:translateY(0)} }
-    @keyframes ae1-prog { 0%,8%{width:12%} 33%,41%{width:50%} 66%,74%{width:88%} 95%,100%{width:100%} }
+/* ── TOKENS ── */
+:root {
+  color-scheme: dark;
+  --bg:       #0A0A0A;
+  --surface:  #111111;
+  --surface-2:#181818;
+  --ink:      #F0EEE9;
+  --ink-2:    rgba(240,238,233,.75);
+  --ink-3:    rgba(240,238,233,.55);
+  --border:   rgba(255,255,255,.07);
+  --border-2: rgba(255,255,255,.12);
+  --display:  'Space Grotesk', system-ui, sans-serif;
+  --body:     Inter, -apple-system, system-ui, sans-serif;
+  --r:        12px;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+body {
+  margin: 0; padding: 0;
+  font-family: var(--body); font-size: 16px; line-height: 1.65;
+  background: var(--bg); color: var(--ink);
+  -webkit-font-smoothing: antialiased; overflow-x: hidden;
+}
+img { max-width: 100%; height: auto; display: block; }
+a { color: inherit; text-decoration: none; }
+button { font-family: var(--body); }
+:focus-visible { outline: 2px solid rgba(255,255,255,.5); outline-offset: 3px; border-radius: 4px; }
+
+/* ── LAYOUT ── */
+.wrap { max-width: 1280px; margin: 0 auto; padding-inline: max(24px, env(safe-area-inset-left, 24px)); }
+.narrow { max-width: 760px; }
+
+/* ── NAV ── */
+.nav {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+  background: rgba(10,10,10,.88); backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+.nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+.nav__left { display: flex; align-items: center; gap: 0; }
+.nav__back {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 14px; color: var(--ink-2); transition: color .2s;
+}
+.nav__back:hover { color: var(--ink); }
+.nav__back i[data-lucide] { width: 16px; height: 16px; }
+.nav__sep { width: 1px; height: 20px; background: var(--border-2); margin: 0 16px; }
+.nav__logo img { height: 26px; width: auto; }
+.nav__right { display: flex; align-items: center; }
+.nav__cv {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 13px; color: var(--ink-2);
+  border: 1px solid var(--border-2); border-radius: 99px;
+  padding: 6px 14px; transition: color .2s, border-color .2s;
+}
+.nav__cv:hover { color: var(--ink); border-color: rgba(255,255,255,.25); }
+.nav__cv i[data-lucide] { width: 12px; height: 12px; }
+
+/* ── SECTIONS ── */
+.sec { padding-block: 96px; border-bottom: 1px solid var(--border); }
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 12px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 2.5px; color: var(--ink-3); margin-bottom: 20px;
+}
+.eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--ink-3); }
+h1, h2, h3 { font-family: var(--display); margin: 0; text-wrap: balance; }
+h2 { font-size: clamp(30px,4vw,46px); font-weight: 700; letter-spacing: -1.5px; line-height: 1.08; margin-bottom: 20px; }
+h3 { font-size: 20px; font-weight: 600; letter-spacing: -.3px; line-height: 1.3; }
+.lede { font-size: 18px; color: var(--ink-2); max-width: 62ch; margin: 0; }
+p { margin: 0; }
+.muted { color: var(--ink-3); }
+.mt { margin-top: 48px; }
+
+/* ── HERO ── */
+.hero { padding-block: 72px 64px; }
+.hero .num { font-size: 12px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 28px; }
+.chip { display: inline-flex; align-items: center; padding: 5px 14px; border-radius: 99px; font-size: 13px; font-weight: 600; border: 1px solid var(--border-2); color: var(--ink-2); }
+.hero h1 { font-size: clamp(52px,8vw,104px); font-weight: 700; line-height: .95; letter-spacing: -4px; margin-bottom: 24px; }
+.hero .lede { font-size: 19px; }
+.wl { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--ink-3); margin-top: 20px; }
+.wl svg { width: 16px; height: 16px; flex: none; }
+.hero__grid { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.05fr); gap: 56px; align-items: center; }
+
+/* ── DEVICE MOCKUP ── */
+.mock { position: relative; padding: 0 0 28px 44px; }
+.laptop { position: relative; z-index: 1; }
+.laptop__screen {
+  background: #0B0B0C; border: 1.5px solid #2E2E30; border-bottom: 0;
+  border-radius: 18px 18px 0 0; padding: 2.4% 2.4% 2.8%;
+  box-shadow: 0 40px 90px rgba(0,0,0,.65);
+}
+.laptop__screen img { width: 100%; aspect-ratio: 16/10; object-fit: cover; object-position: top; border-radius: 4px; }
+.laptop__base {
+  position: relative; height: 16px; width: 114%; margin-left: -7%;
+  background: linear-gradient(#4A4A4D,#2A2A2C 55%,#18181A);
+  border-radius: 2px 2px 16px 16px;
+}
+.laptop__base::after { content: ""; position: absolute; left: 50%; top: 0; transform: translateX(-50%); width: 15%; height: 6px; background: #1A1A1C; border-radius: 0 0 8px 8px; }
+.mock__phone { position: absolute; left: 0; bottom: 0; width: 30%; z-index: 2; border-radius: 28px; box-shadow: 0 30px 70px rgba(0,0,0,.7); border: 8px solid #1C1C1E; overflow: hidden; }
+.mock__phone img { display: block; width: 100%; }
+
+/* ── STATS ── */
+.stats { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 1px; background: var(--border); border-block: 1px solid var(--border); }
+.stat { background: var(--surface); padding: 32px; }
+.stat b { display: block; font-family: var(--display); font-size: 40px; font-weight: 700; letter-spacing: -1.5px; color: var(--ink); line-height: 1; margin-bottom: 10px; white-space: nowrap; }
+.stat span { font-size: 15px; color: var(--ink-2); line-height: 1.5; }
+
+/* ── SPLIT ── */
+.split { display: grid; grid-template-columns: minmax(0,1.15fr) minmax(0,.85fr); gap: 64px; align-items: start; }
+.quote { border-left: 2px solid var(--border-2); padding: 4px 0 4px 20px; font-size: 17px; color: var(--ink); font-style: italic; margin: 28px 0; }
+.quote small { display: block; font-style: normal; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px; }
+
+/* ── RISK CARDS ── */
+.risks { display: grid; gap: 10px; align-self: start; margin-top: 52px; }
+.risk { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 18px 20px; }
+.risk h3 { font-size: 16px; margin-bottom: 4px; display: flex; gap: 10px; align-items: center; }
+.risk h3::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--ink-3); flex: none; }
+.risk p { font-size: 14px; color: var(--ink-2); }
+
+/* ── CARD GRIDS ── */
+.grid2 { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; }
+.grid3 { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 16px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 26px; }
+.card h3 { margin-bottom: 8px; }
+.card p { font-size: 15px; color: var(--ink-2); }
+.card .k { font-family: var(--display); font-size: 13px; color: var(--ink-3); letter-spacing: 1px; margin-bottom: 14px; display: block; font-weight: 600; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
+.tags span { font-size: 12px; border: 1px solid var(--border-2); border-radius: 99px; padding: 3px 10px; color: var(--ink-2); }
+
+/* ── BROWSER FRAME ── */
+.frame { border-radius: var(--r); overflow: hidden; background: #1C1C1E; border: 1px solid rgba(255,255,255,.1); box-shadow: 0 24px 60px rgba(0,0,0,.5); }
+.frame__bar { height: 34px; display: flex; align-items: center; gap: 7px; padding: 0 14px; border-bottom: 1px solid rgba(255,255,255,.06); background: #1C1C1E; }
+.frame__bar i { width: 10px; height: 10px; border-radius: 50%; background: #3A3A3C; }
+.frame__bar span { margin-left: 12px; font-size: 11px; color: #8A8A8E; background: #2A2A2C; border-radius: 6px; padding: 2px 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60%; }
+.frame img { width: 100%; height: auto; }
+.shot { margin-top: 56px; }
+figcaption { font-size: 14px; color: var(--ink-3); margin-top: 14px; max-width: 70ch; }
+
+/* ── ANNOTATED IMAGE ── */
+.annot { display: grid; grid-template-columns: minmax(0,1.35fr) minmax(0,.65fr); gap: 40px; align-items: start; margin-top: 48px; }
+.annot img { border-radius: var(--r); border: 1px solid var(--border-2); }
+.legend { list-style: none; margin: 0; padding: 0; display: grid; gap: 22px; }
+.legend li { display: grid; grid-template-columns: 34px 1fr; gap: 14px; }
+.pin { width: 34px; height: 34px; border-radius: 50%; background: var(--ink); color: var(--bg); font-family: var(--display); font-weight: 700; display: grid; place-items: center; font-size: 15px; flex: none; }
+.legend h3 { font-size: 17px; margin: 4px 0 4px; }
+.legend p { font-size: 15px; color: var(--ink-2); }
+
+/* ── TEST NUMBERS ── */
+.testnums { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 1px; background: var(--border); border-radius: 16px; overflow: hidden; border: 1px solid var(--border); }
+.testnums div { background: var(--surface); padding: 24px; }
+.testnums b { display: block; font-family: var(--display); font-size: 36px; font-weight: 700; letter-spacing: -1px; line-height: 1; margin-bottom: 6px; color: var(--ink); }
+.testnums span { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--ink-3); }
+
+/* ── WIREFRAME LEGEND ── */
+.wflegend { list-style: none; padding: 0; margin: 28px 0 0; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 22px 28px; }
+.wflegend li { display: grid; grid-template-columns: 30px 1fr; gap: 12px; }
+.wflegend .pin { width: 30px; height: 30px; font-size: 13px; }
+.wflegend h3 { font-size: 16px; margin: 3px 0 2px; }
+.wflegend p { font-size: 14px; color: var(--ink-2); }
+
+/* ── SOLUTION TABS ── */
+.dtabs { display: grid; grid-template-columns: minmax(0,.75fr) minmax(0,1.25fr); gap: 32px; align-items: start; }
+.dtabs__list { display: grid; gap: 8px; }
+.dtabs__list button { font: inherit; text-align: left; color: var(--ink); background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; cursor: pointer; display: grid; gap: 4px; transition: border-color .2s, background .2s; }
+.dtabs__list button:hover { border-color: var(--border-2); }
+.dtabs__list button[aria-selected="true"] { border-color: rgba(255,255,255,.28); background: var(--surface-2); }
+.dtabs__list .k { font-family: var(--display); font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+.dtabs__list [aria-selected="true"] .k { color: var(--ink-2); }
+.dtabs__list b { font-family: var(--display); font-size: 19px; font-weight: 600; letter-spacing: -.3px; }
+.dtabs__list .d { font-size: 14.5px; color: var(--ink-2); display: none; }
+.dtabs__list [aria-selected="true"] .d { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.dtabs__side { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.dtabs__ctrl { display: flex; align-items: center; justify-content: space-between; padding: 0 4px; }
+.cnt { font-family: var(--display); font-size: 14px; letter-spacing: 2px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.arrows { display: flex; gap: 8px; }
+.arr { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-2); background: transparent; color: var(--ink); cursor: pointer; font-size: 16px; transition: background .2s, border-color .2s; }
+.arr:hover { background: var(--surface-2); border-color: var(--ink-3); }
+
+/* solution stage — fills the text column height on wide screens */
+@media (min-width: 1001px) {
+  .dtabs { align-items: stretch; grid-template-columns: minmax(0,.8fr) minmax(0,1.2fr); }
+  .dstage { display: flex; flex-direction: column; }
+  .dstage .frame { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+  .dstage .frame__bar { flex: none; }
+  .dstage [role="tabpanel"] { position: relative; flex: 1; min-height: 0; }
+  .dstage [role="tabpanel"][hidden] { display: none; }
+  .dstage [role="tabpanel"] img { position: absolute; inset: 0; width: 100%; height: 100%; aspect-ratio: auto; object-fit: cover; object-position: top; }
+}
+#p1 img { object-position: center 30%; }
+#p4 img { object-position: bottom; }
+@media (max-width: 1000px) {
+  .dstage .frame { min-height: 320px; }
+  .dstage [role="tabpanel"] img { position: static; width: 100%; height: auto; aspect-ratio: 1180/760; object-fit: cover; }
+}
+
+/* ── COMMENTS / ITERATION ── */
+.comments { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; margin-top: 48px; }
+.cmt { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 22px 24px; display: flex; flex-direction: column; gap: 12px; }
+.cmt__who { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--ink-3); }
+.cmt__who i { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg,#6b5cff,#9a7bff); filter: blur(2.5px); flex: none; }
+.cmt__who em { font-style: normal; filter: blur(4px); user-select: none; }
+.cmt blockquote { margin: 0; font-size: 15px; color: var(--ink); }
+.cmt .de { font-size: 13px; color: var(--ink-3); font-style: italic; }
+.cmt .to { margin-top: auto; font-size: 13px; color: var(--ink-2); font-weight: 600; }
+.changes { counter-reset: c; display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 16px; margin-top: 24px; }
+.chg { background: var(--surface-2); border: 1px solid var(--border); border-radius: 16px; padding: 22px; }
+.chg .tag { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+.chg h3 { font-size: 17px; margin: 10px 0 6px; display: flex; gap: 10px; align-items: baseline; }
+.chg h3::before { counter-increment: c; content: counter(c); font-size: 13px; color: var(--ink); border: 1px solid var(--border-2); border-radius: 50%; width: 22px; height: 22px; display: inline-grid; place-items: center; flex: none; }
+.chg p { font-size: 14px; color: var(--ink-2); }
+
+/* ── LIVE PROTOTYPE ── */
+.lp-bar { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin: 36px 0 18px; }
+.seg { display: inline-flex; background: var(--surface); border: 1px solid var(--border-2); border-radius: 10px; padding: 4px; gap: 2px; }
+.seg button { font: inherit; font-size: 14px; color: var(--ink-2); background: none; border: 0; border-radius: 7px; padding: 8px 14px; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.seg button svg { width: 16px; height: 16px; }
+.seg button:hover { color: var(--ink); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); font-weight: 600; }
+.size { font-size: 12px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.openlink { font-size: 14px; text-underline-offset: 4px; text-decoration: underline; color: var(--ink-2); }
+.openlink:hover { color: var(--ink); }
+.tasks { list-style: none; padding: 0; margin: 24px 0 0; display: flex; flex-wrap: wrap; gap: 10px; }
+.tasks li { border: 1px solid var(--border-2); border-radius: 99px; padding: 6px 14px 6px 6px; font-size: 14px; display: flex; align-items: center; gap: 8px; color: var(--ink-2); }
+.tasks b { width: 22px; height: 22px; border-radius: 50%; color: var(--ink); border: 1px solid var(--border-2); display: grid; place-items: center; font-size: 11px; }
+.stage { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: clamp(16px,3vw,40px); display: flex; justify-content: center; overflow: hidden; }
+.device { position: relative; transition: width .35s ease, height .35s ease; }
+.dframe { position: absolute; inset: 0; overflow: hidden; background: #fff; }
+.device.desktop .dframe { border-radius: 10px; border: 1px solid #333; }
+.device.desktop .chrome { height: 34px; background: #1C1C1E; display: flex; align-items: center; gap: 6px; padding: 0 12px; border-bottom: 1px solid #333; }
+.chrome i { width: 10px; height: 10px; border-radius: 50%; background: #3A3A3C; }
+.chrome span { margin-left: 12px; flex: 1; max-width: 340px; background: #2A2A2C; border-radius: 6px; font-size: 11px; color: #8A8A8E; padding: 3px 10px; white-space: nowrap; overflow: hidden; }
+.device.tablet .dframe { border-radius: 26px; border: 10px solid #1C1C1E; }
+.device.mobile .dframe { border-radius: 40px; border: 10px solid #1C1C1E; }
+.device:not(.desktop) .chrome { display: none; }
+.vp { position: absolute; left: 0; right: 0; bottom: 0; overflow: hidden; }
+.vp iframe, .vp .poster { position: absolute; top: 0; left: 0; border: 0; transform-origin: 0 0; background: #F6F6F6; }
+.poster { object-fit: cover; object-position: top; }
+.cover { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(10,10,10,.35); }
+.start { font: inherit; font-size: 15px; font-weight: 600; background: var(--ink); color: var(--bg); border: 0; border-radius: 10px; padding: 13px 22px; display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.start svg { width: 16px; height: 16px; }
+
+/* ── OUTCOMES ── */
+.outs { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 16px; margin-top: 48px; }
+.out { border-top: 2px solid var(--border-2); padding-top: 20px; }
+.out h3 { margin-bottom: 8px; }
+.out p { color: var(--ink-2); font-size: 15px; }
+.note { margin-top: 32px; font-size: 14px; color: var(--ink-3); }
+
+/* ── NEXT + FOOTER ── */
+.next { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; text-decoration: none; padding-block: 72px; }
+.next small { font-size: 12px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+.next h3 { font-size: clamp(28px,4vw,44px); letter-spacing: -1.2px; margin-top: 10px; }
+.next .arr-circle { width: 64px; height: 64px; border-radius: 50%; background: var(--ink); color: var(--bg); display: grid; place-items: center; font-size: 26px; }
+.foot { border-top: 1px solid var(--border); padding-block: 32px; font-size: 13px; color: var(--ink-3); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1100px) { .hero__grid { grid-template-columns: 1fr; gap: 56px; } .mock { max-width: 760px; margin: 0 auto; width: 100%; } }
+@media (max-width: 1000px) {
+  .split, .annot { grid-template-columns: 1fr; gap: 28px; }
+  .dtabs { grid-template-columns: 1fr; }
+  .stats, .changes, .testnums { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .grid3, .outs { grid-template-columns: 1fr; }
+  .wflegend { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+@media (max-width: 640px) {
+  .sec { padding-block: 64px; }
+  .hero h1 { letter-spacing: -2.5px; }
+  .stats, .grid2, .changes, .comments { grid-template-columns: 1fr; }
+  .stat { padding: 24px; }
+  .seg, .size { display: none; }
+  .mock { padding: 0 0 18px 18px; }
+  .mock__phone { border-width: 5px; border-radius: 18px; }
+  .dtabs__list { grid-auto-flow: column; grid-auto-columns: 78%; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 6px; }
+  .dtabs__list button { scroll-snap-align: start; }
+  .wflegend { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .device { transition: none; } }
   </style>
-  <link rel="stylesheet" href="case-study.css" />
 </head>
 <body>
 
-  <!-- NAV -->
-  <nav class="nav" id="nav">
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <div class="wrap">
     <div class="nav__left">
       <a href="../index.html#work" class="nav__back">
         <i data-lucide="arrow-left"></i>
@@ -34,460 +303,427 @@
       </a>
       <div class="nav__sep"></div>
       <a href="../index.html" class="nav__logo">
-        <img src="../ae-logo-white.svg" alt="" class="nav__avatar nav__avatar--logo" aria-hidden="true" />
+        <img src="../ae-logo-white.svg" alt="Amirmasoud Ebadi" />
       </a>
     </div>
     <div class="nav__right">
       <a href="https://drive.google.com/file/d/1v95PNrUq3GGAAFtNv8rxzctYXkbnbcL2/view?usp=drive_link" target="_blank" rel="noopener" class="nav__cv">Download CV <i data-lucide="external-link"></i></a>
     </div>
-  </nav>
+  </div>
+</nav>
 
-  <!-- HERO -->
-  <section class="cs-hero">
-    <div class="cs-hero__inner">
-      <p class="cs-hero__num">01 · Telecom · Enterprise UX</p>
-      <div class="cs-hero__meta">
-        <span class="chip chip--accent">UX/UI Designer</span>
-        <span class="chip chip--telekom">Deutsche Telekom</span>
+<main>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap hero__grid">
+    <div class="hero__txt">
+      <div class="num">01 · Telecom · B2C e-commerce</div>
+      <div class="chips">
+        <span class="chip">UX/UI Designer</span>
+        <span class="chip">Deutsche Telekom</span>
         <span class="chip">4 months</span>
-        <span class="chip">High-fidelity delivery</span>
+        <span class="chip">Concept to hand-off</span>
       </div>
-      <h1 class="cs-hero__title">From Friction<br>to Flow</h1>
-      <p class="cs-hero__desc">
-        Elevating a fragmented configuration system for Europe's leading telecommunications provider. Breaking down complex configuration matrices into an intuitive, modular journey minimised cognitive friction, accelerated decision-making, and turned dropped baskets into completed conversions.
+      <h1>From Friction<br>to Flow</h1>
+      <p class="lede">I redesigned the product configurator of a large European telecom provider. The old flow showed every decision at once. The new one guides customers through one decision at a time, with clear prices and visible progress.</p>
+      <p class="wl">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3 4.5 6v6c0 4.5 3.2 7.8 7.5 9 4.3-1.2 7.5-4.5 7.5-9V6z"/></svg>
+        White-labeled case study. Client screens are recreated under the brand "telvia".
       </p>
     </div>
-    <div class="cs-hero__placeholder" aria-hidden="true">
-      <div id="ae-c1" style="width:100%;max-width:480px;height:280px;border-radius:10px;overflow:hidden;box-shadow:0 16px 40px rgba(0,0,0,0.5);display:flex;flex-direction:column;">
-        <div style="background:#111;padding:9px 16px;border-bottom:1px solid #222;flex-shrink:0;">
-          <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:rgba(240,238,233,0.4);">configurator.telekom.de</span>
+    <div class="mock" role="img" aria-label="The redesigned configurator on a laptop and a phone">
+      <div class="laptop">
+        <div class="laptop__screen">
+          <img src="assets/configurator/hero-desktop.webp" width="2560" height="1600" alt="" />
         </div>
-        <div style="background:#0A0A0A;flex:1;padding:22px 24px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;">
-          <div style="display:flex;align-items:center;">
-            <div style="width:18px;height:18px;border-radius:50%;border:2px solid #333;flex-shrink:0;animation:ae1-dot0 4.8s ease-in-out infinite;"></div>
-            <div style="flex:1;height:2px;margin:0 8px;animation:ae1-ln0 4.8s ease-in-out infinite;"></div>
-            <div style="width:18px;height:18px;border-radius:50%;border:2px solid #333;flex-shrink:0;animation:ae1-dot1 4.8s ease-in-out infinite;"></div>
-            <div style="flex:1;height:2px;margin:0 8px;animation:ae1-ln1 4.8s ease-in-out infinite;"></div>
-            <div style="width:18px;height:18px;border-radius:50%;border:2px solid #333;flex-shrink:0;animation:ae1-dot2 4.8s ease-in-out infinite;"></div>
-          </div>
-          <div style="position:relative;height:90px;overflow:hidden;">
-            <div style="position:absolute;inset:0;animation:ae1-p0 4.8s ease-in-out infinite;">
-              <div style="font-size:9px;letter-spacing:0.09em;color:rgba(240,238,233,0.4);margin-bottom:8px;">STEP 1 · INTERNET</div>
-              <div style="font-size:17px;font-weight:600;color:#F0EEE9;margin-bottom:6px;">Choose your speed</div>
-              <div style="font-size:12px;color:rgba(240,238,233,0.5);">250 MBit/s selected</div>
-            </div>
-            <div style="position:absolute;inset:0;animation:ae1-p1 4.8s ease-in-out infinite;">
-              <div style="font-size:9px;letter-spacing:0.09em;color:rgba(240,238,233,0.4);margin-bottom:8px;">STEP 2 · HARDWARE</div>
-              <div style="font-size:17px;font-weight:600;color:#F0EEE9;margin-bottom:6px;">Pick your router</div>
-              <div style="font-size:12px;color:rgba(240,238,233,0.5);">Speedport Pro added</div>
-            </div>
-            <div style="position:absolute;inset:0;animation:ae1-p2 4.8s ease-in-out infinite;">
-              <div style="font-size:9px;letter-spacing:0.09em;color:rgba(240,238,233,0.4);margin-bottom:8px;">STEP 3 · ADD-ONS</div>
-              <div style="font-size:17px;font-weight:600;color:#F0EEE9;margin-bottom:6px;">Optional extras</div>
-              <div style="font-size:12px;color:rgba(240,238,233,0.5);">MagentaTV added</div>
-            </div>
-          </div>
-          <div style="height:4px;border-radius:3px;background:#1a1a1a;overflow:hidden;">
-            <div style="height:4px;border-radius:3px;background:#C8FF57;animation:ae1-prog 4.8s ease-in-out infinite;"></div>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-radius:8px;background:#111;border:1px solid #222;">
-            <span style="font-size:12px;color:rgba(240,238,233,0.5);">Monthly total</span>
-            <span style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:15px;color:#F0EEE9;">€24,90</span>
-          </div>
-        </div>
+        <div class="laptop__base"></div>
+      </div>
+      <div class="mock__phone">
+        <img src="assets/configurator/hero-mobile.webp" width="1170" height="2532" alt="" />
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- OVERVIEW STRIP -->
-  <div class="cs-blueprint">
-    <div class="cs-blueprint__inner">
-      <span class="cs-blueprint__eyebrow">Project Overview</span>
-      <h2 class="cs-blueprint__title">From all-at-once chaos to a guided step-by-step flow</h2>
-      <p class="cs-blueprint__body">The legacy Telekom configurator forced users to make every decision simultaneously — contract, hardware, add-ons — with no progress indicator and opaque pricing. The redesign introduced a modular, sequential flow with real-time pricing visibility, a persistent progress indicator, and one contextual decision at a time. The result: a validated reduction in abandonment and a measurable improvement in task completion.</p>
+<!-- AT A GLANCE -->
+<section aria-label="Project at a glance">
+  <div class="stats">
+    <div class="stat"><b>4 months</b><span>From audit to developer hand-off</span></div>
+    <div class="stat"><b>3 phases</b><span>Evaluation, concept, design and delivery</span></div>
+    <div class="stat"><b>50%</b><span>Task success in the internal test of the old flow</span></div>
+    <div class="stat"><b>4 viewports</b><span>Designed for desktop, tablet and mobile</span></div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="sec">
+  <div class="wrap split">
+    <div>
+      <div class="eyebrow">The problem</div>
+      <h2>A configurator losing customers at every step</h2>
+      <p class="lede">The old configurator showed the tariff, every configuration step and every checkout step on one crowded screen. There was no clear progress indicator, prices were hard to follow, and changing an earlier choice was difficult. Many people gave up or called support.</p>
+      <blockquote class="quote"><small>Customer, before</small>"I see too many options at once. I'm not sure what things cost or what comes next, so I give up or call support."</blockquote>
+    </div>
+    <div class="risks" aria-label="Business risks">
+      <div class="risk"><h3>Lost sales</h3><p>Customers dropped off before checkout.</p></div>
+      <div class="risk"><h3>Weaker campaigns</h3><p>Paid traffic landed on a page that did not convert.</p></div>
+      <div class="risk"><h3>Support costs</h3><p>Confused customers needed help to finish simple orders.</p></div>
     </div>
   </div>
+</section>
 
-  <!-- STATS -->
-  <div class="cs-stats">
-    <div class="cs-stats__inner">
-      <div class="stat"><div class="stat__value" data-target="38" data-prefix="+" data-suffix="%">+38%</div><div class="stat__label">Funnel Conversion Lift. Minimizing choice overload systematically turned dropped baskets into completed checkouts.</div></div>
-      <div class="stat"><div class="stat__value" data-target="4" data-suffix=" Mo">4 Mo</div><div class="stat__label">Project Duration. Moving from initial heuristic auditing to production-ready design system handoff.</div></div>
-      <div class="stat"><div class="stat__value" data-target="3">3</div><div class="stat__label">Iterative Phases. Seamlessly spanning structured Evaluation, Concept Development, and Delivery.</div></div>
-      <div class="stat"><div class="stat__value" data-target="4">4</div><div class="stat__label">Responsive Viewports. Scaling a completely unified configuration workspace fluidly across devices.</div></div>
+<!-- GOALS + PROCESS -->
+<section class="sec">
+  <div class="wrap">
+    <div class="eyebrow">Goals and process</div>
+    <h2>Two goals, three phases</h2>
+    <div class="grid2 mt">
+      <div class="card"><span class="k">Goal 1</span><h3>More completed orders</h3><p>A clear, transparent flow that builds confidence at the point of purchase.</p></div>
+      <div class="card"><span class="k">Goal 2</span><h3>Healthy cross-selling</h3><p>Add-ons shown as optional, useful choices, never as pressure.</p></div>
+    </div>
+    <div class="grid3" style="margin-top:16px">
+      <div class="card"><span class="k">01</span><h3>Evaluation and insight</h3><p>Find where and why people struggle.</p><div class="tags"><span>Heuristic evaluation</span><span>UX laws</span><span>Gestalt review</span><span>Usability test</span></div></div>
+      <div class="card"><span class="k">02</span><h3>Concept</h3><p>Turn the findings into a modular flow and test it with the client.</p><div class="tags"><span>User flow</span><span>Wireframes</span><span>Client validation</span></div></div>
+      <div class="card"><span class="k">03</span><h3>Design and delivery</h3><p>Build, refine with the client, and hand off to engineering.</p><div class="tags"><span>Hi-fi prototype</span><span>Iteration</span><span>Hand-off</span></div></div>
     </div>
   </div>
+</section>
 
-  <div class="cs-body">
-
-    <!-- Challenge -->
-    <section class="cs-section reveal">
-      <span class="section-eyebrow">The Catalyst</span>
-      <div class="two-col--wide two-col">
-        <div>
-          <h2 class="cs-section__title">A configurator losing customers at every step</h2>
-          <p class="cs-lead">The legacy enterprise configurator forced users to navigate an opaque, all-at-once matrix of technical choices. High cognitive load, vague pricing transparency, and ambiguous steps resulted in critical funnel drop-offs and skyrocketing support costs.</p>
-          <p class="cs-body-text">As a customer attempting to configure a telecom package, users were confronted with too many options simultaneously, unclear real-time pricing, and no sense of progress. They felt anxious about making an incorrect choice, so they abandoned the flow completely or dialled into support out of sheer frustration.</p>
-          <div class="highlight-box">"Why is this hard for people, and how do we fix it?" That question drove every decision.</div>
-        </div>
-        <div>
-          <ul class="problem-list">
-            <li><strong>Revenue Leakage:</strong> Severe funnel friction caused qualified buyers to drop off right before the final checkout stage</li>
-            <li><strong>Diluted Campaign ROI:</strong> Expensive paid traffic was funnelled into an interface incapable of maintaining user intent</li>
-            <li><strong>Escalating OpEx:</strong> Confused users repeatedly relied on support agents to complete simple package configurations</li>
-            <li><strong>No Progress Visibility:</strong> Users had no sense of how far they had come or what remained in the flow</li>
-            <li><strong>Cognitive Overload:</strong> All options presented simultaneously, violating Miller's Law and Hick's Law</li>
-          </ul>
-        </div>
-      </div>
-      <!-- Heuristic audit — the single defining visual for this section -->
-      <figure class="mockup-wrapper mockup-wrapper--wide" aria-label="Heuristic audit map of the legacy configurator">
-        <img src="https://images.squarespace-cdn.com/content/v1/68efa39dafb1cb4730d428a7/f88645f9-a2ad-451a-8488-f095873a3aef/errors.png?format=2500w" alt="Heuristic audit map highlighting friction points in the original telecom configurator interface" loading="lazy" data-zoomable />
-        <span class="mockup-label">Heuristic Audit</span>
-        <figcaption class="mockup-caption">Legacy interface analysis: friction points, cognitive overload zones, and structural failures mapped across the original flow</figcaption>
+<!-- EVALUATION -->
+<section class="sec">
+  <div class="wrap">
+    <div class="eyebrow">Evaluation</div>
+    <h2>What was wrong with the old flow</h2>
+    <p class="lede">A heuristic evaluation, a Gestalt review and a quick internal test all pointed to the same three problems.</p>
+    <div class="annot">
+      <figure style="margin:0">
+        <img src="assets/configurator/before-audit.webp" width="2000" height="1800"
+          alt="Old configurator with three highlighted areas: the price box, two step lists in the sidebar, and the remaining steps under the form" />
+        <figcaption>The old configurator (white-labeled).</figcaption>
       </figure>
-    </section>
-
-    <!-- Process -->
-    <section class="cs-section reveal">
-      <span class="section-eyebrow">The Framework</span>
-      <div class="two-col">
-        <div>
-          <h2 class="cs-section__title">Three phases, zero guesswork</h2>
-          <p class="cs-body-text">A structured process rooted in research, not assumptions. Each phase fed directly into the next, with stakeholder checkpoints throughout.</p>
-        </div>
-        <div></div>
-      </div>
-      <div class="process-steps">
-        <div class="process-step">
-          <div class="process-step__num">1</div>
-          <div>
-            <h3 class="process-step__title">Evaluation &amp; Insight</h3>
-            <p class="process-step__desc">Dissecting the existing cognitive friction to back up future structural layout choices with hard, observable user patterns. Heuristic evaluation, UX principles, Gestalt analysis, and a full usability audit formed the evidence base.</p>
-            <div class="process-step__tags">
-              <span class="mini-tag">Heuristic evaluation</span>
-              <span class="mini-tag">Usability audit</span>
-              <span class="mini-tag">Gestalt analysis</span>
-              <span class="mini-tag">UX principles</span>
-            </div>
-          </div>
-        </div>
-        <div class="process-step">
-          <div class="process-step__num">2</div>
-          <div>
-            <h3 class="process-step__title">Concept Development</h3>
-            <p class="process-step__desc">Moving quickly from data into structural wireframes to align cross-functional tech constraints early. Interactive user flows, component-driven wireframing, and stakeholder alignment sessions defined the modular architecture.</p>
-            <div class="process-step__tags">
-              <span class="mini-tag">Interactive user flows</span>
-              <span class="mini-tag">Component wireframing</span>
-              <span class="mini-tag">Stakeholder alignment</span>
-            </div>
-          </div>
-        </div>
-        <div class="process-step">
-          <div class="process-step__num">3</div>
-          <div>
-            <h3 class="process-step__title">Design &amp; Delivery</h3>
-            <p class="process-step__desc">Transforming approved wireframes into an elegant, scalable dark-mode interface built around design system tokens. High-fidelity prototypes, continuous iteration, and a developer handoff system covering 4 responsive viewports.</p>
-            <div class="process-step__tags">
-              <span class="mini-tag">High-fidelity prototypes</span>
-              <span class="mini-tag">Design system tokens</span>
-              <span class="mini-tag">Developer handoff</span>
-              <span class="mini-tag">4 responsive viewports</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- Gestalt + wireframes: two-column images anchoring the research phase -->
-      <div class="cs-image-row" style="margin-top:40px;">
-        <figure class="cs-image">
-          <img src="https://images.squarespace-cdn.com/content/v1/68efa39dafb1cb4730d428a7/0c1c85bc-1efd-4b29-93f6-0bdca8bbf2c9/gestalt.png?format=1500w" alt="Gestalt analysis identifying visual grouping failures" loading="lazy" data-zoomable />
-          <figcaption>Gestalt analysis: Proximity, Similarity, and Prägnanz violations mapped in the original interface</figcaption>
-        </figure>
-        <figure class="cs-image">
-          <img src="https://images.squarespace-cdn.com/content/v1/68efa39dafb1cb4730d428a7/7861e789-5915-4ffd-996a-18860fa682a3/wireframes+sample.png?format=1500w" alt="Modular user journey wireframes" loading="lazy" data-zoomable />
-          <figcaption>Early wireframes: breaking the all-at-once matrix into a guided modular pipeline</figcaption>
-        </figure>
-      </div>
-
-      <!-- Handoff — belongs here as the end of the delivery phase -->
-      <figure class="mockup-wrapper mockup-wrapper--wide" style="margin-top:40px;">
-        <span class="mockup-label">Design Handoff</span>
-        <img src="https://images.squarespace-cdn.com/content/v1/68efa39dafb1cb4730d428a7/c8bd08d2-763d-4466-90be-79ef747fecd1/hand+off.png?format=2500w" alt="Annotated handoff specs for developer implementation across 4 responsive viewports" loading="lazy" data-zoomable>
-        <figcaption class="mockup-caption">Ready-for-development annotated specs delivered to the in-house engineering team, covering 4 responsive viewports.</figcaption>
-      </figure>
-    </section>
-
-    <!-- Solution -->
-    <section class="cs-section reveal">
-      <span class="section-eyebrow">The Execution</span>
-      <h2 class="cs-section__title" style="margin-bottom:40px;">Design decisions that transformed the funnel</h2>
-      <div class="feature-grid">
-        <div class="feature-card">
-          <div class="feature-card__top">
-            <div class="feature-card__icon"><i data-lucide="layers"></i></div>
-            <h3 class="feature-card__title">Progressive Disclosure</h3>
-            <p class="feature-card__desc">Swapped the single-page choice overload for a modular, multi-step layout. Choices are grouped into contextual bites: Infrastructure, Hardware, Add-ons. Eliminated sensory paralysis and stabilised user momentum throughout the configuration pipeline.</p>
-          </div>
-          <div class="feature-card__img">
-            <div class="cs-illus">
-              <div class="cs-illus__icons">
-                <div class="cs-illus__icon-wrap"><i data-lucide="list"></i></div>
-                <div class="cs-illus__icon-wrap"><i data-lucide="chevron-right"></i></div>
-                <div class="cs-illus__icon-wrap cs-illus__icon-wrap--accent"><i data-lucide="layers"></i></div>
-              </div>
-              <div class="cs-illus__label">One contextual decision at a time</div>
-            </div>
-          </div>
-        </div>
-        <div class="feature-card">
-          <div class="feature-card__top">
-            <div class="feature-card__icon"><i data-lucide="credit-card"></i></div>
-            <h3 class="feature-card__title">Real-time Pricing Summary</h3>
-            <p class="feature-card__desc">Designed a persistent, responsive sticky summary card tracking the base price, itemised choices, and recurring fees dynamically. Established radical transparency, neutralising the sticker shock and anxiety that triggered immediate cart abandonment.</p>
-          </div>
-          <div class="feature-card__img">
-            <div class="cs-illus">
-              <div class="cs-illus__icons">
-                <div class="cs-illus__icon-wrap"><i data-lucide="credit-card"></i></div>
-                <div class="cs-illus__icon-wrap"><i data-lucide="anchor"></i></div>
-                <div class="cs-illus__icon-wrap cs-illus__icon-wrap--accent"><i data-lucide="receipt"></i></div>
-              </div>
-              <div class="cs-illus__label">Transparent pricing at every step</div>
-            </div>
-          </div>
-        </div>
-        <div class="feature-card">
-          <div class="feature-card__top">
-            <div class="feature-card__icon"><i data-lucide="alert-circle"></i></div>
-            <h3 class="feature-card__title">Clear Error Recovery</h3>
-            <p class="feature-card__desc">Created descriptive inline error handling and structural dependency warnings. For example, selecting Router B requires Line Connection X. Replaced cryptic system errors with humanised copy, preventing users from reaching frustrating dead-ends.</p>
-          </div>
-          <div class="feature-card__img">
-            <div class="cs-illus">
-              <div class="cs-illus__icons">
-                <div class="cs-illus__icon-wrap"><i data-lucide="alert-circle"></i></div>
-                <div class="cs-illus__icon-wrap"><i data-lucide="edit-3"></i></div>
-                <div class="cs-illus__icon-wrap cs-illus__icon-wrap--accent"><i data-lucide="check-circle"></i></div>
-              </div>
-              <div class="cs-illus__label">Humanised errors, no dead-ends</div>
-            </div>
-          </div>
-        </div>
-        <div class="feature-card">
-          <div class="feature-card__top">
-            <div class="feature-card__icon"><i data-lucide="trending-up"></i></div>
-            <h3 class="feature-card__title">Contextual Up-sells</h3>
-            <p class="feature-card__desc">Positioned high-value add-ons like extra speed or premium safety bundles as clear choice blocks with explicitly mapped benefits. Enhanced Average Order Value organically without annoying users with dark-pattern popups.</p>
-          </div>
-          <div class="feature-card__img">
-            <div class="cs-illus">
-              <div class="cs-illus__icons">
-                <div class="cs-illus__icon-wrap"><i data-lucide="trending-up"></i></div>
-                <div class="cs-illus__icon-wrap"><i data-lucide="package"></i></div>
-                <div class="cs-illus__icon-wrap cs-illus__icon-wrap--accent"><i data-lucide="star"></i></div>
-              </div>
-              <div class="cs-illus__label">Value-driven, not dark-pattern</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- Main execution showcase -->
-      <figure class="browser-frame" style="margin-top:48px;" aria-label="The Redesigned Flow">
-        <div class="browser-frame__bar">
-          <div class="browser-frame__dots">
-            <span class="browser-frame__dot browser-frame__dot--red"></span>
-            <span class="browser-frame__dot browser-frame__dot--yellow"></span>
-            <span class="browser-frame__dot browser-frame__dot--green"></span>
-          </div>
-          <span class="browser-frame__url">configurator.telco.internal / configure / step-2</span>
-        </div>
-        <img class="browser-frame__img" src="https://images.squarespace-cdn.com/content/v1/68efa39dafb1cb4730d428a7/5463a9b9-3bd7-40c4-b003-ba46421342bb/stepbystep.png?format=2500w" alt="Step-by-step modular configurator flow showing guided decision-making" loading="lazy" data-zoomable>
-        <p class="browser-frame__caption">One contextual decision at a time — with visible progress and transparent pricing throughout each step.</p>
-      </figure>
-
-      <!-- User control + cognitive load: side-by-side detail shots -->
-      <div class="browser-frame--split" style="margin-top:20px;">
-        <div class="browser-frame">
-          <div class="browser-frame__bar">
-            <div class="browser-frame__dots">
-              <span class="browser-frame__dot browser-frame__dot--red"></span>
-              <span class="browser-frame__dot browser-frame__dot--yellow"></span>
-              <span class="browser-frame__dot browser-frame__dot--green"></span>
-            </div>
-            <span class="browser-frame__url">User control & progress</span>
-          </div>
-          <img class="browser-frame__img" src="https://images.squarespace-cdn.com/content/v1/68efa39dafb1cb4730d428a7/fbd0021c-a6ab-4da2-85fb-84fc93535567/user+control.png?format=1500w" alt="User control: progress indicator and editable selections" loading="lazy" data-zoomable>
-        </div>
-        <div class="browser-frame">
-          <div class="browser-frame__bar">
-            <div class="browser-frame__dots">
-              <span class="browser-frame__dot browser-frame__dot--red"></span>
-              <span class="browser-frame__dot browser-frame__dot--yellow"></span>
-              <span class="browser-frame__dot browser-frame__dot--green"></span>
-            </div>
-            <span class="browser-frame__url">Progressive disclosure</span>
-          </div>
-          <img class="browser-frame__img" src="https://images.squarespace-cdn.com/content/v1/68efa39dafb1cb4730d428a7/b6ad0491-346d-4a2f-b33b-b70788c209f0/cognitive+load.png?format=1500w" alt="Progressive disclosure reducing cognitive load" loading="lazy" data-zoomable>
-        </div>
-      </div>
-      <p style="font-size:13px;color:var(--ink-3);text-align:center;margin:12px 0 0;">Left: persistent progress orientation and edit controls. Right: sequential module structure eliminating decision paralysis.</p>
-    </section>
-
-    <!-- Results -->
-    <section class="cs-section reveal">
-      <span class="section-eyebrow">The Results</span>
-      <h2 class="cs-section__title" style="margin-bottom:40px;">Driving meaningful business impact</h2>
-      <div class="results-grid">
-        <div class="result-card result-card--accent">
-          <div class="result-card__value">+38%</div>
-          <div class="result-card__title">Funnel efficiency</div>
-          <div class="result-card__desc">Drop-offs between initial configuration and checkout dropped dramatically within weeks of the update. Task success rate climbed from 50% to 88%.</div>
-        </div>
-        <div class="result-card">
-          <div class="result-card__value">✓</div>
-          <div class="result-card__title">Flawless task completion</div>
-          <div class="result-card__desc">Post-redesign usability test validation showed zero users failing due to structural layout confusion. The modular architecture solved what the original couldn't.</div>
-        </div>
-        <div class="result-card">
-          <div class="result-card__value">↓</div>
-          <div class="result-card__title">Reduced support burden</div>
-          <div class="result-card__desc">Technical queries regarding price calculation and system configurations decreased visibly, freeing up service desks for higher-value interactions.</div>
-        </div>
-        <div class="result-card">
-          <div class="result-card__value">↑</div>
-          <div class="result-card__title">Average order value lifted</div>
-          <div class="result-card__desc">Contextual up-sell blocks presented at the right moment in the flow drove organic AOV improvements without friction or dark patterns.</div>
-        </div>
-      </div>
-      <!-- Full-width final prototype — the payoff image -->
-      <figure class="browser-frame" style="margin-top:48px;" aria-label="High-Fidelity Prototype">
-        <div class="browser-frame__bar">
-          <div class="browser-frame__dots">
-            <span class="browser-frame__dot browser-frame__dot--red"></span>
-            <span class="browser-frame__dot browser-frame__dot--yellow"></span>
-            <span class="browser-frame__dot browser-frame__dot--green"></span>
-          </div>
-          <span class="browser-frame__url">configurator.telco.internal / configure / review</span>
-        </div>
-        <img class="browser-frame__img" src="https://images.squarespace-cdn.com/content/v1/68efa39dafb1cb4730d428a7/dcbd4bc3-304d-441a-9079-ffc085d1980d/Group+1000005928.png?format=2500w" alt="Final high-fidelity configurator screens showing the complete redesigned experience" loading="lazy" data-zoomable>
-        <p class="browser-frame__caption">The final system: a clear, confidence-driven configuration flow that directly validated the strategic goals of reducing friction and increasing customer trust.</p>
-      </figure>
-
-      <div class="impact-validation">
-        <div class="impact-validation__header">
-          <span class="section-eyebrow" style="margin-bottom:12px;">Verifiable Impact & Team Validation</span>
-          <p class="impact-validation__body">While enterprise projects are highly collaborative team efforts, driving clear execution requires individual ownership. Below is direct, real-world feedback from the team and stakeholders validating my specific design execution, system architecture decisions, and cross-functional leadership during this redesign.</p>
-        </div>
-        <figure class="browser-frame browser-frame--sm impact-validation__proof" style="margin-top:32px;">
-          <div class="browser-frame__bar">
-            <div class="browser-frame__dots">
-              <span class="browser-frame__dot browser-frame__dot--red"></span>
-              <span class="browser-frame__dot browser-frame__dot--yellow"></span>
-              <span class="browser-frame__dot browser-frame__dot--green"></span>
-            </div>
-            <span class="browser-frame__url">Stakeholder feedback · Enterprise Delivery Lead</span>
-          </div>
-          <img class="browser-frame__img" src="https://images.squarespace-cdn.com/content/v1/68efa39dafb1cb4730d428a7/8e037331-13e5-4f9f-932f-6504bb36447c/feedback.jpg?format=2500w" alt="Direct stakeholder and peer feedback screenshot validating Amirmasoud's personal design execution and cross-functional leadership" loading="lazy" data-zoomable>
-          <p class="browser-frame__caption">"The modular architecture doesn't just look beautiful. It systematically solved a glaring operational revenue leak." — Enterprise Delivery Lead</p>
-        </figure>
-      </div>
-    </section>
-
-  </div>
-
-  <!-- NEXT -->
-  <div class="cs-next">
-    <div class="cs-next__inner">
-      <p class="cs-next__label">Next case study</p>
-      <a href="openapi.html" class="cs-next__card">
-        <div>
-          <p class="cs-next__card-title">Making the Abstract Tangible</p>
-          <p class="cs-next__card-sub">02 · Platform · Strategy · Design strategy for an Open API platform</p>
-        </div>
-        <div class="cs-next__arrow" aria-hidden="true"><i data-lucide="arrow-right"></i></div>
-      </a>
-    </div>
-  </div>
-
-  <!-- FOOTER -->
-  <div class="footer">
-    <div class="footer__inner">
       <div>
-        <h2 class="footer__title">Let's work<br>together.</h2>
-        <a href="mailto:amirmasoud.ebadi@gmail.com" class="footer__email">amirmasoud.ebadi@gmail.com</a>
-      </div>
-      <div class="footer__actions">
-        <a href="https://www.linkedin.com/in/amirmasoud-ebadi/" target="_blank" rel="noopener" class="btn btn--outline">LinkedIn</a>
-        <a href="mailto:amirmasoud.ebadi@gmail.com?subject=Let%27s%20work%20together%20%E2%80%93%20Amirmasoud%20Ebadi" class="btn btn--accent">Book a 30-min call <i data-lucide="arrow-right"></i></a>
+        <ol class="legend">
+          <li><span class="pin">1</span><div><h3>Prices hidden in a small box</h3><p>The monthly price and the price after month 6 sat in a collapsed box, away from the choices that changed them.</p></div></li>
+          <li><span class="pin">2</span><div><h3>Two step lists that look the same</h3><p>Configuration and checkout steps sat side by side. Users could not tell where they were.</p></div></li>
+          <li><span class="pin">3</span><div><h3>No sense of progress</h3><p>The remaining steps were listed under the form, with no indication of how much was left.</p></div></li>
+        </ol>
+        <div style="margin-top:28px;padding-top:20px;border-top:1px solid var(--border)">
+          <span class="muted" style="font-size:12px;letter-spacing:2px;text-transform:uppercase">Methods</span>
+          <div class="tags"><span>Heuristic evaluation</span><span>Gestalt review</span><span>Miller's, Jakob's and Hick's laws</span><span>Internal usability test</span></div>
+        </div>
       </div>
     </div>
-    <div class="footer__bottom">
-      <span>© 2026 Amirmasoud Ebadi</span>
-      <a href="#" class="footer__back">Back to top <i data-lucide="arrow-up"></i></a>
+    <div class="testnums mt" aria-label="Internal usability test of the old flow">
+      <div><b>4</b><span>Participants</span></div>
+      <div><b>2</b><span>Core tasks</span></div>
+      <div><b>3</b><span>Critical issues</span></div>
+      <div><b>50%</b><span>Task success</span></div>
     </div>
   </div>
+</section>
 
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-  <script>
-    const nav = document.getElementById('nav');
-    window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 40); }, { passive: true });
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-visible'); observer.unobserve(e.target); } });
-    }, { threshold: 0.1 });
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+<!-- CONCEPT -->
+<section class="sec">
+  <div class="wrap">
+    <div class="eyebrow">Concept</div>
+    <h2>From one crowded page to modules</h2>
+    <p class="lede">I broke the page into modules, one per product type, and validated the flow with the client before any visual design.</p>
+    <figure class="shot" style="margin-bottom:0">
+      <img src="assets/configurator/wireframes.webp" width="2400" height="1458"
+        alt="Two wireframes of the modular configurator. Numbered pins mark the progress flow, the open module, the summary bar, the chosen product, its price and the sticky summary."
+        style="border-radius:16px;border:1px solid var(--border)" />
+      <figcaption>Wireframes (recreated): first module open on the left, first module done on the right.</figcaption>
+    </figure>
+    <ol class="wflegend">
+      <li><span class="pin">1</span><div><h3>Progress flow</h3><p>A stepper shows where people are.</p></div></li>
+      <li><span class="pin">2</span><div><h3>Modular configurator</h3><p>One module per product type, one open at a time.</p></div></li>
+      <li><span class="pin">3</span><div><h3>Transparent pricing</h3><p>A summary of price and configuration.</p></div></li>
+      <li><span class="pin">4</span><div><h3>Visual and contextual support</h3><p>A finished module shows the chosen product.</p></div></li>
+      <li><span class="pin">5</span><div><h3>Information clarity</h3><p>Price and "Edit" stay next to each choice.</p></div></li>
+      <li><span class="pin">6</span><div><h3>Streamlined checkout</h3><p>The summary stays sticky, with a direct way to the cart.</p></div></li>
+    </ol>
+    <div class="grid3 mt">
+      <div class="card"><span class="k">Approved</span><h3>Modular configurator</h3><p>The client approved the step-by-step approach.</p></div>
+      <div class="card"><span class="k">Client requirement</span><h3>Mostly sequential flow</h3><p>Steps stay in a fixed order to support cross-selling. Customers can still skip ahead with "Zum Warenkorb".</p></div>
+      <div class="card"><span class="k">Confirmed</span><h3>Progress indicator</h3><p>It keeps people oriented, especially through steps they cannot skip.</p></div>
+    </div>
+  </div>
+</section>
 
-    // Count-up animation
-    function animateCount(el) {
-      const target = parseInt(el.dataset.target, 10);
-      const prefix = el.dataset.prefix || '';
-      const suffix = el.dataset.suffix || '';
-      const duration = 1200;
-      const start = performance.now();
-      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (reduced) { el.textContent = prefix + target + suffix; return; }
-      function update(now) {
-        const elapsed = Math.min((now - start) / duration, 1);
-        const ease = 1 - Math.pow(1 - elapsed, 3);
-        el.textContent = prefix + Math.round(ease * target) + suffix;
-        if (elapsed < 1) requestAnimationFrame(update);
-      }
-      requestAnimationFrame(update);
-    }
-    const countObserver = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting && e.target.dataset.target) {
-          animateCount(e.target);
-          countObserver.unobserve(e.target);
-        }
-      });
-    }, { threshold: 0.5 });
-    document.querySelectorAll('[data-target]').forEach(el => countObserver.observe(el));
+<!-- SOLUTION -->
+<section class="sec">
+  <div class="wrap">
+    <div class="eyebrow">Solution</div>
+    <h2>One decision at a time</h2>
+    <div class="dtabs mt">
+      <div class="dtabs__side">
+        <div class="dtabs__list" role="tablist" aria-label="Design decisions">
+          <button role="tab" id="t1" aria-controls="p1" aria-selected="true">
+            <span class="k">01 · Cognitive load</span>
+            <b>Progressive disclosure</b>
+            <span class="d">The page is split into modules — for example router, TV and WLAN. Only the current step is open.</span>
+          </button>
+          <button role="tab" id="t2" aria-controls="p2" aria-selected="false" tabindex="-1">
+            <span class="k">02 · Orientation</span>
+            <b>Visible progress</b>
+            <span class="d">A progress indicator on top and status icons on each module show what is left.</span>
+          </button>
+          <button role="tab" id="t3" aria-controls="p3" aria-selected="false" tabindex="-1">
+            <span class="k">03 · Control</span>
+            <b>Change or skip any step</b>
+            <span class="d">Finished steps collapse into a card. "Auswahl ändern" reopens them; optional steps can be skipped.</span>
+          </button>
+          <button role="tab" id="t4" aria-controls="p4" aria-selected="false" tabindex="-1">
+            <span class="k">04 · Trust</span>
+            <b>Sticky price summary</b>
+            <span class="d">Monthly and one-time totals are always visible and expand into a full breakdown.</span>
+          </button>
+        </div>
+        <div class="dtabs__ctrl">
+          <span class="cnt" id="dcnt" aria-live="polite">01 / 04</span>
+          <div class="arrows">
+            <button class="arr" id="dprev" aria-label="Previous decision">←</button>
+            <button class="arr" id="dnext" aria-label="Next decision">→</button>
+          </div>
+        </div>
+      </div>
+      <div class="dstage">
+        <div class="frame">
+          <div class="frame__bar" aria-hidden="true"><i></i><i></i><i></i><span>telvia.de/konfigurator</span></div>
+          <div role="tabpanel" id="p1" aria-labelledby="t1">
+            <img src="assets/configurator/feat-1.webp" width="2360" height="1520"
+              alt="Only the WLAN module is open and highlighted; the finished router module above is dimmed" />
+          </div>
+          <div role="tabpanel" id="p2" aria-labelledby="t2" hidden>
+            <img src="assets/configurator/feat-2.webp" width="2360" height="1520"
+              alt="The progress stepper and the check icon of the finished router module are highlighted" />
+          </div>
+          <div role="tabpanel" id="p3" aria-labelledby="t3" hidden>
+            <img src="assets/configurator/feat-3.webp" width="2360" height="1520"
+              alt="The Auswahl ändern links on two finished modules are highlighted" />
+          </div>
+          <div role="tabpanel" id="p4" aria-labelledby="t4" hidden>
+            <img src="assets/configurator/feat-4.webp" width="2360" height="1520"
+              alt="The expanded price bar with every item and the totals is highlighted" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <blockquote class="quote mt"><small>Customer, after</small>"I go step by step, always see my progress and my total, and can change anything before I order."</blockquote>
+  </div>
+</section>
 
-    lucide.createIcons();
+<!-- ITERATION -->
+<section class="sec">
+  <div class="wrap">
+    <div class="eyebrow">Iteration</div>
+    <h2>What the client's review changed</h2>
+    <p class="lede">After the prototype, the client reviewed every screen. Their comments led directly to these changes. Names are hidden.</p>
+    <div class="comments">
+      <div class="cmt">
+        <div class="cmt__who"><i aria-hidden="true"></i><em>Reviewer name</em></div>
+        <blockquote>"The 'continue without' links should be more visible, as buttons. Right now they look like normal links."</blockquote>
+        <p class="de">Die Links „ohne … fortfahren" sollten als Button visuell sichtbarer gemacht werden.</p>
+        <span class="to">→ Change 4</span>
+      </div>
+      <div class="cmt">
+        <div class="cmt__who"><i aria-hidden="true"></i><em>Reviewer name</em></div>
+        <blockquote>"The reduced header is acceptable. The full header only comes in a later stage."</blockquote>
+        <p class="de">Aktueller verwendeter reduzierter Header ist akzeptabel.</p>
+        <span class="to">→ Change 2</span>
+      </div>
+      <div class="cmt">
+        <div class="cmt__who"><i aria-hidden="true"></i><em>Reviewer name</em></div>
+        <blockquote>"It is technically possible to book more than one TV Flex."</blockquote>
+        <p class="de">Es ist auch technisch möglich, mehrere … TV Flex zu buchen.</p>
+        <span class="to">→ Change 3</span>
+      </div>
+      <div class="cmt">
+        <div class="cmt__who"><i aria-hidden="true"></i><em>Reviewer name</em></div>
+        <blockquote>"Make the dependency on the customer's tariff clearer."</blockquote>
+        <p class="de">Deutlicher herausstellen: Abhängigkeit vom Tarif des Kunden.</p>
+      </div>
+    </div>
+    <div class="changes">
+      <div class="chg"><span class="tag">Engineering</span><h3>Two user journeys</h3><p>The availability check separates new customers and switchers, so contract data shows correctly for each.</p></div>
+      <div class="chg"><span class="tag">Brand</span><h3>Reduced header and footer</h3><p>Keeps the brand without menu distractions inside the configurator.</p></div>
+      <div class="chg"><span class="tag">Usability</span><h3>Product counters</h3><p>Products that can be booked more than once got quantity counters.</p></div>
+      <div class="chg"><span class="tag">Business</span><h3>Clearer skip option</h3><p>The final module got a more visible way to skip, which reduces friction.</p></div>
+    </div>
+  </div>
+</section>
 
-    // Lightbox for zoomable images
-    document.querySelectorAll('img[data-zoomable]').forEach(img => {
-      img.addEventListener('click', () => {
-        const overlay = document.createElement('div');
-        overlay.className = 'lx-overlay';
-        const clone = new Image();
-        clone.src = img.src;
-        clone.alt = img.alt;
-        const btn = document.createElement('button');
-        btn.className = 'lx-close';
-        btn.innerHTML = '&times;';
-        btn.addEventListener('click', e => { e.stopPropagation(); overlay.remove(); });
-        clone.addEventListener('click', e => e.stopPropagation());
-        overlay.appendChild(clone);
-        overlay.appendChild(btn);
-        overlay.addEventListener('click', () => overlay.remove());
-        document.body.appendChild(overlay);
-        document.addEventListener('keydown', function esc(e) {
-          if (e.key === 'Escape') { overlay.remove(); document.removeEventListener('keydown', esc); }
-        }, { once: true });
-      });
-    });
-  </script>
+<!-- LIVE PROTOTYPE -->
+<section class="sec" aria-labelledby="lp-title">
+  <div class="wrap">
+    <div class="eyebrow">Live prototype</div>
+    <h2 id="lp-title">Try the redesigned flow</h2>
+    <p class="lede">The prototype runs right here. Switch between desktop, tablet and mobile to see how the layout adapts.</p>
+    <ol class="tasks" aria-label="Quick tasks">
+      <li><b>1</b>Pick a router</li>
+      <li><b>2</b>Confirm your choice</li>
+      <li><b>3</b>Watch the price bar update</li>
+    </ol>
+    <div class="lp-bar">
+      <div class="seg" role="group" aria-label="Device view">
+        <button data-d="desktop" aria-pressed="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M2 20h20"/></svg>Desktop
+        </button>
+        <button data-d="tablet" aria-pressed="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="5" y="2.5" width="14" height="19" rx="2"/><path d="M11 18.5h2"/></svg>Tablet
+        </button>
+        <button data-d="mobile" aria-pressed="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18.5h2"/></svg>Mobile
+        </button>
+      </div>
+      <span class="size" id="size">1280 × 800</span>
+      <a class="openlink" href="configurator-prototype.html" target="_blank" rel="noopener">Open full prototype ↗</a>
+    </div>
+    <div class="stage" id="stage">
+      <div class="device desktop" id="device">
+        <div class="dframe">
+          <div class="chrome" aria-hidden="true"><i></i><i></i><i></i><span>telvia.de/konfigurator</span></div>
+          <div class="vp" id="vp">
+            <img class="poster" id="poster" src="assets/configurator/hero-desktop.webp" alt="Configurator preview — click Start prototype to interact" />
+            <div class="cover" id="cover">
+              <button class="start" id="start">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg>
+                Start prototype
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OUTCOME -->
+<section class="sec">
+  <div class="wrap">
+    <div class="eyebrow">Outcome</div>
+    <h2>What changed</h2>
+    <div class="outs">
+      <div class="out"><h3>Fewer drop-offs</h3><p>The client reported a lower abandonment rate and better task completion.</p></div>
+      <div class="out"><h3>Fewer pricing questions</h3><p>Transparent pricing got positive feedback and reduced confusion about costs, and with it the need to call support.</p></div>
+      <div class="out"><h3>Better cross-selling</h3><p>The client reported a positive lift in mobile add-on attach rates, without pushy patterns.</p></div>
+    </div>
+    <p class="note">Exact figures belong to the client and are not public.</p>
+  </div>
+</section>
+
+</main>
+
+<div class="wrap">
+  <a class="next" href="openapi.html">
+    <div>
+      <small>Next case study</small>
+      <h3>Making the Abstract Tangible</h3>
+      <p class="muted" style="margin-top:6px">02 · Platform · Design strategy for an Open API platform</p>
+    </div>
+    <span class="arr-circle" aria-hidden="true">→</span>
+  </a>
+  <footer class="foot">
+    <span>© 2026 Amirmasoud Ebadi</span>
+    <a href="#" style="color:var(--ink-3)">Back to top ↑</a>
+  </footer>
+</div>
+
+<script src="https://unpkg.com/lucide@1.49.0/dist/umd/lucide.min.js"></script>
+<script>
+lucide.createIcons();
+
+/* ── Nav scroll state ── */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.style.background = window.scrollY > 40
+    ? 'rgba(10,10,10,.95)'
+    : 'rgba(10,10,10,.88)';
+}, { passive: true });
+
+/* ── Solution tabs ── */
+const tabs = [...document.querySelectorAll('[role="tab"]')];
+function selTab(tab, focus) {
+  tabs.forEach(t => {
+    const on = t === tab;
+    t.setAttribute('aria-selected', on);
+    t.tabIndex = on ? 0 : -1;
+    document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+  });
+  document.getElementById('dcnt').textContent = `0${tabs.indexOf(tab)+1} / 0${tabs.length}`;
+  if (focus) tab.focus();
+}
+const curTab = () => tabs.findIndex(t => t.getAttribute('aria-selected') === 'true');
+document.getElementById('dprev').addEventListener('click', () => selTab(tabs[(curTab()-1+tabs.length)%tabs.length]));
+document.getElementById('dnext').addEventListener('click', () => selTab(tabs[(curTab()+1)%tabs.length]));
+tabs.forEach((t, i) => {
+  t.addEventListener('click', () => selTab(t));
+  t.addEventListener('keydown', e => {
+    let n = null;
+    if (e.key==='ArrowDown'||e.key==='ArrowRight') n = tabs[(i+1)%tabs.length];
+    if (e.key==='ArrowUp'||e.key==='ArrowLeft') n = tabs[(i-1+tabs.length)%tabs.length];
+    if (e.key==='Home') n = tabs[0];
+    if (e.key==='End') n = tabs[tabs.length-1];
+    if (n) { e.preventDefault(); selTab(n, true); }
+  });
+});
+
+/* ── Live prototype ── */
+const DEV = {
+  desktop: { w:1280, h:800, chrome:34, bezel:0 },
+  tablet:  { w:820,  h:1080, chrome:0, bezel:10 },
+  mobile:  { w:390,  h:844,  chrome:0, bezel:10 }
+};
+let cur = 'desktop', iframe = null;
+const stage  = document.getElementById('stage');
+const device = document.getElementById('device');
+const vp     = document.getElementById('vp');
+
+function layout() {
+  const d = window.innerWidth <= 640 ? 'mobile' : cur;
+  const c = DEV[d];
+  const cs = getComputedStyle(stage);
+  const avail = stage.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+  const outerW = c.w + c.bezel * 2;
+  const outerH = c.h + c.bezel * 2 + c.chrome;
+  const maxH = d === 'desktop' ? Infinity : Math.max(520, window.innerHeight * .8);
+  const s = Math.min(1, avail/outerW, maxH/outerH);
+  device.className = 'device ' + d;
+  device.style.width  = (outerW * s) + 'px';
+  device.style.height = (outerH * s) + 'px';
+  const df = device.querySelector('.dframe');
+  df.style.borderWidth = c.bezel ? (c.bezel * s) + 'px' : '';
+  vp.style.top = (c.chrome * s) + 'px';
+  [iframe, document.getElementById('poster')].forEach(el => {
+    if (!el) return;
+    el.style.width     = c.w + 'px';
+    el.style.height    = c.h + 'px';
+    el.style.transform = `scale(${s})`;
+  });
+  const sz = document.getElementById('size');
+  if (sz) sz.textContent = `${c.w} × ${c.h}`;
+}
+
+document.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => {
+  cur = b.dataset.d;
+  document.querySelectorAll('.seg button').forEach(x => x.setAttribute('aria-pressed', x === b));
+  layout();
+}));
+
+document.getElementById('start').addEventListener('click', () => {
+  iframe = document.createElement('iframe');
+  iframe.src   = 'configurator-prototype.html';
+  iframe.title = 'Interactive configurator prototype';
+  vp.appendChild(iframe);
+  document.getElementById('cover').remove();
+  document.getElementById('poster').remove();
+  layout();
+  iframe.focus();
+});
+
+window.addEventListener('resize', layout);
+layout();
+</script>
 </body>
 </html>

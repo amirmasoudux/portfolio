@@ -3,658 +3,837 @@
 <head>
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Making the Abstract Tangible — Amirmasoud Ebadi</title>
-  <meta name="description" content="Design strategy for an Open API platform that closed a 70% B2B conversion gap." />
+  <meta name="description" content="How I helped Finnotech turn Open Banking APIs into a story that enterprise buyers could see, touch and commit to." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
   <style>
-    /* ── Reset & Base ─────────────────────────────── */
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    :root {
-      --bg:       #0D0D0D;
-      --surface:  #161616;
-      --surface-2:#1E1E1E;
-      --border:   #2A2A2A;
-      --ink:      #F0EEE9;
-      --ink-2:    rgba(240,238,233,0.75);
-      --ink-3:    rgba(240,238,233,0.55);
-      --accent:   #C8FF57;
-      --pad:      clamp(20px, 5vw, 80px);
-      --page-max: 1120px;
-      --r:        6px;
-    }
-    html { scroll-behavior: smooth; }
-    body {
-      background: var(--bg); color: var(--ink);
-      font-family: 'Inter', sans-serif;
-      font-size: 16px; line-height: 1.7;
-      -webkit-font-smoothing: antialiased;
-    }
-    a { color: inherit; text-decoration: none; }
-    strong { font-weight: 600; color: var(--ink); }
+/* ── TOKENS ── */
+:root {
+  color-scheme: dark;
+  --bg:#0A0A0A; --surface:#111111; --surface-2:#181818;
+  --ink:#F0EEE9; --ink-2:rgba(240,238,233,.75); --ink-3:rgba(240,238,233,.55);
+  --accent:#C8FF57; --border:rgba(255,255,255,.07); --border-2:rgba(255,255,255,.12);
+  --display:"Space Grotesk",Inter,system-ui,sans-serif;
+  --body:Inter,-apple-system,system-ui,sans-serif;
+  --r:12px; --r-xl:24px;
+  --fy:#F6BB16;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{margin:0;font-family:var(--body);font-size:16px;line-height:1.65;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{max-width:100%;height:auto;display:block}
+a{color:inherit;text-decoration:none}
+button{font-family:var(--body)}
+:focus-visible{outline:2px solid rgba(255,255,255,.5);outline-offset:3px;border-radius:4px}
 
-    /* ── Typography helpers ───────────────────────── */
-    .mono {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 11px; letter-spacing: 1.5px;
-      text-transform: uppercase;
-    }
-    .eyebrow {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 11px; letter-spacing: 2px;
-      text-transform: uppercase; color: var(--ink-3);
-      margin-bottom: 20px; display: block;
-    }
-    .display {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(36px, 5.5vw, 72px);
-      font-weight: 800; line-height: 1.05;
-      letter-spacing: -1.5px; color: var(--ink);
-    }
-    .section-heading {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(24px, 3vw, 40px);
-      font-weight: 700; line-height: 1.15;
-      letter-spacing: -0.5px; color: var(--ink);
-      margin-bottom: 16px;
-    }
-    .body-text {
-      font-size: 16px; color: var(--ink-2); line-height: 1.8;
-    }
+/* ── LAYOUT ── */
+.wrap{max-width:1280px;margin:0 auto;padding-inline:max(24px,env(safe-area-inset-left,24px))}
+.narrow{max-width:760px}
 
-    /* ── Layout ───────────────────────────────────── */
-    .wrap { max-width: var(--page-max); margin: 0 auto; padding: 0 var(--pad); }
-    .section { padding: 96px 0; border-top: 1px solid var(--border); }
+/* ── NAV ── */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(10,10,10,.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+.nav__left{display:flex;align-items:center}
+.nav__back{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--ink-2);transition:color .2s}
+.nav__back:hover{color:var(--ink)}
+.nav__back i[data-lucide]{width:16px;height:16px}
+.nav__sep{width:1px;height:20px;background:var(--border-2);margin:0 16px}
+.nav__logo img{height:26px;width:auto}
+.nav__cv{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink-2);border:1px solid var(--border-2);border-radius:99px;padding:6px 14px;transition:color .2s,border-color .2s}
+.nav__cv:hover{color:var(--ink);border-color:rgba(255,255,255,.25)}
+.nav__cv i[data-lucide]{width:12px;height:12px}
 
-    /* ── NAV ──────────────────────────────────────── */
-    nav {
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(13,13,13,0.92); backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border);
-    }
-    .nav-inner {
-      max-width: var(--page-max); margin: 0 auto; padding: 0 var(--pad);
-      height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 16px;
-    }
-    .nav-back {
-      display: flex; align-items: center; gap: 8px;
-      font-family: 'Space Grotesk', sans-serif; font-size: 12px;
-      color: var(--ink-2); transition: color 0.2s;
-    }
-    .nav-back:hover { color: var(--ink); }
-    .nav-name {
-      font-family: 'Space Grotesk', sans-serif; font-size: 12px;
-      color: var(--ink-3); letter-spacing: 0.5px;
-    }
-    .nav-right { display: flex; align-items: center; gap: 12px; }
-    .nav-avail {
-      font-family: 'Space Grotesk', sans-serif; font-size: 11px;
-      color: var(--accent); display: flex; align-items: center; gap: 6px;
-    }
-    .nav-avail::before {
-      content: ''; width: 6px; height: 6px; border-radius: 50%;
-      background: var(--accent); display: inline-block;
-      box-shadow: 0 0 0 0 rgba(200,255,87,0.6);
-      animation: pulse 2s ease-in-out infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(200,255,87,0.5); }
-      50% { box-shadow: 0 0 0 5px rgba(200,255,87,0); }
-    }
-    .nav-cv {
-      font-family: 'Space Grotesk', sans-serif; font-size: 11px;
-      color: var(--ink-2); border: 1px solid var(--border);
-      border-radius: var(--r); padding: 6px 12px;
-      transition: color 0.2s, border-color 0.2s;
-    }
-    .nav-cv:hover { color: var(--ink); border-color: rgba(255,255,255,0.25); }
+/* ── SECTIONS ── */
+.sec{padding-block:96px;border-bottom:1px solid var(--border)}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:2.5px;color:var(--ink-3);margin-bottom:20px}
+.eyebrow::before{content:"";width:24px;height:1px;background:var(--ink-3)}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance}
+h2{font-size:clamp(30px,4vw,46px);font-weight:700;letter-spacing:-1.5px;line-height:1.08;margin-bottom:20px}
+h3{font-size:20px;font-weight:600;letter-spacing:-.3px;line-height:1.3}
+.lede{font-size:18px;color:var(--ink-2);max-width:62ch;margin:0}
+p{margin:0}
+.muted{color:var(--ink-3)}
+.mt{margin-top:48px}
 
-    /* ── HERO ─────────────────────────────────────── */
-    .hero {
-      padding: 80px 0 72px;
-      background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(200,255,87,0.05) 0%, transparent 70%);
-    }
-    .hero-breadcrumb {
-      font-family: 'Space Grotesk', sans-serif; font-size: 11px;
-      letter-spacing: 2px; text-transform: uppercase;
-      color: var(--ink-3); margin-bottom: 32px;
-      display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
-    }
-    .hero-breadcrumb span { color: var(--border); }
-    .hero-title { margin-bottom: 24px; }
-    .hero-sub {
-      font-size: clamp(16px, 1.8vw, 20px); color: var(--ink-2);
-      line-height: 1.6; max-width: 680px; margin-bottom: 56px;
-    }
-    .hero-sub em { color: var(--accent); font-style: normal; font-weight: 600; }
+/* ── HERO ── */
+.hero{padding-block:72px 64px}
+.hero .num{font-size:12px;letter-spacing:2.5px;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 28px}
+.chip{display:inline-flex;align-items:center;padding:5px 14px;border-radius:99px;font-size:13px;font-weight:600;border:1px solid var(--border-2);color:var(--ink-2)}
+.chip--accent{background:rgba(246,187,22,.1);border-color:rgba(246,187,22,.3);color:var(--fy)}
+.hero h1{font-size:clamp(48px,5.4vw,84px);font-weight:700;line-height:.95;letter-spacing:-3px;margin-bottom:24px}
+.hero .lede{font-size:19px}
+.hl{color:var(--fy)}
+.hero__grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:56px;align-items:center}
 
-    /* Browser mockup */
-    .hero-mockup {
-      border: 1px solid var(--border); border-radius: var(--r);
-      background: var(--surface); overflow: hidden;
-      max-width: 860px;
-    }
-    .mockup-bar {
-      padding: 10px 16px; border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; gap: 8px; background: var(--surface-2);
-    }
-    .mockup-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); }
-    .mockup-url {
-      flex: 1; height: 22px; border-radius: 3px; background: var(--border);
-      margin-left: 8px; max-width: 260px;
-    }
-    .mockup-body { padding: 32px; display: grid; gap: 16px; }
-    .mockup-row { display: flex; gap: 16px; }
-    .mockup-block {
-      border-radius: 3px; background: var(--surface-2);
-      border: 1px solid var(--border);
-    }
-    .mockup-block--lg { height: 80px; flex: 2; }
-    .mockup-block--sm { height: 80px; flex: 1; }
-    .mockup-block--wide { height: 40px; flex: 1; }
-    .mockup-block--accent { border-color: rgba(200,255,87,0.3); background: rgba(200,255,87,0.04); }
-    .mockup-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-    .mockup-grid-item { height: 56px; border-radius: 3px; background: var(--surface-2); border: 1px solid var(--border); }
-    .mockup-label-row { display: flex; gap: 8px; }
-    .mockup-tag { height: 20px; width: 60px; border-radius: 3px; background: rgba(200,255,87,0.12); }
+/* ── HERO DECK ── */
+/* ── HERO FAN DECK ── */
+.deck{position:relative;height:clamp(300px,34vw,480px);perspective:1400px;display:flex;align-items:flex-end;justify-content:center;overflow:visible}
+.deck__in{position:absolute;inset:0;transform-style:preserve-3d;display:flex;align-items:flex-end;justify-content:center}
+/* fan cards */
+.pc{
+  position:absolute;bottom:0;
+  width:clamp(130px,13vw,190px);
+  aspect-ratio:.707;
+  border-radius:14px;
+  box-shadow:0 20px 56px rgba(0,0,0,.7);
+  overflow:hidden;
+  transform-origin:50% 100%;
+  display:flex;flex-direction:column;
+}
+/* playing card face: colored band + white body */
+.pc__band{flex:0 0 52%;display:flex;align-items:center;justify-content:center;padding:8%}
+.pc--bank .pc__band{background:#655F82}
+.pc--pay  .pc__band{background:#C8A010}
+.pc__band svg{width:78%;height:auto;filter:drop-shadow(0 4px 12px rgba(0,0,0,.3))}
+.pc__body{flex:1;background:#fff;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;padding:7% 8% 8%;container-type:inline-size}
+.pc__body h5{font-family:var(--display);font-size:clamp(8px,1.8cqw,14px);line-height:1.2;font-weight:700;color:#1d1d1f;margin:0;letter-spacing:-.2px}
+.pc__body .wm{font-family:var(--display);font-size:clamp(7px,1.4cqw,11px);font-weight:700;color:#4a4a54;letter-spacing:.04em}
 
-    /* ── METRICS BAR ──────────────────────────────── */
-    .metrics {
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      background: var(--surface);
-    }
-    .metrics-inner {
-      max-width: var(--page-max); margin: 0 auto; padding: 0 var(--pad);
-      display: grid; grid-template-columns: repeat(4, 1fr);
-    }
-    .metric {
-      padding: 36px 32px; border-right: 1px solid var(--border);
-    }
-    .metric:last-child { border-right: none; }
-    .metric-value {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 48px; font-weight: 800;
-      color: var(--accent); line-height: 1;
-      margin-bottom: 8px; white-space: nowrap;
-    }
-    .metric-label { font-size: 13px; color: var(--ink-3); line-height: 1.5; }
+@keyframes dealIn{
+  from{opacity:0;transform:var(--fan-to) translateY(80px) scale(.9)}
+  to  {opacity:1;transform:var(--fan-to)}
+}
+/* keep old .face for overlay use */
+.face{position:absolute;inset:0;background:#fff;color:#1d1d1f;display:grid;grid-template-columns:38% 1fr;font-family:var(--body)}
+.face__side{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:8%;text-align:center}
+.face--bank .face__side{background:#ECEBF4}
+.face--pay .face__side{background:#FFF4D1}
+.face__side svg{width:62%;height:auto}
+.face__side .no{font-family:var(--display);font-weight:700;font-size:clamp(11px,1.1vw,14px);letter-spacing:1px;color:#55555c}
+.face__body{padding:9% 9% 8%;display:flex;flex-direction:column;justify-content:center;gap:8px;min-width:0}
+.face__body .fam{font-size:clamp(9px,.8vw,11px);letter-spacing:1.5px;text-transform:uppercase;color:#77777e;font-weight:600}
+.face__body h4{font-family:var(--display);font-size:clamp(15px,1.6vw,22px);line-height:1.15;margin:0;letter-spacing:-.3px}
+.face__body p{font-size:clamp(10px,.95vw,13px);line-height:1.45;color:#45454b;margin:0}
+.face__body .eu{font-size:clamp(9px,.8vw,11px);font-weight:600;color:#3d3d42;background:#F1F1F3;border-radius:99px;padding:3px 8px;align-self:flex-start}
+.face__body .logo{margin-top:auto;font-family:var(--display);font-weight:700;font-size:clamp(10px,.9vw,12px);color:#55555c}
 
-    /* ── CHALLENGE ────────────────────────────────── */
-    .challenge-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 64px;
-      margin-bottom: 48px;
-    }
-    .pain-list { display: flex; flex-direction: column; gap: 12px; }
-    .pain-item {
-      background: var(--surface); border: 1px solid var(--border);
-      border-left: 3px solid var(--accent);
-      border-radius: 0 var(--r) var(--r) 0;
-      padding: 16px 20px;
-      font-size: 14px; color: var(--ink-2); line-height: 1.6;
-    }
-    .blockquote {
-      background: var(--surface); border: 1px solid var(--border);
-      border-left: 3px solid var(--accent);
-      border-radius: 0 var(--r) var(--r) 0;
-      padding: 28px 32px; margin-bottom: 40px;
-      font-size: clamp(16px, 2vw, 20px);
-      font-style: italic; color: var(--ink-2); line-height: 1.6;
-    }
-    .persona-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    .persona-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--r); padding: 28px;
-    }
-    .persona-tag {
-      font-family: 'Space Grotesk', sans-serif; font-size: 10px;
-      letter-spacing: 2px; text-transform: uppercase;
-      color: var(--accent); margin-bottom: 12px; display: block;
-    }
-    .persona-name {
-      font-family: 'Space Grotesk', sans-serif; font-size: 18px;
-      font-weight: 700; color: var(--ink); margin-bottom: 12px;
-    }
+/* ── STATS ── */
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--border);border-block:1px solid var(--border)}
+.stat{background:var(--surface);padding:32px;display:grid;grid-template-columns:auto 1fr;column-gap:18px;align-items:start}
+.stat .si{grid-row:span 2;width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--border-2);color:var(--ink)}
+.stat .si svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.stat b{display:block;font-family:var(--display);font-size:40px;font-weight:700;letter-spacing:-1.5px;color:var(--ink);line-height:1;margin-bottom:10px;white-space:nowrap}
+.stat span{font-size:15px;color:var(--ink-2);line-height:1.5}
 
-    /* ── STRATEGIC PIVOT ──────────────────────────── */
-    .pivot-grid {
-      display: grid; grid-template-columns: 1fr auto 1fr; gap: 24px;
-      align-items: center; margin-top: 40px;
-    }
-    .pivot-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--r); padding: 32px;
-    }
-    .pivot-card--after { border-color: rgba(200,255,87,0.25); }
-    .pivot-label {
-      font-family: 'Space Grotesk', sans-serif; font-size: 10px;
-      letter-spacing: 2px; text-transform: uppercase;
-      margin-bottom: 14px; display: block;
-    }
-    .pivot-label--before { color: var(--ink-3); }
-    .pivot-label--after { color: var(--accent); }
-    .pivot-title {
-      font-family: 'Space Grotesk', sans-serif; font-size: 18px;
-      font-weight: 700; color: var(--ink); margin-bottom: 10px;
-    }
-    .pivot-arrow {
-      font-size: 28px; color: var(--accent); text-align: center;
-      font-family: 'Space Grotesk', sans-serif; font-weight: 800;
-    }
+/* ── SPLIT ── */
+.split{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:64px;align-items:start}
+.split--prob{align-items:start}
+.quote{border-left:2px solid var(--fy);padding:4px 0 4px 20px;font-size:17px;color:var(--ink);font-style:italic;margin:28px 0}
+.quote small{display:block;font-style:normal;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--ink-3);margin-bottom:6px}
 
-    /* ── SOLUTION ─────────────────────────────────── */
-    .solution-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
-      margin-top: 40px;
-    }
-    .solution-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--r); padding: 32px;
-      transition: background 0.2s;
-    }
-    .solution-card:hover { background: var(--surface-2); }
-    .solution-card--wide { grid-column: 1 / -1; }
-    .solution-icon {
-      width: 40px; height: 40px; border-radius: var(--r);
-      background: rgba(200,255,87,0.1); border: 1px solid rgba(200,255,87,0.2);
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 20px;
-    }
-    .solution-icon i[data-lucide] {
-      width: 18px; height: 18px;
-      stroke: var(--ink-2); stroke-width: 1.5;
-      fill: none; display: inline-flex;
-    }
-    .solution-title {
-      font-family: 'Space Grotesk', sans-serif; font-size: 18px;
-      font-weight: 700; color: var(--ink); margin-bottom: 10px;
-    }
+/* ── RISK FLOW (problem) ── */
+.risks--flow{margin-top:38px;gap:0;display:grid}
+.risks--flow .risk{display:grid;grid-template-columns:44px 1fr;gap:16px;padding:22px 22px 22px 18px;border-radius:0;border-bottom-width:0;background:var(--surface);border:1px solid var(--border)}
+.risks--flow .risk:first-child{border-radius:var(--r) var(--r) 0 0}
+.risks--flow .risk:last-child{border-radius:0 0 var(--r) var(--r);border-bottom-width:1px}
+.risks--flow .risk h3{font-size:19px;letter-spacing:-.3px;margin-bottom:6px}
+.risks--flow .ri{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--border-2);color:var(--ink)}
+.risks--flow .ri svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.risk--goal{box-shadow:inset 3px 0 0 var(--fy)}
+.risk--goal h3{color:var(--fy)}
+.risk p{font-size:15px;color:var(--ink-2)}
 
-    /* ── IMPACT ───────────────────────────────────── */
-    .impact-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
-      margin-top: 40px; margin-bottom: 24px;
-    }
-    .impact-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--r); padding: 32px;
-      transition: background 0.2s;
-    }
-    .impact-card:hover { background: var(--surface-2); }
-    .impact-value {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 56px; font-weight: 800;
-      color: var(--accent); line-height: 1; margin-bottom: 8px;
-    }
-    .impact-label {
-      font-size: 14px; color: var(--ink-2);
-    }
-    .insight-card {
-      background: var(--surface); border: 1px solid rgba(200,255,87,0.2);
-      border-radius: var(--r); padding: 40px;
-      font-size: clamp(16px, 2vw, 20px); color: var(--ink-2);
-      font-style: italic; line-height: 1.7;
-    }
-    .insight-card strong { color: var(--ink); }
+/* ── CARDS / GRID ── */
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:26px}
+.card h3{margin-bottom:8px}
+.card p{font-size:15px;color:var(--ink-2)}
+.card .k{font-family:var(--display);font-size:13px;color:var(--ink-3);letter-spacing:1px;margin-bottom:14px;display:block;font-weight:600}
+.card .q{margin-top:14px;font-style:italic;color:var(--ink)}
 
-    /* ── NEXT ─────────────────────────────────────── */
-    .next-card {
-      display: flex; align-items: center; justify-content: space-between;
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--r); padding: 36px 40px; margin-top: 40px;
-      transition: background 0.2s, border-color 0.2s;
-    }
-    .next-card:hover { background: var(--surface-2); border-color: rgba(255,255,255,0.12); }
-    .next-label {
-      font-family: 'Space Grotesk', sans-serif; font-size: 11px;
-      letter-spacing: 2px; text-transform: uppercase;
-      color: var(--ink-3); margin-bottom: 8px; display: block;
-    }
-    .next-title {
-      font-family: 'Space Grotesk', sans-serif; font-size: 22px;
-      font-weight: 700; color: var(--ink);
-    }
-    .next-arrow { font-size: 28px; color: var(--accent); }
+/* ── STRATEGY SHIFT ── */
+.shift{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:16px;align-items:stretch}
+.shift>div{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px 26px;display:grid;gap:6px}
+.shift span{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.shift b{font-family:var(--display);font-size:22px;font-weight:600;letter-spacing:-.4px}
+.shift small{font-size:14px;color:var(--ink-2)}
+.shift__from b{color:var(--ink-2);text-decoration:line-through;text-decoration-color:rgba(255,255,255,.3)}
+.shift__arrow{display:grid;place-items:center;font-size:28px;color:var(--ink-3);background:none!important;border:0!important;padding:0!important}
+.blocks{margin:0}
+.blocks img{background:#fff;border-radius:16px;padding:28px 40px;width:100%}
+figcaption{font-size:14px;color:var(--ink-3);margin-top:14px;max-width:70ch}
+figcaption b{color:var(--ink);font-weight:600}
 
-    /* ── FOOTER ───────────────────────────────────── */
-    footer {
-      padding: 96px 0 48px;
-      border-top: 1px solid var(--border);
-      text-align: center;
-    }
-    .footer-headline {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(32px, 5vw, 64px);
-      font-weight: 800; letter-spacing: -1px;
-      color: var(--ink); margin-bottom: 20px;
-    }
-    .footer-email {
-      font-size: 18px; color: var(--accent);
-      border-bottom: 1px solid rgba(200,255,87,0.3);
-      padding-bottom: 2px; transition: border-color 0.2s;
-    }
-    .footer-email:hover { border-color: var(--accent); }
-    .footer-buttons {
-      display: flex; gap: 12px; justify-content: center;
-      margin-top: 32px; flex-wrap: wrap;
-    }
-    .btn {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 12px 24px; border-radius: var(--r);
-      font-size: 14px; font-weight: 600;
-      transition: all 0.2s ease-in-out; cursor: pointer;
-    }
-    .btn-outline {
-      border: 1px solid var(--border); color: var(--ink-2);
-      background: transparent;
-    }
-    .btn-outline:hover { border-color: rgba(255,255,255,0.25); color: var(--ink); }
-    .btn-accent {
-      background: var(--accent); color: #0A0A0A;
-      border: 1px solid transparent; font-weight: 700;
-    }
-    .btn-accent:hover { opacity: 0.88; }
-    .footer-copy {
-      margin-top: 48px;
-      font-family: 'Space Grotesk', sans-serif; font-size: 11px;
-      color: var(--ink-3); letter-spacing: 1px;
-    }
+/* ── SERVICE CARD VIEWER ── */
+.dtabs{display:grid;grid-template-columns:minmax(0,.75fr) minmax(0,1.25fr);gap:32px;align-items:start}
+.dtabs__side{display:flex;flex-direction:column;gap:14px;min-width:0}
+.dtabs__list{display:grid;gap:8px}
+.dtabs__list button{font:inherit;text-align:left;color:var(--ink);background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 20px;cursor:pointer;display:grid;gap:4px;transition:border-color .2s,background .2s}
+.dtabs__list button:hover{border-color:var(--border-2)}
+.dtabs__list button[aria-selected="true"]{border-color:rgba(255,255,255,.28);background:var(--surface-2)}
+.dtabs__list .k{font-family:var(--display);font-size:12px;letter-spacing:.3px;text-transform:none;color:var(--ink-3);font-weight:600}
+.dtabs__list b{font-family:var(--display);font-size:19px;font-weight:600;letter-spacing:-.3px}
+.dtabs__ctrl{display:flex;align-items:center;justify-content:space-between;padding:0 4px}
+.cnt{font-family:var(--display);font-size:14px;letter-spacing:2px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.arrows{display:flex;gap:8px}
+.arr{font:inherit;width:40px;height:40px;border-radius:50%;border:1px solid var(--border-2);background:transparent;color:var(--ink);cursor:pointer;font-size:16px;transition:background .2s,border-color .2s}
+.arr:hover{background:var(--surface-2);border-color:var(--ink-3)}
+.viewer{min-width:0;display:flex;flex-direction:column;gap:14px}
+.sc{container-type:inline-size;perspective:2000px;cursor:pointer;border-radius:10px}
+.sc__in{display:grid;transition:transform .7s cubic-bezier(.2,.7,.2,1);transform-style:preserve-3d}
+.sc.is-back .sc__in{transform:rotateY(180deg)}
+.sc__face{grid-area:1/1;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:10px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+.sc__back{transform:rotateY(180deg)}
+.viewer__bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.viewer .eu{font-size:13px;color:var(--ink-3)}
 
-    /* ── Scroll reveal ────────────────────────────── */
-    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
-    .reveal.visible { opacity: 1; transform: none; }
-    @media (prefers-reduced-motion: reduce) {
-      .reveal { opacity: 1; transform: none; transition: none; }
-      .metric-value { transition: none; }
-    }
+/* ── CARD OVERLAY ── */
+.c-ov{position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:clamp(16px,4vw,48px);pointer-events:none;opacity:0;transition:opacity .25s}
+.c-ov.is-open{pointer-events:auto;opacity:1}
+.c-ov__bg{position:absolute;inset:0;background:rgba(6,6,6,.88);backdrop-filter:blur(20px);cursor:pointer}
+.c-box{position:relative;z-index:1;width:min(700px,100%);display:flex;flex-direction:column;gap:14px;transform:translateY(20px);transition:transform .35s cubic-bezier(.22,1,.36,1)}
+.c-ov.is-open .c-box{transform:translateY(0)}
+.c-card{container-type:inline-size;perspective:2000px;cursor:pointer}
+@keyframes flip-peek{0%{transform:rotateY(0)}55%{transform:rotateY(42deg)}100%{transform:rotateY(0)}}
+.c-card__in{display:grid;transition:transform .7s cubic-bezier(.2,.7,.2,1);transform-style:preserve-3d}
+.c-card.is-back .c-card__in{transform:rotateY(180deg)}
+.c-card__in.peeking{animation:flip-peek 1s cubic-bezier(.4,0,.2,1) forwards}
+.c-face{grid-area:1/1;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:14px;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,.8)}
+.c-rear{transform:rotateY(180deg)}
+.c-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.sides{display:inline-flex;background:var(--surface);border:1px solid var(--border);border-radius:99px;padding:4px}
+.sides button{font:inherit;font-size:14px;color:var(--ink-2);background:none;border:0;border-radius:99px;padding:8px 14px;cursor:pointer;transition:background .15s,color .15s}
+.sides button:hover{color:var(--ink)}
+.sides button[aria-pressed="true"]{background:var(--ink);color:#0A0A0A;font-weight:600}
+.c-eu{font-size:13px;color:var(--ink-3)}
+.c-close{font:inherit;width:40px;height:40px;border-radius:50%;border:1px solid var(--border-2);background:rgba(255,255,255,.06);color:var(--ink-2);cursor:pointer;font-size:20px;display:grid;place-items:center;transition:background .2s,color .2s;flex-shrink:0}
+.c-close:hover{background:rgba(255,255,255,.16);color:var(--ink)}
 
-    /* ── Responsive ───────────────────────────────── */
-    @media (max-width: 800px) {
-      .metrics-inner { grid-template-columns: repeat(2, 1fr); }
-      .metric { border-right: none; border-bottom: 1px solid var(--border); }
-      .metric:nth-child(odd) { border-right: 1px solid var(--border); }
-      .metric:nth-last-child(-n+2) { border-bottom: none; }
-      .challenge-grid, .persona-grid, .impact-grid, .solution-grid { grid-template-columns: 1fr; }
-      .solution-card--wide { grid-column: auto; }
-      .pivot-grid { grid-template-columns: 1fr; }
-      .pivot-arrow { transform: rotate(90deg); }
-      .nav-name { display: none; }
-    }
-    @media (max-width: 540px) {
-      .metrics-inner { grid-template-columns: 1fr 1fr; }
-      .next-card { flex-direction: column; align-items: flex-start; gap: 16px; }
-    }
+/* card front */
+.cf{aspect-ratio:1.414;background:#A6A7AB;display:flex;align-items:center;justify-content:center;gap:1.8cqw;padding:6cqw;font-family:var(--body);height:100%}
+.cf__title{background:#fff;color:#2b2b30;width:27cqw;height:36cqw;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.6cqw;padding:2cqw;text-align:center}
+.cf__title svg{width:12cqw;height:auto}
+.cf__title h4{font-family:var(--display);font-size:2.5cqw;line-height:1.15;font-weight:700;margin:0;letter-spacing:-.02em}
+.cf__ic{width:3.6cqw;color:#3a3a3f;display:block}.cf__ic svg{width:100%;display:block}
+.cf__desc{width:50cqw;height:36cqw;padding:3cqw 3.4cqw;display:flex;flex-direction:column;justify-content:center;gap:1.3cqw}
+.cf--bank .cf__desc{background:#655F82;color:#fff}
+.cf--pay .cf__desc{background:#F6BB16;color:#1d1d1f}
+.cf__desc p{margin:0;font-size:1.55cqw;line-height:1.55}
+
+/* card back */
+.cbk{aspect-ratio:1.414;background:#fff;position:relative;overflow:hidden;color:#3a3a3f;font-family:var(--body);height:100%}
+.cbk__ring{position:absolute;width:86cqw;aspect-ratio:1;border-radius:50%;background:#E6E6E8;right:-40cqw;top:-46cqw}
+.cbk__blob{position:absolute;width:66cqw;aspect-ratio:1;border-radius:50%;right:-36cqw;top:-36cqw}
+.cbk__head{position:absolute;left:6cqw;top:5.5cqw;width:52cqw;display:flex;gap:2.2cqw;align-items:flex-start}
+.cbk__brick{width:9cqw;flex:none}.cbk__brick svg{width:100%;display:block}
+.cbk__head p{margin:0;font-size:1.55cqw;line-height:1.55}
+.cbk__logo{position:absolute;left:6cqw;bottom:4cqw;font-family:var(--display);font-weight:700;font-size:2.2cqw;color:#5d5d63;letter-spacing:-.02em}
+.cb__flow{position:absolute;left:6cqw;right:6cqw;top:24cqw;display:flex;align-items:center;justify-content:space-between}
+.cb__arr{flex:1;height:1px;background:#F08A84;position:relative;margin:0 .6cqw}
+.cb__arr::after{content:"";position:absolute;right:30%;top:-.9cqw;border-left:1.6cqw solid #F08A84;border-top:.9cqw solid transparent;border-bottom:.9cqw solid transparent}
+
+/* wireframe phone */
+.wp{width:17cqw;flex:none;aspect-ratio:9/18.6;background:#F4F4F5;border:1px solid #DEDEE1;border-radius:2.2cqw;display:flex;flex-direction:column;align-items:center;padding:1.6cqw 1cqw 1cqw;box-shadow:0 2cqw 3cqw rgba(0,0,0,.12);font-size:1cqw;position:relative;z-index:1}
+.wp__spk{width:2.4em;height:.3em;border-radius:1em;background:#D2D2D6;margin-bottom:1.2em}
+.wp__home{width:2.6em;height:2.6em;border-radius:50%;border:1px solid #CFCFD3;margin-top:1em;flex:none}
+.wp__scr{flex:1;width:100%;background:linear-gradient(#E2E2E5,#F2F2F3 60%,#E7E7EA);display:flex;flex-direction:column;align-items:stretch;justify-content:center;gap:1em;padding:1.4em 1.2em;color:#2b2b30;text-align:center;min-height:0}
+.wp__scr--web{justify-content:flex-start;padding-top:.8em}
+.wlogo{display:flex;flex-direction:column;align-items:center;gap:.3em;background:#fff;border:2px solid currentColor;border-radius:.8em;padding:.8em .6em .5em;margin:0 auto;width:72%}
+.wlogo svg{width:58%;height:auto}.wlogo b{font-family:var(--display);font-size:1.2em;line-height:1}
+.wbank{display:flex;flex-direction:column;align-items:center;gap:.2em;color:#8a8a90}.wbank svg{width:3.6em}.wbank b{font-size:1em;letter-spacing:.05em}
+.wcard{background:#fff;padding:1em .9em;display:flex;flex-direction:column;gap:.7em;text-align:left}
+.wh{font-size:1.05em;line-height:1.3;text-align:center}
+.wf{display:block;background:#E9E9EC;font-size:.85em;padding:.45em .6em;color:#777}
+.wbtn{display:block;background:#1DB394;color:#fff;font-weight:700;font-size:.95em;text-align:center;padding:.6em;border-radius:.3em}
+.wbtn--g{background:#7A7A80}
+.wduo{display:grid;grid-template-columns:1fr 1fr;gap:.5em}
+.wradio{background:#7A7A80;color:#fff;font-size:.9em;padding:.6em;text-align:left;border-right:1.4em solid #fff;position:relative}
+.wmsg{background:#7A7A80;color:#fff;font-size:1.05em;line-height:1.3;padding:.9em .6em}
+.wmsg--q{font-size:.95em}
+.wok{width:2.8em;height:2.8em;border-radius:50%;background:#1DB394;color:#fff;display:grid;place-items:center;font-size:1.5em;font-weight:700;margin:0 auto}
+.wurl{background:#fff;border-radius:1em;font-size:.75em;color:#8a8a90;padding:.3em .7em;text-align:left;white-space:nowrap;overflow:hidden}
+.wsm{font-size:.85em;color:#5d5d63;line-height:1.35}
+.wli{font-size:.85em;color:#3a3a3f}
+.wrow{display:flex;justify-content:space-between;gap:.5em;font-size:.9em;background:#fff;padding:.5em .6em;border-bottom:1px solid #eee}
+.wcard .wrow{padding:.3em 0;background:none}
+
+/* payout split */
+.wsplit{position:absolute;left:6cqw;right:6cqw;top:21cqw;display:flex;align-items:center;gap:1.5cqw;font-size:1cqw;color:#2b2b30}
+.ws__col{display:flex;flex-direction:column;gap:.8em;align-items:center;text-align:center;flex:1}
+.ws__avs{display:grid;grid-template-columns:repeat(2,4.4em);gap:.8em}
+.av{width:4.4em;height:4.4em;border-radius:50%;background:#D9D9DC;position:relative;overflow:hidden}
+.av::before{content:"";position:absolute;width:42%;height:42%;border-radius:50%;background:#9C9CA2;left:29%;top:18%}
+.av::after{content:"";position:absolute;width:80%;height:50%;border-radius:50% 50% 0 0;background:#9C9CA2;left:10%;bottom:-12%}
+.av--1{background:#E6E0D6}.av--2{background:#DCE3E8}
+.ws__arr{flex:0 0 5cqw;height:1px;background:#F08A84;position:relative}
+.ws__arr::after{content:"";position:absolute;right:-.2cqw;top:-.9cqw;border-left:1.6cqw solid #F08A84;border-top:.9cqw solid transparent;border-bottom:.9cqw solid transparent}
+.ws__acct{flex:1.3;background:#F1F1F3;border:1px solid #DEDEE1;padding:1.6em 1.2em;display:flex;flex-direction:column;gap:.8em;align-items:center;text-align:center}
+.ws__acct .wlogo{width:50%}
+.ws__acct b{font-size:1.3em}
+.ws__out{align-items:stretch}
+.ws__row{display:flex;align-items:center;gap:.7em;background:#F1F1F3;padding:.5em .8em;font-size:1.05em}
+.wok--s{width:1.8em;height:1.8em;font-size:1em;margin:0}
+.ws__fee{color:#fff;font-weight:700;justify-content:center}
+.ws__labels{position:absolute;left:6cqw;right:6cqw;top:48cqw;display:grid;grid-template-columns:1fr 1.3fr 1fr;gap:6.5cqw;font-size:1.15cqw;color:#77777e;text-align:center;border-top:1px solid #D2D2D6;padding-top:1cqw}
+@container (max-width:560px){
+  .cf,.cbk{aspect-ratio:auto}
+  .cf{flex-direction:column;padding:6cqw;gap:3cqw}
+  .cf__title,.cf__desc{width:100%;height:auto;margin:0}
+  .cf__title{flex-direction:row;justify-content:flex-start;padding:4cqw;gap:4cqw;text-align:left}
+  .cf__title svg{width:18cqw}.cf__title h4{font-size:6cqw;flex:1}.cf__ic{flex:0 0 7cqw;width:7cqw}
+  .cf__desc{padding:6cqw;gap:3cqw}.cf__desc p{font-size:3.9cqw}
+  .cbk{padding:7cqw 6cqw 12cqw}
+  .cbk__ring{width:120cqw;right:-70cqw;top:-80cqw}.cbk__blob{width:90cqw;right:-62cqw;top:-62cqw}
+  .cbk__head,.cb__flow,.wsplit,.ws__labels{position:relative;left:auto;right:auto;top:auto;width:auto}
+  .cbk__head{gap:4cqw}.cbk__brick{width:15cqw}.cbk__head p{font-size:3.9cqw}
+  .cb__flow{display:grid;grid-template-columns:1fr 1fr;gap:5cqw;margin-top:6cqw;justify-items:center}
+  .cb__arr{display:none}
+  .wp{width:38cqw;font-size:2.25cqw;border-radius:5cqw}
+  .wsplit{flex-direction:column;font-size:2.4cqw;margin-top:6cqw;gap:3cqw}
+  .ws__col,.ws__acct{width:100%}
+  .ws__avs{grid-template-columns:repeat(6,4.4em)}
+  .ws__arr{flex:0 0 7cqw;width:1px;height:7cqw}.ws__arr::after{right:auto;top:auto;left:-1.6cqw;bottom:-.4cqw;border-left:1.6cqw solid transparent;border-right:1.6cqw solid transparent;border-top:2.6cqw solid #F08A84;border-bottom:0}
+  .ws__labels{display:none}
+  .cbk{padding-bottom:7cqw}
+  .cbk__logo{position:static;display:block;margin-top:7cqw;font-size:5cqw}
+}
+
+/* ── EVENT PHOTOS ── */
+.event{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.event figure{margin:0}
+.event img{width:100%;aspect-ratio:5/2;object-fit:cover;border-radius:12px;image-rendering:-webkit-optimize-contrast}
+
+/* ── IMPACT / OUTCOMES ── */
+.outs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:48px}
+.out{border-top:2px solid var(--border-2);padding-top:20px}
+.out h3{margin-bottom:8px}
+.out p{color:var(--ink-2);font-size:15px}
+.out .k{font-family:var(--display);font-size:12px;letter-spacing:1px;color:var(--ink-3);font-weight:600;margin-bottom:10px;display:block}
+
+/* ── DASHBOARD ── */
+.dash{display:grid;gap:28px}
+.dash .laptop{max-width:900px;margin:0 auto;width:100%}
+.laptop__screen{background:#0B0B0C;border:1.5px solid #2E2E30;border-bottom:0;border-radius:18px 18px 0 0;padding:2.4% 2.4% 2.8%;box-shadow:0 40px 90px rgba(0,0,0,.65)}
+.laptop__screen img{width:100%;height:auto;border-radius:4px}
+.laptop__base{position:relative;height:16px;width:114%;margin-left:-7%;background:linear-gradient(#4A4A4D,#2A2A2C 55%,#18181A);border-radius:2px 2px 16px 16px}
+.laptop__base::after{content:"";position:absolute;left:50%;top:0;transform:translateX(-50%);width:15%;height:6px;background:#1A1A1C;border-radius:0 0 8px 8px}
+.dsw{justify-self:center}
+.dash__row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.dash__row figure{margin:0}
+.dash__row figcaption{text-align:center;margin-top:10px}
+.dash__row img{aspect-ratio:16/10;object-fit:cover;object-position:top left;width:100%;display:block}
+.frame{border-radius:var(--r);overflow:hidden;background:#1C1C1E;border:1px solid rgba(255,255,255,.1);box-shadow:0 24px 60px rgba(0,0,0,.5)}
+.frame__bar{height:34px;display:flex;align-items:center;gap:7px;padding:0 14px;border-bottom:1px solid rgba(255,255,255,.06)}
+.frame__bar i{width:10px;height:10px;border-radius:50%;background:#3A3A3C}
+.h3sub{font-family:var(--display);font-size:24px;font-weight:600;letter-spacing:-.3px;margin:56px 0 10px}
+.note{margin-top:16px;font-size:14px;color:var(--ink-3);max-width:70ch}
+
+/* ── NEXT + FOOTER ── */
+.next{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;text-decoration:none;padding-block:72px}
+.next small{font-size:12px;letter-spacing:2.5px;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.next h3{font-size:clamp(28px,4vw,44px);letter-spacing:-1.2px;margin-top:10px}
+.next .arr-circle{width:64px;height:64px;border-radius:50%;background:var(--accent);color:#0A0A0A;display:grid;place-items:center;font-size:26px}
+.foot{border-top:1px solid var(--border);padding-block:32px;font-size:13px;color:var(--ink-3);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+
+/* ── RESPONSIVE ── */
+@media (max-width:1100px){
+  .hero__grid{grid-template-columns:1fr;gap:48px}
+  .deck{height:280px}
+  .pc{width:clamp(110px,28vw,160px)}
+  .stat{padding:24px}.stat b{font-size:34px}
+}
+@media (max-width:1000px){
+  .split,.split--prob{grid-template-columns:1fr;gap:28px}
+  .stats,.outs{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid3{grid-template-columns:1fr}
+  .dtabs{grid-template-columns:1fr}
+  .event{grid-template-columns:1fr}
+  .risks--flow{margin-top:8px}
+  .fan-stage{height:320px}
+  .fc:nth-child(1){transform:rotate(-22deg) translateX(-130px)}
+  .fc:nth-child(2){transform:rotate(-7deg) translateX(-44px)}
+  .fc:nth-child(3){transform:rotate(7deg) translateX(44px)}
+  .fc:nth-child(4){transform:rotate(22deg) translateX(130px)}
+  .fc:nth-child(1):hover,.fc:nth-child(1):focus-visible{transform:rotate(-22deg) translateX(-130px) translateY(-38px) scale(1.07)}
+  .fc:nth-child(2):hover,.fc:nth-child(2):focus-visible{transform:rotate(-7deg) translateX(-44px) translateY(-38px) scale(1.07)}
+  .fc:nth-child(3):hover,.fc:nth-child(3):focus-visible{transform:rotate(7deg) translateX(44px) translateY(-38px) scale(1.07)}
+  .fc:nth-child(4):hover,.fc:nth-child(4):focus-visible{transform:rotate(22deg) translateX(130px) translateY(-38px) scale(1.07)}
+}
+@media (max-width:640px){
+  .sec{padding-block:64px}
+  .hero h1{letter-spacing:-2px}
+  .stats,.grid2,.outs{grid-template-columns:1fr}
+  .shift{grid-template-columns:1fr}.shift__arrow{transform:rotate(90deg)}
+  .dash__row{grid-template-columns:1fr}
+  .blocks img{padding:14px}
+  .dtabs__list{grid-auto-flow:column;grid-auto-columns:78%;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px}
+  .dtabs__list button{scroll-snap-align:start}
+  .sides .lg{display:none}.sides button{padding:8px 18px}
+  .fan-stage{height:260px}
+  .fc:nth-child(1){transform:rotate(-18deg) translateX(-100px)}
+  .fc:nth-child(2){transform:rotate(-6deg) translateX(-34px)}
+  .fc:nth-child(3){transform:rotate(6deg) translateX(34px)}
+  .fc:nth-child(4){transform:rotate(18deg) translateX(100px)}
+  .fc:nth-child(1):hover,.fc:nth-child(1):focus-visible{transform:rotate(-18deg) translateX(-100px) translateY(-30px) scale(1.06)}
+  .fc:nth-child(2):hover,.fc:nth-child(2):focus-visible{transform:rotate(-6deg) translateX(-34px) translateY(-30px) scale(1.06)}
+  .fc:nth-child(3):hover,.fc:nth-child(3):focus-visible{transform:rotate(6deg) translateX(34px) translateY(-30px) scale(1.06)}
+  .fc:nth-child(4):hover,.fc:nth-child(4):focus-visible{transform:rotate(18deg) translateX(100px) translateY(-30px) scale(1.06)}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
   </style>
 </head>
 <body>
 
 <!-- NAV -->
-<nav>
-  <div class="nav-inner">
-    <a href="../index.html#work" class="nav-back">← All work</a>
-<div class="nav-right">
-      <a href="https://drive.google.com/file/d/1v95PNrUq3GGAAFtNv8rxzctYXkbnbcL2/view?usp=drive_link" target="_blank" rel="noopener" class="nav-cv">Download CV ↗</a>
+<nav class="nav" id="nav">
+  <div class="wrap">
+    <div class="nav__left">
+      <a href="../index.html#work" class="nav__back">
+        <i data-lucide="arrow-left"></i>
+        All work
+      </a>
+      <div class="nav__sep"></div>
+      <a href="../index.html" class="nav__logo">
+        <img src="../ae-logo-white.svg" alt="Amirmasoud Ebadi" />
+      </a>
     </div>
+    <a href="https://drive.google.com/file/d/1v95PNrUq3GGAAFtNv8rxzctYXkbnbcL2/view?usp=drive_link" target="_blank" rel="noopener" class="nav__cv">Download CV <i data-lucide="external-link"></i></a>
   </div>
-  </nav>
+</nav>
 
 <main>
 
-  <!-- HERO -->
-  <section class="hero">
-    <div class="wrap">
-      <div class="hero-breadcrumb">
-        <span>UX Strategist</span><span>·</span>
-        <span>Fintech / B2B</span><span>·</span>
-        <span>6 Months</span><span>·</span>
-        <span>Concept &amp; Delivery</span>
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap hero__grid">
+    <div class="hero__txt">
+      <div class="num">02 · Fintech · B2B platform</div>
+      <div class="chips">
+        <span class="chip chip--accent">UX Strategist and Concept Developer</span>
+        <span class="chip">Finnotech</span>
+        <span class="chip">6 months</span>
+        <span class="chip">Sales tools</span>
       </div>
-      <h1 class="display hero-title">Making the<br>Abstract Tangible</h1>
-      <p class="hero-sub">Helping non-technical executives understand the strategic value of Open APIs. Result: a <em>70% B2B conversion gap closed.</em></p>
-
-      <div class="hero-mockup">
-        <div class="mockup-bar">
-          <div class="mockup-dot"></div>
-          <div class="mockup-dot"></div>
-          <div class="mockup-dot"></div>
-          <div class="mockup-url"></div>
-        </div>
-        <div class="mockup-body">
-          <div class="mockup-label-row">
-            <div class="mockup-tag"></div>
-            <div class="mockup-tag"></div>
-          </div>
-          <div class="mockup-row">
-            <div class="mockup-block mockup-block--lg mockup-block--accent"></div>
-            <div class="mockup-block mockup-block--sm"></div>
-          </div>
-          <div class="mockup-grid">
-            <div class="mockup-grid-item"></div>
-            <div class="mockup-grid-item mockup-block--accent"></div>
-            <div class="mockup-grid-item"></div>
-          </div>
-          <div class="mockup-row">
-            <div class="mockup-block mockup-block--wide"></div>
-            <div class="mockup-block mockup-block--wide"></div>
-            <div class="mockup-block mockup-block--wide mockup-block--accent"></div>
-          </div>
-        </div>
-      </div>
+      <h1>Making the Abstract Tangible</h1>
+      <p class="lede">Finnotech sold Open Banking APIs to banks and businesses. The product was strong, but executives couldn't see what it would do for them. I helped turn technical features into business outcomes they could see, touch and build with.</p>
     </div>
-  </section>
+    <div class="deck" id="hero-deck" role="img" aria-label="Four API service cards in a fan">
+      <div class="deck__in" id="deck-in"></div>
+    </div>
+  </div>
+</section>
 
-  <!-- METRICS BAR -->
-  <div class="metrics">
-    <div class="metrics-inner">
-      <div class="metric">
-        <div class="metric-value" data-target="70" data-suffix="%">0%</div>
-        <div class="metric-label">Conversion rate improvement after the design shift</div>
+<!-- AT A GLANCE -->
+<section aria-label="Project at a glance">
+  <div class="stats">
+    <div class="stat">
+      <span class="si" aria-hidden="true"><svg viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>
+      <b>70%</b><span>Uplift in enterprise client conversions</span>
+    </div>
+    <div class="stat">
+      <span class="si" aria-hidden="true"><svg viewBox="0 0 24 24"><line x1="3" x2="21" y1="22" y2="22"/><line x1="6" x2="6" y1="18" y2="11"/><line x1="10" x2="10" y1="18" y2="11"/><line x1="14" x2="14" y1="18" y2="11"/><line x1="18" x2="18" y1="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg></span>
+      <b>4 banks</b><span>Reached out to integrate the APIs</span>
+    </div>
+    <div class="stat">
+      <span class="si" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg></span>
+      <b>2 projects</b><span>Additional projects assigned to us</span>
+    </div>
+    <div class="stat">
+      <span class="si" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg></span>
+      <b>6 months</b><span>Project duration</span>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="sec">
+  <div class="wrap split split--prob">
+    <div>
+      <div class="eyebrow">The problem</div>
+      <h2>A strong product that buyers couldn't picture</h2>
+      <p class="lede">Finnotech's Open Banking APIs were competitive, yet B2B conversion stayed low. The product wasn't the problem. The sales material described technical features, so non-technical leaders couldn't see the return on investment, and they didn't commit.</p>
+      <p class="note">Context for European readers: Finnotech is an Iranian fintech that offered bank APIs to third parties, similar to what PSD2 enabled for banks and fintechs in Europe.</p>
+    </div>
+    <div class="risks risks--flow" aria-label="Problem summary">
+      <div class="risk">
+        <span class="ri" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></svg></span>
+        <div><h3>The barrier</h3><p>Sales teams sold technical features, not business outcomes.</p></div>
       </div>
-      <div class="metric">
-        <div class="metric-value" data-target="4" data-suffix="">0</div>
-        <div class="metric-label">Additional banks reached out to integrate post-launch</div>
+      <div class="risk">
+        <span class="ri" aria-hidden="true"><svg viewBox="0 0 24 24"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg></span>
+        <div><h3>The impact</h3><p>Buyers couldn't see the ROI, so deals stalled.</p></div>
       </div>
-      <div class="metric">
-        <div class="metric-value" data-target="2" data-prefix="+">0</div>
-        <div class="metric-label">Bonus projects assigned off the back of this engagement</div>
-      </div>
-      <div class="metric">
-        <div class="metric-value">6mo</div>
-        <div class="metric-label">Free engineering support included in post-launch plan</div>
+      <div class="risk risk--goal">
+        <span class="ri" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>
+        <div><h3>The goal</h3><p>Redesign the sales story and materials so the value is obvious.</p></div>
       </div>
     </div>
   </div>
+</section>
 
-  <!-- CHALLENGE -->
-  <section class="section" aria-labelledby="challenge-heading">
-    <div class="wrap">
-      <span class="eyebrow reveal">— The Challenge</span>
-      <h2 class="section-heading reveal" id="challenge-heading">A technically superior product<br>that executives couldn't buy into</h2>
+<!-- RESEARCH -->
+<section class="sec">
+  <div class="wrap">
+    <div class="eyebrow">Research</div>
+    <h2>Finding the confidence gap</h2>
+    <p class="lede">Low sales were the symptom. To find the real blocker, we interviewed the whole team in person, including the sales representatives and the product manager.</p>
+    <div class="grid2 mt">
+      <div class="card">
+        <span class="k">PRIORITY 1 · ENTERPRISE</span>
+        <h3>The risk-averse executive</h3>
+        <p>Needs the strategic value without technical jargon. When something is unclear, they stay quiet and drop off rather than risk looking uninformed.</p>
+        <p class="q">"What does this mean for our business?"</p>
+      </div>
+      <div class="card">
+        <span class="k">PRIORITY 2 · SME</span>
+        <h3>The resource-constrained founder</h3>
+        <p>Sees high risk in security, time and cost. Needs quick, concrete proof that the integration is safe and doable.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
-      <div class="challenge-grid">
-        <div class="reveal">
-          <p class="body-text" style="margin-bottom:20px;">Finnotech had built one of the most capable Open API platforms in the region — a technically sophisticated system ready for enterprise-scale integration. But the sales process was stalling at the executive level.</p>
-          <p class="body-text">The people making purchasing decisions weren't engineers. They were C-suite leaders and founders who needed to understand strategic outcomes, not technical capabilities. The gap between what the product could do and what buyers could understand was costing deals.</p>
-        </div>
-        <div class="pain-list reveal">
-          <div class="pain-item">Sales materials caused cognitive overload in non-technical executives</div>
-          <div class="pain-item">No ROI framing — buyers couldn't calculate the value of integration</div>
-          <div class="pain-item">Identical messaging for enterprise C-suite and SME founders with completely different needs</div>
-          <div class="pain-item">Technical documentation positioned as the primary entry point</div>
-          <div class="pain-item">No visual representation of how integration would look in practice</div>
+<!-- STRATEGY -->
+<section class="sec">
+  <div class="wrap">
+    <div class="eyebrow">Strategy</div>
+    <h2>From features to outcomes</h2>
+    <div class="shift mt">
+      <div class="shift__from"><span>From</span><b>Selling technical features</b><small>Endpoints, documentation, integration guides</small></div>
+      <div class="shift__arrow" aria-hidden="true">→</div>
+      <div class="shift__to"><span>To</span><b>Selling business outcomes</b><small>What the client's own product can do next</small></div>
+    </div>
+    <div class="grid2" style="margin-top:16px">
+      <div class="card"><span class="k">HOW MIGHT WE · 1</span><h3>…make the value visible enough that an executive understands it without technical help?</h3></div>
+      <div class="card"><span class="k">HOW MIGHT WE · 2</span><h3>…remove the feeling of risk so a founder is comfortable committing?</h3></div>
+    </div>
+    <figure class="blocks mt">
+      <img src="assets/openapi/blocks.webp" width="1400" height="621"
+        alt="Illustration: a bank on the left, Finnotech's API building blocks in the middle, and a business on the right, connected by arrows" />
+      <figcaption><b>One service, one building block.</b> We framed every API as a numbered block that sits between a bank and a business. Clients could see how a few blocks combine into a new feature for their own product.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- PROTOTYPES -->
+<section class="sec">
+  <div class="wrap">
+    <div class="eyebrow">Prototypes</div>
+    <h2>Double-sided service cards</h2>
+    <p class="lede">A deck of printed cards, one per service. The front explains the service. The back shows a white-labeled mock-up of the client's own product after the integration, so a CEO could see exactly what their customers would experience.</p>
+    <div class="dtabs mt">
+      <div class="dtabs__side">
+        <div class="dtabs__list" role="tablist" aria-label="Cards"></div>
+        <div class="dtabs__ctrl">
+          <span class="cnt" id="dcnt" aria-live="polite">01 / 04</span>
+          <div class="arrows">
+            <button class="arr" id="dprev" aria-label="Previous card">←</button>
+            <button class="arr" id="dnext" aria-label="Next card">→</button>
+          </div>
         </div>
       </div>
-
-      <blockquote class="blockquote reveal">
-        "The platform was selling technical features when buyers needed to see strategic outcomes."
-      </blockquote>
-
-      <div class="persona-grid reveal">
-        <div class="persona-card">
-          <span class="persona-tag">Persona 01 — Enterprise</span>
-          <div class="persona-name">The Risk-Averse Executive</div>
-          <p class="body-text" style="font-size:14px;">Needs strategic value without technical jargon. Their question is "What does this mean for our business?" not "How does the API work?" They need outcomes mapped to their KPIs before the engineering team ever gets involved.</p>
-        </div>
-        <div class="persona-card">
-          <span class="persona-tag">Persona 02 — SME</span>
-          <div class="persona-name">The Resource-Constrained Founder</div>
-          <p class="body-text" style="font-size:14px;">Needs immediate reassurance about security, time, and cost. "Will this break what I already have?" comes before "What can I build?" They need a fast path to confidence, not a deep technical evaluation.</p>
+      <div class="viewer" id="viewer" role="tabpanel">
+        <div class="sc" id="sc"><div class="sc__in" id="scin"></div></div>
+        <div class="viewer__bar">
+          <div class="sides" role="group" aria-label="Card side">
+            <button type="button" data-side="0" aria-pressed="true">Front<span class="lg"> · The service</span></button>
+            <button type="button" data-side="1" aria-pressed="false">Back<span class="lg"> · The client's product</span></button>
+          </div>
+          <span class="eu" id="eu"></span>
         </div>
       </div>
     </div>
-  </section>
-
-  <!-- STRATEGIC PIVOT -->
-  <section class="section" aria-labelledby="pivot-heading">
-    <div class="wrap">
-      <span class="eyebrow reveal">— The Strategic Pivot</span>
-      <h2 class="section-heading reveal" id="pivot-heading">From selling features<br>to selling outcomes</h2>
-      <p class="body-text reveal" style="max-width:640px;">The entire design strategy rested on one reframe: stop explaining what the APIs do and start showing what they make possible.</p>
-
-      <div class="pivot-grid reveal">
-        <div class="pivot-card">
-          <span class="pivot-label pivot-label--before">Before</span>
-          <div class="pivot-title">Selling Technical Features</div>
-          <p class="body-text" style="font-size:14px;">Code samples, endpoint documentation, integration guides. Every touchpoint assumed deep technical context that most buyers didn't have — and didn't need.</p>
-        </div>
-        <div class="pivot-arrow">→</div>
-        <div class="pivot-card pivot-card--after">
-          <span class="pivot-label pivot-label--after">After</span>
-          <div class="pivot-title">Selling Strategic Outcomes</div>
-          <p class="body-text" style="font-size:14px;">ROI visualisation, business scenario mapping, co-creation tools. Every touchpoint started with the buyer's world and worked back to the technology that enabled it.</p>
-        </div>
-      </div>
+    <p class="note">Recreated in English from the original Persian cards. App names and amounts are examples.</p>
+    <h3 class="h3sub">In the meeting, and after it</h3>
+    <p class="lede">Sales reps and clients laid the cards out together to design the client's solution in the meeting. Afterwards the cards stayed with the client as a brochure, which helped them remember and build consensus internally.</p>
+    <div class="event mt">
+      <figure><img src="assets/openapi/ev-card.webp" width="728" height="336" alt="A hand writes notes on a printed card next to loose Lego bricks" loading="lazy" /></figure>
+      <figure><img src="assets/openapi/ev-booth.webp" width="796" height="328" alt="Visitors at the Finnotech booth gather around a table and build with bricks" loading="lazy" /></figure>
+      <figure><img src="assets/openapi/ev-bricks.webp" width="796" height="372" alt="Close-up of hands placing bricks on a green baseplate" loading="lazy" /></figure>
+      <figure><img src="assets/openapi/ev-stand.webp" width="780" height="364" alt="The Finnotech booth with a wall made of large building blocks" loading="lazy" /></figure>
     </div>
-  </section>
+    <p class="note">At an industry event, the building-block idea became physical: visitors built with real bricks and sketched on the cards.</p>
+  </div>
+</section>
 
-  <!-- SOLUTION -->
-  <section class="section" aria-labelledby="solution-heading">
-    <div class="wrap">
-      <span class="eyebrow reveal">— The Solution</span>
-      <h2 class="section-heading reveal" id="solution-heading">Two tools that changed<br>the conversation</h2>
-
-      <div class="solution-grid">
-        <div class="solution-card reveal">
-          <div class="solution-icon"><i data-lucide="bar-chart-2"></i></div>
-          <div class="solution-title">Digital ROI Simulator</div>
-          <p class="body-text" style="font-size:14px;">A white-labeled interactive prototype that let buyers model their own integration scenarios. Input current transaction volume, output projected cost savings and new revenue. No technical knowledge required — the language of business, not engineering.</p>
-        </div>
-        <div class="solution-card reveal">
-          <div class="solution-icon"><i data-lucide="layout-grid"></i></div>
-          <div class="solution-title">Printed Co-Creation Wireframes</div>
-          <p class="body-text" style="font-size:14px;">A set of physical design cards used in workshop settings to map buyer-specific integration flows. Tangible, visual, and collaborative — designed to make abstract API capabilities concrete within the buyer's own business context.</p>
-        </div>
-        <div class="solution-card solution-card--wide reveal">
-          <div class="solution-icon"><i data-lucide="zap"></i></div>
-          <div class="solution-title">Post-Launch Adoption Programme</div>
-          <p class="body-text" style="font-size:14px;">A structured 6-month support plan built into the sales agreement: dedicated sandbox access, a CSR onboarding programme, and committed engineering support hours. Reduced perceived risk by guaranteeing accountability beyond the signed contract.</p>
-        </div>
-      </div>
+<!-- IMPACT -->
+<section class="sec">
+  <div class="wrap">
+    <div class="eyebrow">Impact</div>
+    <h2>Trust is a design problem</h2>
+    <p class="lede">We validated the materials in two stages before rolling them out: first inside the sales process, then in the market.</p>
+    <div class="outs">
+      <div class="out"><span class="k">COMMERCIAL</span><h3>70% conversion uplift</h3><p>Conversion of enterprise clients rose by 70%.</p></div>
+      <div class="out"><span class="k">COMMERCIAL</span><h3>Faster pipeline</h3><p>Fewer early drop-offs and noticeably faster movement through the pipeline.</p></div>
+      <div class="out"><span class="k">MARKET</span><h3>4 more banks</h3><p>Four banks reached out on their own to integrate the API list. Finnotech moved from a single provider toward an industry leader.</p></div>
+      <div class="out"><span class="k">MARKET</span><h3>Clients got excited</h3><p>We tested the tools in real sales meetings. Clients "got excited" when they saw their own improved product.</p></div>
     </div>
-  </section>
+    <blockquote class="quote mt"><small>Strategic outcome</small>Trust is a design problem. Once it is solved, it drives growth across the industry.</blockquote>
+  </div>
+</section>
 
-  <!-- IMPACT -->
-  <section class="section" aria-labelledby="impact-heading">
-    <div class="wrap">
-      <span class="eyebrow reveal">— The Impact</span>
-      <h2 class="section-heading reveal" id="impact-heading">From single provider<br>to industry contender</h2>
-
-      <div class="impact-grid">
-        <div class="impact-card reveal">
-          <div class="impact-value" data-target="70" data-suffix="%">0%</div>
-          <div class="impact-label">Conversion rate improvement after the design and messaging shift</div>
-        </div>
-        <div class="impact-card reveal">
-          <div class="impact-value" data-target="4">0</div>
-          <div class="impact-label">New banks entered the integration pipeline within 90 days of launch</div>
-        </div>
-        <div class="impact-card reveal">
-          <div class="impact-value" data-target="2" data-prefix="+">0</div>
-          <div class="impact-label">Bonus strategic design projects assigned directly from this engagement</div>
-        </div>
-        <div class="impact-card reveal">
-          <div class="impact-value">→</div>
-          <div class="impact-label">Repositioned from technical vendor to recognized industry platform leader</div>
-        </div>
-      </div>
-
-      <div class="insight-card reveal">
-        "The product didn't change. <strong>The language around it did.</strong> When we stopped explaining the API and started showing what it makes possible for the buyer's business, the decision became obvious."
-      </div>
+<!-- WHAT HAPPENED NEXT -->
+<section class="sec">
+  <div class="wrap">
+    <div class="eyebrow">What happened next</div>
+    <h2>Removing the remaining doubts</h2>
+    <p class="lede">The first interviews showed that startups and SMEs had their own concerns. We focused on enterprises first and planned to return to this segment in the next phase.</p>
+    <div class="grid3 mt">
+      <div class="card"><span class="k">IMPLEMENTATION</span><h3>Free engineering help</h3><p>Clients worried the integration would be too complex, so we offered six months of free engineering support.</p></div>
+      <div class="card"><span class="k">SOCIAL RESPONSIBILITY</span><h3>Free APIs for startups</h3><p>New startups got selected API packages for free in their first six months.</p></div>
+      <div class="card"><span class="k">FUNCTION</span><h3>A free sandbox</h3><p>For clients unsure whether the product would work for them, we introduced a free sandbox to test in.</p></div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- NEXT -->
-  <section class="section" aria-labelledby="next-heading">
-    <div class="wrap">
-      <span class="eyebrow reveal" id="next-heading">— Next Case Study</span>
-      <a href="customerclub.html" class="next-card reveal">
-        <div>
-          <span class="next-label">Up Next</span>
-          <div class="next-title">Driving Loyalty — Banking Customer Club</div>
+<!-- DASHBOARD -->
+<section class="sec">
+  <div class="wrap">
+    <div class="eyebrow">Also designed</div>
+    <h2>The developer dashboard</h2>
+    <p class="lede">I designed the UX and UI of Finnotech's developer dashboard, where clients sign in, register their apps, pick services and find the documentation. This refreshed version brings today's patterns: usage at a glance, keys you can copy and rotate, user-approved scopes per service, and docs with live code examples.</p>
+    <div class="dash mt">
+      <div class="laptop">
+        <div class="laptop__screen">
+          <img id="dmain" src="assets/openapi/dash-new-main.webp" width="1600" height="1000" alt="Refreshed dashboard overview with API usage, apps, a go-live checklist and notifications" />
         </div>
-        <div class="next-arrow">→</div>
-      </a>
+        <div class="laptop__base"></div>
+      </div>
+      <div class="dash__row" id="drow"></div>
     </div>
-  </section>
+    <p class="note">A concept refresh. App names, people and numbers are examples.</p>
+  </div>
+</section>
 
 </main>
 
-<!-- FOOTER -->
-<footer>
-  <div class="wrap">
-    <div class="footer-headline">Let's work together.</div>
-    <a href="mailto:amirmasoud.ebadi@gmail.com" class="footer-email">amirmasoud.ebadi@gmail.com</a>
-    <div class="footer-buttons">
-      <a href="https://www.linkedin.com/in/amirmasoud-ebadi/" target="_blank" rel="noopener" class="btn btn-outline">LinkedIn ↗</a>
-      <a href="mailto:amirmasoud.ebadi@gmail.com?subject=Let's%20work%20together" class="btn btn-accent">Book a 30-min call →</a>
+<!-- CARD OVERLAY -->
+
+
+<div class="wrap">
+  <a class="next" href="customerclub.html">
+    <div>
+      <small>Next case study</small>
+      <h3>Driving Loyalty</h3>
+      <p class="muted" style="margin-top:6px">03 · Fintech · A customer club for a regional bank</p>
     </div>
-    <p class="footer-copy">© 2025 Amirmasoud Ebadi</p>
-  </div>
-</footer>
+    <span class="arr-circle" aria-hidden="true">→</span>
+  </a>
+  <footer class="foot">
+    <span>© 2026 Amirmasoud Ebadi</span>
+    <a href="#" style="color:var(--ink-3)">Back to top ↑</a>
+  </footer>
+</div>
 
+<script src="https://unpkg.com/lucide@1.49.0/dist/umd/lucide.min.js"></script>
 <script>
-  // Scroll reveal
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(el => {
-      if (el.isIntersecting) {
-        el.target.classList.add('visible');
-        observer.unobserve(el.target);
-      }
-    });
-  }, { threshold: 0.1 });
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+lucide.createIcons();
 
-  // Count-up animation
-  function animateCount(el) {
-    const target = parseInt(el.dataset.target, 10);
-    const prefix = el.dataset.prefix || '';
-    const suffix = el.dataset.suffix || '';
-    const duration = 1200;
-    const start = performance.now();
-    const update = (now) => {
-      const progress = Math.min((now - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      el.textContent = prefix + Math.round(eased * target) + suffix;
-      if (progress < 1) requestAnimationFrame(update);
-    };
-    requestAnimationFrame(update);
-  }
+/* ── Nav scroll ── */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.style.background = window.scrollY > 40 ? 'rgba(10,10,10,.95)' : 'rgba(10,10,10,.88)';
+}, { passive: true });
 
-  const countObserver = new IntersectionObserver((entries) => {
-    entries.forEach(el => {
-      if (el.isIntersecting && el.target.dataset.target) {
-        animateCount(el.target);
-        countObserver.unobserve(el.target);
-      }
-    });
-  }, { threshold: 0.5 });
-  document.querySelectorAll('[data-target]').forEach(el => countObserver.observe(el));
+/* ── Brick SVG ── */
+const BRICK = (c, no) => {
+  const isWhite = c === '#fff';
+  const badgeFill = isWhite ? 'rgba(0,0,0,0.12)' : 'rgba(255,255,255,0.92)';
+  const badgeText = isWhite ? '#888' : '#1a1a1a';
+  const st = [[50,27],[29,38],[71,38],[50,49]].map(([x,y]) =>
+    `<path d="M${x-8} ${y}v-6a8 3.6 0 0 1 16 0v6a8 3.6 0 0 1-16 0z" fill="${c}"/>` +
+    `<path d="M${x-8} ${y}v-6a8 3.6 0 0 0 16 0v6a8 3.6 0 0 1-16 0z" fill="#000" opacity=".12"/>` +
+    `<ellipse cx="${x}" cy="${y-6}" rx="8" ry="3.6" fill="${c}"/>` +
+    `<ellipse cx="${x}" cy="${y-6}" rx="8" ry="3.6" fill="#fff" opacity=".22"/>`).join('');
+  return `<svg viewBox="0 0 100 96" aria-hidden="true">
+    <path d="M8 38 50 56v36L8 74z" fill="${c}"/>
+    <path d="M50 56 92 38v36L50 92z" fill="${c}"/>
+    <path d="M50 56 92 38v36L50 92z" fill="#000" opacity=".18"/>
+    <path d="M50 20 92 38 50 56 8 38z" fill="${c}"/>
+    <path d="M50 20 92 38 50 56 8 38z" fill="#fff" opacity=".14"/>
+    ${st}
+    ${no ? `<g transform="translate(71,65) skewX(-23)"><circle cx="0" cy="0" r="12" fill="${badgeFill}"/><text x="0" y="0.5" text-anchor="middle" dominant-baseline="middle" font-family="Space Grotesk,Arial,sans-serif" font-weight="700" font-size="12" fill="${badgeText}">${no}</text></g>` : ''}
+  </svg>`;
+};
+const ICON = { bank: `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M8 9.5h6.5l-1.8-1.8M16 14.5H9.5l1.8 1.8" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>` };
+const FAM = { bank: { name: 'Banking service', c: '#5D5A84' }, pay: { name: 'Facilitation service', c: '#F6BB16' } };
+const APP = { taxito: { name: 'Taxito', c: '#F07A1A' }, abacus: { name: 'Abacus', c: '#24306B' } };
+
+const CARDS = [
+  { no:'01', fam:'bank', title:'Account opening', eu:'Digital onboarding', app:'abacus',
+    desc:['With this service, you can open a new account at your bank online, from anywhere and at any time.','Account opening lets you open new accounts at Finnotech\'s partner banks in minutes. Apps can use the same service to open accounts for their users.','You only need one active account at a partner bank. After that, new accounts open online, quickly and securely, without a branch visit.'],
+    use:'Abacus, a budgeting app, uses this service to open savings accounts for its users, so they can set part of their income aside. The account is created in the user\'s own online bank, with their permission.' },
+  { no:'02', fam:'bank', title:'Direct debit', eu:'SEPA Direct Debit', app:'taxito',
+    desc:['With this service, your customers allow you online to collect money from their account. Depending on your service, the permission covers one payment or a regular schedule.','Direct debit lets you collect monthly and recurring payments. Customers are happier, because they no longer have to think about regular payments.'],
+    use:'Taxito uses this service so riders can top up their ride credit by a fixed amount every month, without a payment step for each ride.' },
+  { no:'22', fam:'pay', title:'In-app payment', eu:'In-app checkout', app:'taxito',
+    desc:['With this service, you add the payment step to your own app. Users see their cards without being sent to an external payment page, pick one, enter its code and pay.','Checkout becomes faster and much simpler, and customers get a better online shopping experience.'],
+    use:'Taxito\'s manager wants a simpler checkout. With this service, riders pay inside the app and are never redirected to a payment gateway.' },
+  { no:'24', fam:'pay', title:'Intermediary account and payout split', eu:'Marketplace payouts', app:'taxito',
+    desc:['With this service, all customer payments land in one intermediary account and are split automatically between the platform and its partners.','The platform no longer holds money that isn\'t its own, and every partner gets their share on a fixed schedule.'],
+    use:'Only part of each fare belongs to Taxito; most of it belongs to the drivers. All fares land in an intermediary account. On a set schedule, each driver\'s share is paid out and the rest goes to Taxito.' }
+];
+
+/* ── Card front ── */
+const front = (k) => {
+  const d = CARDS[k], f = FAM[d.fam];
+  return `<div class="cf cf--${d.fam}"><div class="cf__title">${BRICK(f.c,+d.no)}<h4>${d.title}</h4><span class="cf__ic">${ICON.bank}</span></div><div class="cf__desc">${d.desc.map(p=>`<p>${p}</p>`).join('')}</div></div>`;
+};
+
+/* ── Card back ── */
+const APPIC = {
+  abacus: `<svg viewBox="0 0 40 32" aria-hidden="true"><rect x="2" y="2" width="36" height="28" rx="2" fill="none" stroke="currentColor" stroke-width="3"/>${[8,16,24].map((y,i)=>`<line x1="4" y1="${y}" x2="36" y2="${y}" stroke="currentColor" stroke-width="1.5"/>${[0,1,2].map(j=>`<circle cx="${8+j*5+(i===1?14:0)}" cy="${y}" r="2.6" fill="currentColor"/>`).join('')}`).join('')}</svg>`,
+  taxito: `<svg viewBox="0 0 40 32" aria-hidden="true"><rect x="13" y="1" width="14" height="6" rx="1.5" fill="currentColor"/><path d="M8 14l4-6h16l4 6" fill="none" stroke="currentColor" stroke-width="3"/><rect x="4" y="14" width="32" height="11" rx="3" fill="currentColor"/><rect x="7" y="25" width="6" height="5" rx="1" fill="currentColor"/><rect x="27" y="25" width="6" height="5" rx="1" fill="currentColor"/><circle cx="11" cy="19.5" r="2.3" fill="#fff"/><circle cx="29" cy="19.5" r="2.3" fill="#fff"/></svg>`
+};
+const BANKIC = `<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="19" fill="#D9D9DC"/><path d="M9 16 20 9l11 7z" fill="#fff"/><rect x="11" y="17" width="3" height="10" fill="#fff"/><rect x="18.5" y="17" width="3" height="10" fill="#fff"/><rect x="26" y="17" width="3" height="10" fill="#fff"/><rect x="9" y="28" width="22" height="3" fill="#fff"/></svg>`;
+const ph = (inner, cls='') => `<div class="wp"><i class="wp__spk"></i><div class="wp__scr ${cls}">${inner}</div><i class="wp__home"></i></div>`;
+const logo = (a) => `<div class="wlogo" style="color:${APP[a].c}">${APPIC[a]}<b>${APP[a].name}</b></div>`;
+const bank = (t) => `<div class="wbank">${BANKIC}<b>${t||'BANK'}</b></div>`;
+const btn = (t, g) => `<span class="wbtn${g?' wbtn--g':''}">${t}</span>`;
+const fld = (t) => `<span class="wf">${t}</span>`;
+const msg = (t) => `<div class="wmsg">${t}</div><span class="wok">✓</span>`;
+const url = `<div class="wurl">‹ › internetbank.dashboard</div>`;
+const row = (a, b) => `<div class="wrow"><span>${a}</span><b>${b}</b></div>`;
+const login = ph(`<div class="wcard">${bank()}${fld('Customer ID')}${fld('Password')}${btn('Log in →')}${btn('Sign up',1)}</div>`);
+const FLOWS = [
+  [ph(`${logo('abacus')}<div class="wradio">Open an account</div>${btn('Confirm')}`), login,
+   ph(`${url}<div class="wcard"><b class="wh">Welcome to your online bank</b>${bank()}<span class="wsm">Choose an account type:</span><span class="wli">○ Short-term</span><span class="wli">● Savings</span>${btn('Confirm')}</div>`,'wp__scr--web'),
+   ph(`${logo('abacus')}${msg('New account opened')}`)],
+  [ph(`${logo('taxito')}<div class="wmsg wmsg--q">Pay for your rides monthly?</div>${btn('Confirm')}`), login,
+   ph(`${url}<div class="wcard"><b class="wh">Approve a monthly payment to Taxito</b>${bank()}${row('Amount','€40')}${row('Every','Month')}<div class="wduo">${btn('No',1)}${btn('Yes')}</div></div>`,'wp__scr--web'),
+   ph(`${logo('taxito')}${msg('Monthly payment approved')}`)],
+  [ph(`${logo('taxito')}${row('Fare','€12.40')}${row('Driver','727')}${btn('Confirm')}`),
+   ph(`${logo('taxito')}<div class="wcard"><b class="wh">Choose a card</b>${row('Visa','•• 4417')}${row('Debit','•• 0832')}${row('Visa','•• 2290')}</div>`),
+   ph(`${logo('taxito')}<div class="wcard"><b class="wh">Card •• 4417</b>${fld('Security code')}${btn('Pay')}</div>`),
+   ph(`${logo('taxito')}${msg('Payment successful')}`)],
+  null
+];
+const SPLIT = () => {
+  const av = (i) => `<span class="av av--${i%3}"></span>`;
+  return `<div class="wsplit">
+    <div class="ws__col"><div class="ws__avs">${[0,1,2,3,4,5].map(av).join('')}</div><span class="wsm">Riders pay their fares</span></div>
+    <div class="ws__arr" aria-hidden="true"></div>
+    <div class="ws__acct">${logo('taxito')}<b>Intermediary account</b><span class="wsm">Fares are collected, then split on a schedule</span></div>
+    <div class="ws__arr" aria-hidden="true"></div>
+    <div class="ws__col ws__out">${['Driver 17','Driver 18','Driver 19','Driver 51'].map(t=>`<div class="ws__row"><span class="wok wok--s">✓</span>${t}</div>`).join('')}<div class="ws__row ws__fee" style="background:${APP.taxito.c}">Taxito fee</div></div>
+  </div>
+  <div class="ws__labels"><span>In: fares</span><span>Intermediary account</span><span>Out: payouts</span></div>`;
+};
+const back = (k) => {
+  const d = CARDS[k], f = FAM[d.fam];
+  const flow = FLOWS[k] ? `<div class="cb__flow">${FLOWS[k].join('<span class="cb__arr" aria-hidden="true"></span>')}</div>` : SPLIT();
+  return `<div class="cbk cbk--${d.fam}"><i class="cbk__ring"></i><i class="cbk__blob" style="background:${f.c}"></i><div class="cbk__head"><span class="cbk__brick">${BRICK(f.c,+d.no)}</span><p>${d.use}</p></div>${flow}<span class="cbk__logo">finnotech</span></div>`;
+};
+
+/* ── Hero fan deck ── */
+const SHORT = [
+  'Open an account at a partner bank online, from anywhere.',
+  '',
+  'Accept card payments inside your own app, without redirecting customers.',
+  'Collect all payments in one account and split them automatically between the platform and its partners.'
+];
+const face = (k) => {
+  const d = CARDS[k], f = FAM[d.fam];
+  return `<div class="face face--${d.fam}"><div class="face__side">${BRICK(f.c)}<span class="no">N° ${d.no}</span></div><div class="face__body"><span class="fam">${f.name}</span><h4>${d.title}</h4><p>${SHORT[k]}</p><span class="eu">In Europe: ${d.eu}</span><span class="logo">finnotech</span></div></div>`;
+};
+
+/* ── Hero stacked deck ── */
+const STACK_Z = 32;
+const deckIn = document.getElementById('deck-in');
+const deckEl = document.getElementById('hero-deck');
+
+/* 3 cards: account opening, in-app payment, payout split */
+[0, 2, 3].forEach((k, i) => {
+  const d = CARDS[k], f = FAM[d.fam];
+  const pc = document.createElement('div');
+  pc.className = `pc pc--${d.fam}`;
+  pc.setAttribute('aria-hidden','true');
+  pc.innerHTML = `<div class="pc__band">${BRICK(f.c, +d.no)}</div>
+    <div class="pc__body"><h5>${d.title}</h5><span class="wm">finnotech</span></div>`;
+  const finalZ = i * STACK_Z;
+  pc.style.transform = `translateZ(${finalZ}px)`;
+  pc.style.opacity = '0';
+  deckIn.appendChild(pc);
+  setTimeout(() => {
+    pc.style.transition = 'opacity .5s';
+    pc.style.opacity = '1';
+  }, 80 + i * 100);
+});
+
+/* subtle float on top card */
+const topCard = () => deckIn.lastElementChild;
+setTimeout(() => {
+  let t = 0;
+  setInterval(() => {
+    t += 0.018;
+    const top = topCard();
+    if (top) top.style.transform = `translateZ(${2 * STACK_Z}px) translateY(${Math.sin(t)*7}px)`;
+  }, 16);
+}, 100 + 3 * 120 + 400);
+
+/* 3D parallax — shift the whole isometric deck */
+const BASE = 'rotateX(48deg) rotateZ(22deg)';
+deckIn.style.transform = BASE;
+if (deckEl && !matchMedia('(prefers-reduced-motion:reduce)').matches) {
+  deckEl.addEventListener('mousemove', e => {
+    const r = deckEl.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5;
+    const y = (e.clientY - r.top) / r.height - 0.5;
+    deckIn.style.transition = '';
+    deckIn.style.transform = `rotateX(${48 - y*8}deg) rotateZ(${22 + x*6}deg)`;
+  }, { passive: true });
+  deckEl.addEventListener('mouseleave', () => {
+    deckIn.style.transition = 'transform .8s cubic-bezier(.22,1,.36,1)';
+    deckIn.style.transform = BASE;
+  });
+}
+
+/* ── Viewer ── */
+const list = document.querySelector('.dtabs__list');
+list.innerHTML = CARDS.map((d,i) =>
+  `<button role="tab" id="t${i}" aria-controls="viewer" aria-selected="${i===0}" ${i?'tabindex="-1"':''}><span class="k">N° ${d.no} · ${FAM[d.fam].name}</span><b>${d.title}</b></button>`
+).join('');
+const tabs = [...list.querySelectorAll('[role=tab]')];
+const sc = document.getElementById('sc');
+const scin = document.getElementById('scin');
+const segs = [...document.querySelectorAll('.sides button')];
+let side = 0;
+function setSide(s) {
+  side = s;
+  sc.classList.toggle('is-back', !!s);
+  segs.forEach((b,j) => b.setAttribute('aria-pressed', j===s));
+  if (scin.children[0]) scin.children[0].setAttribute('aria-hidden', !!s);
+  if (scin.children[1]) scin.children[1].setAttribute('aria-hidden', !s);
+}
+function sel(i, focus) {
+  tabs.forEach((t,j) => { t.setAttribute('aria-selected', j===i); t.tabIndex = j===i ? 0 : -1; });
+  document.getElementById('viewer').setAttribute('aria-labelledby', 't'+i);
+  document.getElementById('dcnt').textContent = `0${i+1} / 0${tabs.length}`;
+  document.getElementById('eu').textContent = 'In Europe: ' + CARDS[i].eu;
+  scin.innerHTML = `<div class="sc__face">${front(i)}</div><div class="sc__face sc__back">${back(i)}</div>`;
+  setSide(side);
+  if (focus) tabs[i].focus();
+}
+const cur = () => tabs.findIndex(t => t.getAttribute('aria-selected') === 'true');
+tabs.forEach((t,i) => {
+  t.addEventListener('click', () => sel(i));
+  t.addEventListener('keydown', e => {
+    let n = null;
+    if (e.key==='ArrowDown'||e.key==='ArrowRight') n = (i+1) % tabs.length;
+    if (e.key==='ArrowUp'||e.key==='ArrowLeft') n = (i-1+tabs.length) % tabs.length;
+    if (n !== null) { e.preventDefault(); sel(n, true); }
+  });
+});
+document.getElementById('dprev').onclick = () => sel((cur()-1+tabs.length)%tabs.length);
+document.getElementById('dnext').onclick = () => sel((cur()+1)%tabs.length);
+segs.forEach((b,j) => b.addEventListener('click', () => setSide(j)));
+sc.addEventListener('click', () => setSide(side ? 0 : 1));
+sel(0);
+
+/* ── Dashboard row ── */
+const drow = document.getElementById('drow');
+drow.innerHTML = [
+  ['dash-new-login.webp',1600,1000,'Refreshed sign-in screen','Sign in'],
+  ['dash-new-app.webp',1600,1000,'Refreshed app page with credentials, services and scopes','Manage an app, its keys and scopes'],
+  ['dash-new-docs.webp',1600,1000,'Refreshed docs page with a step-by-step guide and code example','Docs with code examples']
+].map(([f,w,h,a,c]) =>
+  `<figure><div class="frame"><div class="frame__bar"><i></i><i></i><i></i></div><img src="assets/openapi/${f}" width="${w}" height="${h}" alt="${a}" loading="lazy"></div><figcaption>${c}</figcaption></figure>`
+).join('');
 </script>
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-<script>lucide.createIcons();</script>
-
 </body>
 </html>
