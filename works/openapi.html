@@ -161,7 +161,8 @@ figcaption b{color:var(--ink);font-weight:600}
 
 /* ── SERVICE CARD VIEWER ── */
 .dtabs{display:grid;grid-template-columns:minmax(0,.75fr) minmax(0,1.25fr);gap:32px;align-items:start}
-.dtabs__side{display:flex;flex-direction:column;gap:14px;min-width:0}
+.dtabs__side{display:flex;flex-direction:column;justify-content:space-between;gap:14px;min-width:0}
+@media (min-width:1001px){.dtabs{grid-template-columns:minmax(0,1fr) auto;align-items:stretch}}
 .dtabs__list{display:grid;gap:8px}
 .dtabs__list button{font:inherit;text-align:left;color:var(--ink);background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 20px;cursor:pointer;display:grid;gap:4px;transition:border-color .2s,background .2s}
 .dtabs__list button:hover{border-color:var(--border-2)}
@@ -824,6 +825,19 @@ document.getElementById('dnext').onclick = () => sel((cur()+1)%tabs.length);
 segs.forEach((b,j) => b.addEventListener('click', () => setSide(j)));
 sc.addEventListener('click', () => setSide(side ? 0 : 1));
 sel(0);
+
+/* Desktop: size the card so it is exactly as tall as the card list */
+const viewer = document.getElementById('viewer');
+const dtabs = document.querySelector('.dtabs');
+const wide = matchMedia('(min-width:1001px)');
+function fitViewer() {
+  if (!wide.matches) { viewer.style.width = ''; return; }
+  const w = Math.min(list.offsetHeight * 1.414, dtabs.clientWidth * .62);
+  if (Math.abs(viewer.offsetWidth - w) > 1) viewer.style.width = Math.round(w) + 'px';
+}
+new ResizeObserver(fitViewer).observe(list);
+wide.addEventListener('change', fitViewer);
+fitViewer();
 
 /* ── Dashboard row ── */
 const drow = document.getElementById('drow');
