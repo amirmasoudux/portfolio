@@ -376,6 +376,14 @@ figcaption b{color:var(--ink);font-weight:600}
   .fc:nth-child(4):hover,.fc:nth-child(4):focus-visible{transform:rotate(18deg) translateX(100px) translateY(-30px) scale(1.06)}
 }
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* Key numbers: same block as the customer club case study */
+.stats{gap:1px;background:var(--border);border:1px solid var(--border);border-radius:20px;overflow:hidden}
+.stat{display:flex;flex-direction:column;align-items:flex-start;padding:28px;background:var(--surface)}
+.stat .si{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--border-2);color:var(--ink);margin-bottom:22px;flex:none}
+.stat .si svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.stat b{font-size:34px;line-height:1;letter-spacing:-1.5px;color:var(--ink);white-space:nowrap;margin-bottom:8px}
+@media (max-width:1100px){.stat b{font-size:28px}}
   </style>
 </head>
 <body>
@@ -420,7 +428,7 @@ figcaption b{color:var(--ink);font-weight:600}
 </section>
 
 <!-- AT A GLANCE -->
-<section aria-label="Project at a glance">
+<section aria-label="Project at a glance"><div class="wrap">
   <div class="stats">
     <div class="stat">
       <span class="si" aria-hidden="true"><svg viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>
@@ -439,7 +447,7 @@ figcaption b{color:var(--ink);font-weight:600}
       <b>6 months</b><span>Project duration</span>
     </div>
   </div>
-</section>
+</div></section>
 
 <!-- PROBLEM -->
 <section class="sec">
