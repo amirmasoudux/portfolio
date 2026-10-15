@@ -1,0 +1,12 @@
+{
+  "redirects": [
+    { "source": "/home", "destination": "/", "permanent": true },
+    { "source": "/works", "destination": "/#work", "permanent": true },
+    { "source": "/works/configurator", "destination": "/works/configurator.html", "permanent": true },
+    { "source": "/works/openapi", "destination": "/works/openapi.html", "permanent": true },
+    { "source": "/works/customerclub", "destination": "/works/customerclub.html", "permanent": true }
+  ],
+  "rewrites": [
+    { "source": "/:ref([a-z0-9-]+)", "destination": "/index.html" }
+  ]
+}
