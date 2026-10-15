@@ -28,10 +28,18 @@ a{color:inherit}
 .narrow{max-width:760px}
 
 /* nav */
-.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(10,10,10,.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+.nav a{text-decoration:none}
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(10,10,10,.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
 .nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
-.nav a{text-decoration:none;font-size:14px;color:var(--ink-2)}
-.nav .logo{font-family:var(--display);font-weight:700;font-size:18px;color:var(--ink);letter-spacing:-.5px}
+.nav__left{display:flex;align-items:center}
+.nav__back{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--ink-2);transition:color .2s}
+.nav__back:hover{color:var(--ink)}
+.nav__back i[data-lucide]{width:16px;height:16px}
+.nav__sep{width:1px;height:20px;background:var(--border-2);margin:0 16px}
+.nav__logo img{height:26px;width:auto}
+.nav__cv{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink-2);border:1px solid var(--border-2);border-radius:99px;padding:6px 14px;transition:color .2s,border-color .2s}
+.nav__cv:hover{color:var(--ink);border-color:rgba(255,255,255,.25)}
+.nav__cv i[data-lucide]{width:12px;height:12px}
 .pill{border:1px solid var(--border-2);border-radius:99px;padding:6px 14px}
 
 /* sections */
@@ -267,7 +275,6 @@ figcaption{font-size:14px;color:var(--ink-3);margin-top:14px;max-width:70ch}
   .devices{grid-template-columns:1fr}
   .phone{max-width:260px;margin:0 auto}
   .seg,.size{display:none}
-  .nav .pill{display:none}
 }
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.device{transition:none}}
 
@@ -424,11 +431,22 @@ svg{flex:none}
 </head>
 <body style="margin:0">
 
-<header class="nav"><div class="wrap">
-  <a href="../index.html#work">← All work</a>
-  <a class="logo" href="../index.html">AE</a>
-  <a class="pill" href="https://drive.google.com/file/d/1v95PNrUq3GGAAFtNv8rxzctYXkbnbcL2/view?usp=drive_link" target="_blank" rel="noopener">Download CV</a>
-</div></header>
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <div class="wrap">
+    <div class="nav__left">
+      <a href="../index.html#work" class="nav__back">
+        <i data-lucide="arrow-left"></i>
+        All work
+      </a>
+      <div class="nav__sep"></div>
+      <a href="../index.html" class="nav__logo">
+        <img src="../ae-logo-white.svg" alt="Amirmasoud Ebadi" />
+      </a>
+    </div>
+    <a href="https://drive.google.com/file/d/1v95PNrUq3GGAAFtNv8rxzctYXkbnbcL2/view?usp=drive_link" target="_blank" rel="noopener" class="nav__cv">Download CV <i data-lucide="external-link"></i></a>
+  </div>
+</nav>
 
 <main>
 <!-- HERO -->
@@ -546,6 +564,14 @@ svg{flex:none}
   <footer class="foot"><span>© 2026 Amirmasoud Ebadi</span><a href="#">Back to top ↑</a></footer>
 </div>
 
+<script src="https://unpkg.com/lucide@1.49.0/dist/umd/lucide.min.js"></script>
+<script>
+lucide.createIcons();
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.style.background = window.scrollY > 40 ? 'rgba(10,10,10,.95)' : 'rgba(10,10,10,.88)';
+}, { passive: true });
+</script>
 <script>
 const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
 /* scroll story: sticky phone follows the active step */
