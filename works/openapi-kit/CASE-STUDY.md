@@ -4,7 +4,7 @@ Source of truth for `works/openapi.html`. Facts come from the live page (amirmas
 
 > Rules
 > - Only the facts below. No new metrics, quotes or results.
-> - English only, written for a European reader. No Persian text in any visual.
+> - English only, written for a European reader. No non-English text in any visual.
 > - The "UX Strategist…" chip uses Finnotech yellow #F6BB16 (not lime) on this page. Lime stays only on the next-case arrow.
 > - Colour: only Finnotech yellow #F6BB16, used sparingly: the goal row (thin left bar only) and the quote bar. Everything else follows the site's neutral type colours, like the other case studies.
 > - Icons: Lucide (trending-up, landmark, briefcase, calendar, ban, trending-down, target), white, 1.75 stroke, on a neutral tile.
@@ -33,7 +33,7 @@ Each stat has a white Lucide icon on a neutral tile: trending-up, landmark, brie
 
 Finnotech's Open Banking APIs were competitive, yet B2B conversion stayed low. The product wasn't the problem. The sales material described technical features, so non-technical leaders couldn't see the return on investment, and they didn't commit.
 
-Small note: Context for European readers: Finnotech is an Iranian fintech that offered bank APIs to third parties, similar to what PSD2 enabled for banks and fintechs in Europe.
+Small note: Context for European readers: Finnotech is a fintech in the Middle East that offered bank APIs to third parties, similar to what PSD2 enabled for banks and fintechs in Europe.
 
 Side block, top-aligned with the H2, as one connected stack with icon tiles: white Lucide icons ban, trending-down, target; the goal row gets a yellow heading and a thin yellow left bar:
 - **The barrier:** sales teams sold technical features, not business outcomes.
@@ -76,7 +76,7 @@ Component (see `reference/index.html`, data and motion in the script). It replac
 | N° 22 In-app payment · Facilitation | Pay without leaving the app. | Taxito riders pay in the app, with no redirect. | In-app checkout |
 | N° 24 Payout split · Facilitation | One account in. Fair shares out. | Every fare is split between drivers and Taxito. | Marketplace payouts |
 
-Note: Recreated in English from the original Persian cards. App names and amounts are examples.
+Note: Recreated in English from the original cards. App names and amounts are examples.
 
 Sub-heading **In the meeting, and after it**: Sales reps and clients laid the cards out together to design the client's solution in the meeting. Afterwards the cards stayed with the client as a brochure, which helped them remember and build consensus internally.
 
