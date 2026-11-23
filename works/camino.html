@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Permission for Every Metre — Amirmasoud Ebadi</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="description" content="How I designed Camino, the internal tool that secures the right of way for fibre rollout in Germany." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+/* ── TOKENS ── */
+:root {
+  color-scheme: dark;
+  --bg:       #0A0A0A;
+  --surface:  #111111;
+  --surface-2:#181818;
+  --ink:      #F0EEE9;
+  --ink-2:    rgba(240,238,233,.75);
+  --ink-3:    rgba(240,238,233,.55);
+  --border:   rgba(255,255,255,.07);
+  --border-2: rgba(255,255,255,.12);
+  --display:  'Space Grotesk', system-ui, sans-serif;
+  --body:     Inter, -apple-system, system-ui, sans-serif;
+  --r:        12px;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+body {
+  margin: 0; padding: 0;
+  font-family: var(--body); font-size: 16px; line-height: 1.65;
+  background: var(--bg); color: var(--ink);
+  -webkit-font-smoothing: antialiased; overflow-x: hidden;
+}
+img { max-width: 100%; height: auto; display: block; }
+a { color: inherit; text-decoration: none; }
+button { font-family: var(--body); }
+:focus-visible { outline: 2px solid rgba(255,255,255,.5); outline-offset: 3px; border-radius: 4px; }
+
+/* ── LAYOUT ── */
+.wrap { max-width: 1280px; margin: 0 auto; padding-inline: max(24px, env(safe-area-inset-left, 24px)); }
+.narrow { max-width: 760px; }
+
+/* ── NAV ── */
+.nav {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+  background: rgba(10,10,10,.88); backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+.nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+.nav__left { display: flex; align-items: center; gap: 0; }
+.nav__back {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 14px; color: var(--ink-2); transition: color .2s;
+}
+.nav__back:hover { color: var(--ink); }
+.nav__back i[data-lucide] { width: 16px; height: 16px; }
+.nav__sep { width: 1px; height: 20px; background: var(--border-2); margin: 0 16px; }
+.nav__logo img { height: 26px; width: auto; }
+.nav__right { display: flex; align-items: center; }
+.nav__cv {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 13px; color: var(--ink-2);
+  border: 1px solid var(--border-2); border-radius: 99px;
+  padding: 6px 14px; transition: color .2s, border-color .2s;
+}
+.nav__cv:hover { color: var(--ink); border-color: rgba(255,255,255,.25); }
+.nav__cv i[data-lucide] { width: 12px; height: 12px; }
+
+/* ── SECTIONS ── */
+.sec { padding-block: 96px; border-bottom: 1px solid var(--border); }
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 12px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 2.5px; color: var(--ink-3); margin-bottom: 20px;
+}
+.eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--ink-3); }
+h1, h2, h3 { font-family: var(--display); margin: 0; text-wrap: balance; }
+h2 { font-size: clamp(30px,4vw,46px); font-weight: 700; letter-spacing: -1.5px; line-height: 1.08; margin-bottom: 20px; }
+h3 { font-size: 20px; font-weight: 600; letter-spacing: -.3px; line-height: 1.3; }
+.lede { font-size: 18px; color: var(--ink-2); max-width: 62ch; margin: 0; }
+p { margin: 0; }
+.muted { color: var(--ink-3); }
+.mt { margin-top: 48px; }
+
+/* ── HERO ── */
+.hero { padding-block: 72px 64px; }
+.hero .num { font-size: 12px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 28px; }
+.chip { display: inline-flex; align-items: center; padding: 5px 14px; border-radius: 99px; font-size: 13px; font-weight: 600; border: 1px solid var(--border-2); color: var(--ink-2); }
+.hero h1 { font-size: clamp(52px,8vw,104px); font-weight: 700; line-height: .95; letter-spacing: -4px; margin-bottom: 24px; }
+.hero .lede { font-size: 19px; }
+.wl { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--ink-3); margin-top: 20px; }
+.wl svg { width: 16px; height: 16px; flex: none; }
+.hero__grid { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.05fr); gap: 56px; align-items: center; }
+
+/* ── DEVICE MOCKUP ── */
+.mock { position: relative; padding: 0 0 28px 44px; }
+.laptop { position: relative; z-index: 1; }
+.laptop__screen {
+  background: #0B0B0C; border: 1.5px solid #2E2E30; border-bottom: 0;
+  border-radius: 18px 18px 0 0; padding: 2.4% 2.4% 2.8%;
+  box-shadow: 0 40px 90px rgba(0,0,0,.65);
+}
+.laptop__screen img { width: 100%; aspect-ratio: 16/10; object-fit: cover; object-position: top; border-radius: 4px; }
+.laptop__base {
+  position: relative; height: 16px; width: 114%; margin-left: -7%;
+  background: linear-gradient(#4A4A4D,#2A2A2C 55%,#18181A);
+  border-radius: 2px 2px 16px 16px;
+}
+.laptop__base::after { content: ""; position: absolute; left: 50%; top: 0; transform: translateX(-50%); width: 15%; height: 6px; background: #1A1A1C; border-radius: 0 0 8px 8px; }
+.mock__phone { position: absolute; left: 0; bottom: 0; width: 30%; z-index: 2; border-radius: 28px; box-shadow: 0 30px 70px rgba(0,0,0,.7); border: 8px solid #1C1C1E; overflow: hidden; }
+.mock__phone img { display: block; width: 100%; }
+
+/* ── STATS ── */
+.stats { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 1px; background: var(--border); border-block: 1px solid var(--border); }
+.stat { background: var(--surface); padding: 32px; }
+.stat b { display: block; font-family: var(--display); font-size: 40px; font-weight: 700; letter-spacing: -1.5px; color: var(--ink); line-height: 1; margin-bottom: 10px; white-space: nowrap; }
+.stat span { font-size: 15px; color: var(--ink-2); line-height: 1.5; }
+
+/* ── SPLIT ── */
+.split { display: grid; grid-template-columns: minmax(0,1.15fr) minmax(0,.85fr); gap: 64px; align-items: start; }
+.quote { border-left: 2px solid var(--border-2); padding: 4px 0 4px 20px; font-size: 17px; color: var(--ink); font-style: italic; margin: 28px 0; }
+.quote small { display: block; font-style: normal; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px; }
+
+/* ── RISK CARDS ── */
+.risks { display: grid; gap: 10px; align-self: start; margin-top: 52px; }
+.risk { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 18px 20px; }
+.risk h3 { font-size: 16px; margin-bottom: 4px; display: flex; gap: 10px; align-items: center; }
+.risk h3::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--ink-3); flex: none; }
+.risk p { font-size: 14px; color: var(--ink-2); }
+
+/* ── CARD GRIDS ── */
+.grid2 { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; }
+.grid3 { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 16px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 26px; }
+.card h3 { margin-bottom: 8px; }
+.card p { font-size: 15px; color: var(--ink-2); }
+.card .k { font-family: var(--display); font-size: 13px; color: var(--ink-3); letter-spacing: 1px; margin-bottom: 14px; display: block; font-weight: 600; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
+.tags span { font-size: 12px; border: 1px solid var(--border-2); border-radius: 99px; padding: 3px 10px; color: var(--ink-2); }
+
+/* ── BROWSER FRAME ── */
+.frame { border-radius: var(--r); overflow: hidden; background: #1C1C1E; border: 1px solid rgba(255,255,255,.1); box-shadow: 0 24px 60px rgba(0,0,0,.5); }
+.frame__bar { height: 34px; display: flex; align-items: center; gap: 7px; padding: 0 14px; border-bottom: 1px solid rgba(255,255,255,.06); background: #1C1C1E; }
+.frame__bar i { width: 10px; height: 10px; border-radius: 50%; background: #3A3A3C; }
+.frame__bar span { margin-left: 12px; font-size: 11px; color: #8A8A8E; background: #2A2A2C; border-radius: 6px; padding: 2px 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60%; }
+.frame img { width: 100%; height: auto; }
+.shot { margin-top: 56px; }
+figcaption { font-size: 14px; color: var(--ink-3); margin-top: 14px; max-width: 70ch; }
+
+/* ── ANNOTATED IMAGE ── */
+.annot { display: grid; grid-template-columns: minmax(0,1.35fr) minmax(0,.65fr); gap: 40px; align-items: start; margin-top: 48px; }
+.annot img { border-radius: var(--r); border: 1px solid var(--border-2); }
+.legend { list-style: none; margin: 0; padding: 0; display: grid; gap: 22px; }
+.legend li { display: grid; grid-template-columns: 34px 1fr; gap: 14px; }
+.pin { width: 34px; height: 34px; border-radius: 50%; background: var(--ink); color: var(--bg); font-family: var(--display); font-weight: 700; display: grid; place-items: center; font-size: 15px; flex: none; }
+.legend h3 { font-size: 17px; margin: 4px 0 4px; }
+.legend p { font-size: 15px; color: var(--ink-2); }
+
+/* ── TEST NUMBERS ── */
+.testnums { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 1px; background: var(--border); border-radius: 16px; overflow: hidden; border: 1px solid var(--border); }
+.testnums div { background: var(--surface); padding: 24px; }
+.testnums b { display: block; font-family: var(--display); font-size: 36px; font-weight: 700; letter-spacing: -1px; line-height: 1; margin-bottom: 6px; color: var(--ink); }
+.testnums span { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--ink-3); }
+
+/* ── WIREFRAME LEGEND ── */
+.wflegend { list-style: none; padding: 0; margin: 28px 0 0; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 22px 28px; }
+.wflegend li { display: grid; grid-template-columns: 30px 1fr; gap: 12px; }
+.wflegend .pin { width: 30px; height: 30px; font-size: 13px; }
+.wflegend h3 { font-size: 16px; margin: 3px 0 2px; }
+.wflegend p { font-size: 14px; color: var(--ink-2); }
+
+/* ── SOLUTION TABS ── */
+.dtabs { display: grid; grid-template-columns: minmax(0,.75fr) minmax(0,1.25fr); gap: 32px; align-items: start; }
+.dtabs__list { display: grid; gap: 8px; }
+.dtabs__list button { font: inherit; text-align: left; color: var(--ink); background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; cursor: pointer; display: grid; gap: 4px; transition: border-color .2s, background .2s; }
+.dtabs__list button:hover { border-color: var(--border-2); }
+.dtabs__list button[aria-selected="true"] { border-color: rgba(255,255,255,.28); background: var(--surface-2); }
+.dtabs__list .k { font-family: var(--display); font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+.dtabs__list [aria-selected="true"] .k { color: var(--ink-2); }
+.dtabs__list b { font-family: var(--display); font-size: 19px; font-weight: 600; letter-spacing: -.3px; }
+.dtabs__list .d { font-size: 14.5px; color: var(--ink-2); display: none; }
+.dtabs__list [aria-selected="true"] .d { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.dtabs__side { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.dtabs__ctrl { display: flex; align-items: center; justify-content: space-between; padding: 0 4px; }
+.cnt { font-family: var(--display); font-size: 14px; letter-spacing: 2px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.arrows { display: flex; gap: 8px; }
+.arr { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-2); background: transparent; color: var(--ink); cursor: pointer; font-size: 16px; transition: background .2s, border-color .2s; }
+.arr:hover { background: var(--surface-2); border-color: var(--ink-3); }
+
+/* solution stage — fills the text column height on wide screens */
+@media (min-width: 1001px) {
+  .dtabs { align-items: stretch; grid-template-columns: minmax(0,.8fr) minmax(0,1.2fr); }
+  .dstage { display: flex; flex-direction: column; }
+  .dstage .frame { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+  .dstage .frame__bar { flex: none; }
+  .dstage [role="tabpanel"] { position: relative; flex: 1; min-height: 0; }
+  .dstage [role="tabpanel"][hidden] { display: none; }
+  .dstage [role="tabpanel"] img { position: absolute; inset: 0; width: 100%; height: 100%; aspect-ratio: auto; object-fit: cover; object-position: top; }
+}
+#p1 img { object-position: center 30%; }
+#p4 img { object-position: bottom; }
+@media (max-width: 1000px) {
+  .dstage .frame { min-height: 320px; }
+  .dstage [role="tabpanel"] img { position: static; width: 100%; height: auto; aspect-ratio: 1180/760; object-fit: cover; }
+}
+
+/* ── COMMENTS / ITERATION ── */
+.comments { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; margin-top: 48px; }
+.cmt { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 22px 24px; display: flex; flex-direction: column; gap: 12px; }
+.cmt__who { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--ink-3); }
+.cmt__who i { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg,#6b5cff,#9a7bff); filter: blur(2.5px); flex: none; }
+.cmt__who em { font-style: normal; filter: blur(4px); user-select: none; }
+.cmt blockquote { margin: 0; font-size: 15px; color: var(--ink); }
+.cmt .de { font-size: 13px; color: var(--ink-3); font-style: italic; }
+.cmt .to { margin-top: auto; font-size: 13px; color: var(--ink-2); font-weight: 600; }
+.changes { counter-reset: c; display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 16px; margin-top: 24px; }
+.chg { background: var(--surface-2); border: 1px solid var(--border); border-radius: 16px; padding: 22px; }
+.chg .tag { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+.chg h3 { font-size: 17px; margin: 10px 0 6px; display: flex; gap: 10px; align-items: baseline; }
+.chg h3::before { counter-increment: c; content: counter(c); font-size: 13px; color: var(--ink); border: 1px solid var(--border-2); border-radius: 50%; width: 22px; height: 22px; display: inline-grid; place-items: center; flex: none; }
+.chg p { font-size: 14px; color: var(--ink-2); }
+
+/* ── LIVE PROTOTYPE ── */
+.lp-bar { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin: 36px 0 18px; }
+.seg { display: inline-flex; background: var(--surface); border: 1px solid var(--border-2); border-radius: 10px; padding: 4px; gap: 2px; }
+.seg button { font: inherit; font-size: 14px; color: var(--ink-2); background: none; border: 0; border-radius: 7px; padding: 8px 14px; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.seg button svg { width: 16px; height: 16px; }
+.seg button:hover { color: var(--ink); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); font-weight: 600; }
+.size { font-size: 12px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.openlink { font-size: 14px; text-underline-offset: 4px; text-decoration: underline; color: var(--ink-2); }
+.openlink:hover { color: var(--ink); }
+.tasks { list-style: none; padding: 0; margin: 24px 0 0; display: flex; flex-wrap: wrap; gap: 10px; }
+.tasks li { border: 1px solid var(--border-2); border-radius: 99px; padding: 6px 14px 6px 6px; font-size: 14px; display: flex; align-items: center; gap: 8px; color: var(--ink-2); }
+.tasks b { width: 22px; height: 22px; border-radius: 50%; color: var(--ink); border: 1px solid var(--border-2); display: grid; place-items: center; font-size: 11px; }
+.stage { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: clamp(16px,3vw,40px); display: flex; justify-content: center; overflow: hidden; }
+.device { position: relative; transition: width .35s ease, height .35s ease; }
+.dframe { position: absolute; inset: 0; overflow: hidden; background: #fff; }
+.device.desktop .dframe { border-radius: 10px; border: 1px solid #333; }
+.device.desktop .chrome { height: 34px; background: #1C1C1E; display: flex; align-items: center; gap: 6px; padding: 0 12px; border-bottom: 1px solid #333; }
+.chrome i { width: 10px; height: 10px; border-radius: 50%; background: #3A3A3C; }
+.chrome span { margin-left: 12px; flex: 1; max-width: 340px; background: #2A2A2C; border-radius: 6px; font-size: 11px; color: #8A8A8E; padding: 3px 10px; white-space: nowrap; overflow: hidden; }
+.device.tablet .dframe { border-radius: 26px; border: 10px solid #1C1C1E; }
+.device.mobile .dframe { border-radius: 40px; border: 10px solid #1C1C1E; }
+.device:not(.desktop) .chrome { display: none; }
+.vp { position: absolute; left: 0; right: 0; bottom: 0; overflow: hidden; }
+.vp iframe, .vp .poster { position: absolute; top: 0; left: 0; border: 0; transform-origin: 0 0; background: #F6F6F6; }
+.poster { object-fit: cover; object-position: top; }
+.cover { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(10,10,10,.35); }
+.start { font: inherit; font-size: 15px; font-weight: 600; background: var(--ink); color: var(--bg); border: 0; border-radius: 10px; padding: 13px 22px; display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.start svg { width: 16px; height: 16px; }
+
+/* ── OUTCOMES ── */
+.outs { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 16px; margin-top: 48px; }
+.out { border-top: 2px solid var(--border-2); padding-top: 20px; }
+.out h3 { margin-bottom: 8px; }
+.out p { color: var(--ink-2); font-size: 15px; }
+.note { margin-top: 32px; font-size: 14px; color: var(--ink-3); }
+
+/* ── NEXT + FOOTER ── */
+.next { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; text-decoration: none; padding-block: 72px; }
+.next small { font-size: 12px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+.next h3 { font-size: clamp(28px,4vw,44px); letter-spacing: -1.2px; margin-top: 10px; }
+.next .arr-circle { width: 64px; height: 64px; border-radius: 50%; background: var(--ink); color: var(--bg); display: grid; place-items: center; font-size: 26px; }
+.foot { border-top: 1px solid var(--border); padding-block: 32px; font-size: 13px; color: var(--ink-3); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1100px) { .hero__grid { grid-template-columns: 1fr; gap: 56px; } .mock { max-width: 760px; margin: 0 auto; width: 100%; } }
+@media (max-width: 1000px) {
+  .split, .annot { grid-template-columns: 1fr; gap: 28px; }
+  .dtabs { grid-template-columns: 1fr; }
+  .stats, .changes, .testnums { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .grid3, .outs { grid-template-columns: 1fr; }
+  .wflegend { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+@media (max-width: 640px) {
+  .sec { padding-block: 64px; }
+  .hero h1 { letter-spacing: -2.5px; }
+  .stats, .grid2, .changes, .comments { grid-template-columns: 1fr; }
+  .stat { padding: 24px; }
+  .seg, .size { display: none; }
+  .mock { padding: 0 0 18px 18px; }
+  .mock__phone { border-width: 5px; border-radius: 18px; }
+  .dtabs__list { grid-auto-flow: column; grid-auto-columns: 78%; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 6px; }
+  .dtabs__list button { scroll-snap-align: start; }
+  .wflegend { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .device { transition: none; } }
+
+/* Key numbers: same block as the customer club case study */
+.stats{gap:1px;background:var(--border);border:1px solid var(--border);border-radius:20px;overflow:hidden}
+.stat{display:flex;flex-direction:column;align-items:flex-start;padding:28px;background:var(--surface)}
+.stat .si{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--border-2);color:var(--ink);margin-bottom:22px;flex:none}
+.stat .si svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.stat b{font-size:34px;line-height:1;letter-spacing:-1.5px;color:var(--ink);white-space:nowrap;margin-bottom:8px}
+@media (max-width:1100px){.stat b{font-size:28px}}
+/* ── CAMINO ADDITIONS ── */
+/* solution screens: show each screen whole, never cropped */
+@media (min-width:1001px){
+  .dtabs{align-items:start}
+  .dstage [role="tabpanel"]{flex:none}
+  .dstage [role="tabpanel"] img{position:static;width:100%;height:auto;object-fit:contain}
+}
+@media (max-width:1000px){.dstage [role="tabpanel"] img{aspect-ratio:auto;object-fit:contain}}
+.facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;margin:0;background:var(--border);border:1px solid var(--border);border-radius:20px;overflow:hidden}
+.facts div{background:var(--surface);padding:24px 28px}
+.facts dt{font-size:12px;letter-spacing:2.5px;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-bottom:8px}
+.facts dd{margin:0;font-size:16px;color:var(--ink);line-height:1.45}
+@media (max-width:1000px){.facts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.facts{grid-template-columns:1fr}}
+.big{font-family:var(--display);font-size:clamp(26px,3vw,38px);font-weight:600;line-height:1.15;letter-spacing:-1px;color:var(--ink-3);margin:0}
+.big span{color:var(--ink)}
+.big.closing{margin-top:72px;max-width:24ch}
+.bomb{background:linear-gradient(180deg,#0A0A0A 0%,#13110E 50%,#0A0A0A 100%)}
+.bomb .split{align-items:center}
+.hmw{margin:56px 0 0;padding:32px 36px;border:1px solid var(--border-2);border-radius:20px;background:var(--surface);font-family:var(--display);font-size:clamp(22px,2.6vw,32px);font-weight:600;line-height:1.25;letter-spacing:-.6px}
+.hmw small{display:block;font-family:var(--body);font-size:12px;letter-spacing:2.5px;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-bottom:14px}
+.steps{list-style:none;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:20px;overflow:hidden}
+.steps li{background:var(--surface);padding:24px}
+.steps b{font-family:var(--display);font-size:13px;letter-spacing:1px;color:var(--ink-3);display:block;margin-bottom:14px}
+.steps h3{font-size:17px;margin-bottom:6px}
+.steps p{font-size:14px;color:var(--ink-2)}
+.flow{margin-left:0;margin-right:0;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:28px}
+.flow__scroll{overflow-x:auto}
+.flow svg{display:block;width:100%;min-width:880px;height:auto}
+.flow .n rect{fill:#181818;stroke:rgba(255,255,255,.16);stroke-width:1.2}
+.flow .n text{fill:var(--ink)}
+.flow .n .s{fill:var(--ink-3);font-size:13px}
+.flow .hl rect{fill:#22231F;stroke:rgba(240,238,233,.55)}
+.flow .dash rect{stroke-dasharray:5 4}
+@media (max-width:1000px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.steps{grid-template-columns:1fr}.hmw{padding:24px}.flow{padding:16px}}
+
+  </style>
+  <script>
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+  </script>
+  <script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <div class="wrap">
+    <div class="nav__left">
+      <a href="../index.html#work" class="nav__back">
+        <i data-lucide="arrow-left"></i>
+        All work
+      </a>
+      <div class="nav__sep"></div>
+      <a href="../index.html" class="nav__logo">
+        <img src="../ae-logo-white.svg" alt="Amirmasoud Ebadi" />
+      </a>
+    </div>
+    <div class="nav__right">
+      <a href="https://drive.google.com/file/d/1v95PNrUq3GGAAFtNv8rxzctYXkbnbcL2/view?usp=drive_link" target="_blank" rel="noopener" class="nav__cv">Download CV <i data-lucide="external-link"></i></a>
+    </div>
+  </div>
+</nav>
+
+<main>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap hero__grid">
+    <div class="hero__txt">
+      <div class="num">04 · Telecom · Enterprise workflow</div>
+      <div class="chips">
+        <span class="chip">Internal tool</span>
+        <span class="chip">Fibre rollout</span>
+        <span class="chip">Germany</span>
+        <span class="chip">Concept to hi-fi prototype</span>
+      </div>
+      <h1>Permission for<br>every metre</h1>
+      <p class="lede">Before fibre goes into the ground in Germany, every metre of the route needs a permission. Camino is the internal tool I designed for the planners who collect them: from towns, utilities, landowners, and the bomb disposal service.</p>
+      <p class="wl">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3 4.5 6v6c0 4.5 3.2 7.8 7.5 9 4.3-1.2 7.5-4.5 7.5-9V6z"/></svg>
+        Confidential project, shared on request. Screens are recreated under the brand "telvia" with fictional data.
+      </p>
+    </div>
+    <div class="mock" role="img" aria-label="The Camino dashboard on a laptop, with key numbers and today's tasks">
+      <div class="laptop">
+        <div class="laptop__screen">
+          <img src="assets/camino/dashboard.jpg" width="2000" height="1250" alt="" />
+        </div>
+        <div class="laptop__base"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AT A GLANCE -->
+<section aria-label="Project at a glance"><div class="wrap">
+  <dl class="facts">
+    <div><dt>Product</dt><dd>Internal workflow tool for securing the right of way</dd></div>
+    <div><dt>Users</dt><dd>Route planners and external contractors</dd></div>
+    <div><dt>Scope</dt><dd>End-to-end permit flow, from project set-up to archive</dd></div>
+    <div><dt>Output</dt><dd>Flows, screen designs and a clickable hi-fi prototype</dd></div>
+  </dl>
+</div></section>
+
+<!-- PROBLEM -->
+<section class="sec">
+  <div class="wrap split">
+    <div>
+      <div class="eyebrow">The problem</div>
+      <h2>One cable, dozens of permissions</h2>
+      <p class="lede">Picture a village waiting for fast internet. The new fibre route runs a few kilometres: under a municipal street, along a district road, beneath a stream, across two farm fields and past an old gas line.</p>
+      <p class="lede" style="margin-top:16px">Every crossing has an owner. Every owner needs a letter, the right page of the route plan, and time to answer. One project quietly turns into dozens of separate conversations, and each planner runs several projects at once.</p>
+      <blockquote class="quote"><small>Planner, before</small>"It all lives in spreadsheets, Outlook folders and paper letters. When I'm on holiday, the project stands still."</blockquote>
+    </div>
+    <div class="risks" aria-label="Business risks">
+      <div class="risk"><h3>Construction waits</h3><p>No digging starts until every metre is secured. This step is the bottleneck of the rollout.</p></div>
+      <div class="risk"><h3>Legal deadlines slip</h3><p>A missed date means losing the right to treat silence as approval.</p></div>
+      <div class="risk"><h3>Knowledge in one inbox</h3><p>Colleagues and contractors can't take over a case they can't see.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- GERMANY -->
+<section class="sec">
+  <div class="wrap">
+    <div class="eyebrow">Context</div>
+    <h2>Germany adds its own layer</h2>
+    <p class="lede">The work is not hard because any single step is hard. It is hard because hundreds of small, rule-bound steps run in parallel, each with its own clock.</p>
+    <div class="grid3 mt">
+      <div class="card"><span class="k">Authorities</span><h3>Every office is different</h3><p>Each municipality has its own forms and its own pace. Many still answer by post.</p></div>
+      <div class="card"><span class="k">§ 127 TKG</span><h3>A deadline that can work for you</h3><p>If a road authority does not decide within three months of a complete application, approval is deemed granted. Only if you can prove the date.</p></div>
+      <div class="card"><span class="k">Utilities</span><h3>Four weeks to answer</h3><p>Water, power and gas companies need time to check their networks against the route.</p></div>
+      <div class="card"><span class="k">Paper</span><h3>Even letters have rules</h3><p>Over 65 sheets, the print service can't send them. They are printed by hand and the dispatch is confirmed before any deadline starts.</p></div>
+      <div class="card"><span class="k">GDPR</span><h3>Landowners are people</h3><p>Their data is protected. Personal notes must stay out of the official archive.</p></div>
+      <div class="card"><span class="k">Archive</span><h3>Proof for decades</h3><p>Approvals and contracts go to a long-term archive, because the cable stays in the ground.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- KAMPFMITTEL -->
+<section class="sec bomb">
+  <div class="wrap">
+    <div class="eyebrow">The part nobody expects</div>
+    <h2>Bombs in the ground</h2>
+    <div class="split" style="margin-top:28px">
+      <div>
+        <p class="lede">Around eighty years after the Second World War, Germany still finds unexploded bombs, often enough that evacuations of whole neighbourhoods are a familiar news story.</p>
+        <p class="lede" style="margin-top:16px">So before anyone digs, the route goes to the explosive ordnance disposal service. They often check it against aerial photos taken during the war. The answer can be "clear", "suspected", or "must be probed on site".</p>
+      </div>
+      <p class="big">Everywhere else, a mistake means a delay. <span>Here it means danger.</span></p>
+    </div>
+    <div class="grid3 mt">
+      <div class="card"><span class="k">Decision 1</span><h3>Its own category</h3><p>Ordnance clearance is never hidden inside "other permits". It has its own place in every project.</p></div>
+      <div class="card"><span class="k">Decision 2</span><h3>Never colour alone</h3><p>Status always shows as a shape and words, so nobody misreads "suspected" as "clear".</p></div>
+      <div class="card"><span class="k">Decision 3</span><h3>Tied to the plan page</h3><p>Every answer links to the exact page of the route plan it covers, so the team sees which metres are clear.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PEOPLE + CHALLENGE -->
+<section class="sec">
+  <div class="wrap">
+    <div class="eyebrow">Users and challenge</div>
+    <h2>They don't need delight. They need certainty.</h2>
+    <div class="grid2 mt">
+      <div class="card"><span class="k">Route planners</span><h3>Experts, all day, many projects</h3><p>They know the rules better than any tool. They are interrupted by calls all the time and need to find their place again in seconds.</p></div>
+      <div class="card"><span class="k">Contractors and owners</span><h3>Shared work, one accountable person</h3><p>External contractors prepare requests. One Telvia owner stays accountable and is the only one who can close a project.</p></div>
+    </div>
+    <blockquote class="hmw"><small>Design challenge</small>How might we turn hundreds of parallel, rule-bound conversations into one calm list of next steps, with the legal proof built in?</blockquote>
+  </div>
+</section>
+
+<!-- USER FLOWS -->
+<section class="sec">
+  <div class="wrap">
+    <div class="eyebrow">User flows</div>
+    <h2>From project to secured route</h2>
+    <p class="lede">I mapped the whole journey before drawing a screen. A project moves through eight steps; each request inside it follows its own life cycle.</p>
+    <ol class="steps mt">
+      <li><b>01</b><h3>Create project</h3><p>Enter the project ID. Build orders load from the order system.</p></li>
+      <li><b>02</b><h3>Upload the plan</h3><p>The route plan becomes the map of the work.</p></li>
+      <li><b>03</b><h3>Evaluate the plan</h3><p>Create a request right on the page where the cable crosses something.</p></li>
+      <li><b>04</b><h3>Pick contacts</h3><p>The address book is filtered by area and type of owner.</p></li>
+      <li><b>05</b><h3>Send</h3><p>From a template, with the plan pages attached. Email or letter.</p></li>
+      <li><b>06</b><h3>Rate the reply</h3><p>Approved, with conditions, needs revision, or wrong recipient.</p></li>
+      <li><b>07</b><h3>Secure and archive</h3><p>Legal documents go to the archive. Personal notes don't.</p></li>
+      <li><b>08</b><h3>Close the project</h3><p>When every request is closed, construction can start.</p></li>
+    </ol>
+
+    <figure class="flow mt" aria-labelledby="flow-cap">
+      <div class="flow__scroll">
+        <svg viewBox="0 0 1280 360" role="img" aria-labelledby="flow-title flow-desc">
+          <title id="flow-title">Life cycle of one request</title>
+          <desc id="flow-desc">Draft, ready to send, sent. From sent, either a reply arrives or three months pass without an answer, which counts as approval. A reply is rated: approved, approved with conditions which are clarified first, or needs revision which goes back to ready to send. Approval leads to route secured and then archived.</desc>
+          <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="rgba(240,238,233,.55)"/></marker></defs>
+          <g fill="none" stroke="rgba(240,238,233,.4)" stroke-width="1.5" marker-end="url(#ah)">
+            <path d="M170 178h28"/><path d="M350 178h28"/><path d="M530 178h28"/><path d="M710 178h48"/><path d="M910 178h28"/><path d="M1090 178h18"/>
+            <path d="M455 150V58h13"/><path d="M670 58h165v90"/>
+            <path d="M600 206v92H462"/><path d="M290 298h-15v-90"/>
+            <path d="M690 206v62"/><path d="M850 270v-62"/>
+          </g>
+          <g font-family="Inter, system-ui, sans-serif" font-size="15" text-anchor="middle">
+            <g class="n"><rect x="20" y="150" width="150" height="56" rx="10"/><text x="95" y="183">Draft</text></g>
+            <g class="n"><rect x="200" y="150" width="150" height="56" rx="10"/><text x="275" y="183">Ready to send</text></g>
+            <g class="n"><rect x="380" y="150" width="150" height="56" rx="10"/><text x="455" y="183">Sent</text></g>
+            <g class="n"><rect x="560" y="150" width="150" height="56" rx="10"/><text x="635" y="183">Reply to rate</text></g>
+            <g class="n hl"><rect x="760" y="150" width="150" height="56" rx="10"/><text x="835" y="183">Approved</text></g>
+            <g class="n hl"><rect x="940" y="150" width="150" height="56" rx="10"/><text x="1015" y="183">Route secured</text></g>
+            <g class="n"><rect x="1110" y="150" width="150" height="56" rx="10"/><text x="1185" y="183">Archived</text></g>
+            <g class="n dash"><rect x="470" y="20" width="200" height="76" rx="10"/><text x="570" y="52">3 months, no answer</text><text x="570" y="74" class="s">deemed approval</text></g>
+            <g class="n"><rect x="290" y="270" width="172" height="56" rx="10"/><text x="376" y="303">Needs revision</text></g>
+            <g class="n"><rect x="680" y="270" width="190" height="56" rx="10"/><text x="775" y="303">Clarify conditions</text></g>
+          </g>
+        </svg>
+      </div>
+      <figcaption id="flow-cap">Life cycle of one request. Silence for three months counts as approval; a revision sends the request back to be sent again.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- SOLUTION -->
+<section class="sec">
+  <div class="wrap">
+    <div class="eyebrow">Solution</div>
+    <h2>One calm list of next steps</h2>
+    <div class="dtabs mt">
+      <div class="dtabs__side">
+        <div class="dtabs__list" role="tablist" aria-label="Design decisions">
+          <button role="tab" id="t1" aria-controls="p1" aria-selected="true">
+            <span class="k">01 · Orientation</span>
+            <b>The plan is the map of the work</b>
+            <span class="d">Requests are created on the page of the route plan they concern. Pins show which crossing each one is about.</span>
+          </button>
+          <button role="tab" id="t2" aria-controls="p2" aria-selected="false" tabindex="-1">
+            <span class="k">02 · Focus</span>
+            <b>Every request has one next step</b>
+            <span class="d">A hint bar on top says what to do now: add contacts, send, rate the reply, secure, archive.</span>
+          </button>
+          <button role="tab" id="t3" aria-controls="p3" aria-selected="false" tabindex="-1">
+            <span class="k">03 · Overview</span>
+            <b>Grouped by who owns the land</b>
+            <span class="d">A project shows its requests by category, each with a status in shape and words.</span>
+          </button>
+          <button role="tab" id="t4" aria-controls="p4" aria-selected="false" tabindex="-1">
+            <span class="k">04 · Time</span>
+            <b>The clock runs itself</b>
+            <span class="d">Deemed-approval dates, the four-week window and reminders come from the send date, not from someone's calendar.</span>
+          </button>
+        </div>
+        <div class="dtabs__ctrl">
+          <span class="cnt" id="dcnt" aria-live="polite">01 / 04</span>
+          <div class="arrows">
+            <button class="arr" id="dprev" aria-label="Previous decision">←</button>
+            <button class="arr" id="dnext" aria-label="Next decision">→</button>
+          </div>
+        </div>
+      </div>
+      <div class="dstage">
+        <div class="frame">
+          <div class="frame__bar" aria-hidden="true"><i></i><i></i><i></i><span>camino.telvia.de</span></div>
+          <div role="tabpanel" id="p1" aria-labelledby="t1">
+            <img src="assets/camino/plan.jpg" width="2000" height="1250" alt="Plan evaluation: the list of requests by category next to an aerial route plan with numbered pins" />
+          </div>
+          <div role="tabpanel" id="p2" aria-labelledby="t2" hidden>
+            <img src="assets/camino/vorgang.jpg" width="2000" height="1722" alt="A request with a hint bar on top: a new reply has arrived and must be rated" />
+          </div>
+          <div role="tabpanel" id="p3" aria-labelledby="t3" hidden>
+            <img src="assets/camino/project.jpg" width="2000" height="1896" alt="Project detail view with project facts, uploaded plans and requests grouped by category" />
+          </div>
+          <div role="tabpanel" id="p4" aria-labelledby="t4" hidden>
+            <img src="assets/camino/dashboard.jpg" width="2000" height="1250" alt="Dashboard with key numbers and a task list of reminders and deadlines" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="grid2" style="margin-top:16px">
+      <div class="card"><span class="k">05 · Decisions</span><h3>Replies must be rated</h3><p>An incoming answer is rated before the status can move. The inbox becomes a list of decisions.</p></div>
+      <div class="card"><span class="k">06 · Scale</span><h3>Bulk where work repeats</h3><p>All utilities in an area can be contacted in one step, one request each.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ACCESSIBILITY -->
+<section class="sec">
+  <div class="wrap">
+    <div class="eyebrow">Accessibility</div>
+    <h2>Built for everyone on the team</h2>
+    <p class="lede">An internal tool is used every day, for years, by everyone in the department. Nobody chooses it, so it has to work for all of them.</p>
+    <div class="outs">
+      <div class="out"><h3>Shape and words, not colour</h3><p>Warning is a triangle, error a circle, done a check, each with a label. Statuses stay readable with colour blindness.</p></div>
+      <div class="out"><h3>Contrast that passes</h3><p>The brand lime only appears on dark surfaces. Buttons and links use a deep green and black at WCAG AA or better.</p></div>
+      <div class="out"><h3>Keyboard and calm</h3><p>Every action is reachable by keyboard, dialogs close with Escape, and motion can be switched off.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- LIVE PROTOTYPE -->
+<section class="sec" aria-labelledby="lp-title">
+  <div class="wrap">
+    <div class="eyebrow">Live prototype</div>
+    <h2 id="lp-title">Try Camino</h2>
+    <p class="lede">The prototype runs right here, with fictional data. Use the "Prototyp" button in its corner to simulate replies and fast-forward time.</p>
+    <ol class="tasks" aria-label="Quick tasks">
+      <li><b>1</b>Rate the new reply from the utility</li>
+      <li><b>2</b>Create a request on plan page 2</li>
+      <li><b>3</b>Fast-forward until silence counts as approval</li>
+    </ol>
+    <div class="lp-bar">
+      <div class="seg" role="group" aria-label="Device view">
+        <button data-d="desktop" aria-pressed="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M2 20h20"/></svg>Desktop
+        </button>
+        <button data-d="tablet" aria-pressed="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="5" y="2.5" width="14" height="19" rx="2"/><path d="M11 18.5h2"/></svg>Tablet
+        </button>
+      </div>
+      <span class="size" id="size">1440 × 900</span>
+      <a class="openlink" href="camino-prototype.html" target="_blank" rel="noopener">Open full prototype ↗</a>
+    </div>
+    <div class="stage" id="stage">
+      <div class="device desktop" id="device">
+        <div class="dframe">
+          <div class="chrome" aria-hidden="true"><i></i><i></i><i></i><span>camino.telvia.de</span></div>
+          <div class="vp" id="vp">
+            <img class="poster" id="poster" src="assets/camino/dashboard.jpg" alt="Camino dashboard preview — click Start prototype to interact" />
+            <div class="cover" id="cover">
+              <button class="start" id="start">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg>
+                Start prototype
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TAKEAWAYS -->
+<section class="sec">
+  <div class="wrap">
+    <div class="eyebrow">Reflection</div>
+    <h2>What I took away</h2>
+    <div class="outs">
+      <div class="out"><h3>Learn the rules first</h3><p>Most design decisions came straight from the law and the process. Mapping the full life cycle before any screen saved the most rework.</p></div>
+      <div class="out"><h3>Trust comes from predictability</h3><p>Experts trust a tool that always puts the next step, the deadline and the proof in the same place.</p></div>
+      <div class="out"><h3>Next: more bulk</h3><p>Many requests look alike. Rating similar replies and sending reminders in batches would save the most time next.</p></div>
+    </div>
+    <p class="big closing">A fibre connection is the last step of a long paper trail. <span>Camino's job is to make that trail shorter, provable and calm.</span></p>
+  </div>
+</section>
+
+</main>
+
+<div class="wrap">
+  <a class="next" href="configurator.html">
+    <div>
+      <small>Next case study</small>
+      <h3>From Friction to Flow</h3>
+      <p class="muted" style="margin-top:6px">01 · Telecom · A guided product configurator</p>
+    </div>
+    <span class="arr-circle" aria-hidden="true">→</span>
+  </a>
+  <footer class="foot">
+    <span>© 2026 Amirmasoud Ebadi</span>
+    <a href="#" style="color:var(--ink-3)">Back to top ↑</a>
+  </footer>
+</div>
+
+<script src="https://unpkg.com/lucide@1.49.0/dist/umd/lucide.min.js"></script>
+<script>
+lucide.createIcons();
+
+/* ── Nav scroll state ── */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.style.background = window.scrollY > 40
+    ? 'rgba(10,10,10,.95)'
+    : 'rgba(10,10,10,.88)';
+}, { passive: true });
+
+/* ── Solution tabs ── */
+const tabs = [...document.querySelectorAll('[role="tab"]')];
+function selTab(tab, focus) {
+  tabs.forEach(t => {
+    const on = t === tab;
+    t.setAttribute('aria-selected', on);
+    t.tabIndex = on ? 0 : -1;
+    document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+  });
+  document.getElementById('dcnt').textContent = `0${tabs.indexOf(tab)+1} / 0${tabs.length}`;
+  if (focus) tab.focus();
+}
+const curTab = () => tabs.findIndex(t => t.getAttribute('aria-selected') === 'true');
+document.getElementById('dprev').addEventListener('click', () => selTab(tabs[(curTab()-1+tabs.length)%tabs.length]));
+document.getElementById('dnext').addEventListener('click', () => selTab(tabs[(curTab()+1)%tabs.length]));
+tabs.forEach((t, i) => {
+  t.addEventListener('click', () => selTab(t));
+  t.addEventListener('keydown', e => {
+    let n = null;
+    if (e.key==='ArrowDown'||e.key==='ArrowRight') n = tabs[(i+1)%tabs.length];
+    if (e.key==='ArrowUp'||e.key==='ArrowLeft') n = tabs[(i-1+tabs.length)%tabs.length];
+    if (e.key==='Home') n = tabs[0];
+    if (e.key==='End') n = tabs[tabs.length-1];
+    if (n) { e.preventDefault(); selTab(n, true); }
+  });
+});
+
+/* ── Live prototype ── */
+const DEV = {
+  desktop: { w:1440, h:900, chrome:34, bezel:0 },
+  tablet:  { w:1024, h:768, chrome:0, bezel:10 },
+  mobile:  { w:390,  h:844,  chrome:0, bezel:10 }
+};
+let cur = 'desktop', iframe = null;
+const stage  = document.getElementById('stage');
+const device = document.getElementById('device');
+const vp     = document.getElementById('vp');
+
+function layout() {
+  const d = window.innerWidth <= 640 ? 'mobile' : cur;
+  const c = DEV[d];
+  const cs = getComputedStyle(stage);
+  const avail = stage.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+  const outerW = c.w + c.bezel * 2;
+  const outerH = c.h + c.bezel * 2 + c.chrome;
+  const maxH = d === 'desktop' ? Infinity : Math.max(520, window.innerHeight * .8);
+  const s = Math.min(1, avail/outerW, maxH/outerH);
+  device.className = 'device ' + d;
+  device.style.width  = (outerW * s) + 'px';
+  device.style.height = (outerH * s) + 'px';
+  const df = device.querySelector('.dframe');
+  df.style.borderWidth = c.bezel ? (c.bezel * s) + 'px' : '';
+  vp.style.top = (c.chrome * s) + 'px';
+  [iframe, document.getElementById('poster')].forEach(el => {
+    if (!el) return;
+    el.style.width     = c.w + 'px';
+    el.style.height    = c.h + 'px';
+    el.style.transform = `scale(${s})`;
+  });
+  const sz = document.getElementById('size');
+  if (sz) sz.textContent = `${c.w} × ${c.h}`;
+}
+
+document.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => {
+  cur = b.dataset.d;
+  document.querySelectorAll('.seg button').forEach(x => x.setAttribute('aria-pressed', x === b));
+  layout();
+}));
+
+document.getElementById('start').addEventListener('click', () => {
+  iframe = document.createElement('iframe');
+  iframe.src   = 'camino-prototype.html';
+  iframe.title = 'Interactive Camino prototype';
+  vp.appendChild(iframe);
+  document.getElementById('cover').remove();
+  document.getElementById('poster').remove();
+  layout();
+  iframe.focus();
+});
+
+window.addEventListener('resize', layout);
+layout();
+</script>
+</body>
+</html>

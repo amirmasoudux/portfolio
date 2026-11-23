@@ -1,0 +1,1799 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Telvia Camino</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap">
+<style>
+/* Layout: Camino app shell (brand bar, dark icon sidebar, breadcrumb, cards), recreated from the original XD screens under the Telvia brand. Light-only product UI prototype. */
+:root{
+  color-scheme:light;
+  --ink:#111111; --ink-2:#6B6B6B; --ink-3:#9A9A9A;
+  --page:#F4F4F4; --surface:#FFFFFF; --zebra:#F5F5F5; --line:#E0E0E0; --line-2:#B3B3B3;
+  --lime:#C8F542; --lime-hover:#B9E632;
+  --side:#262626; --side-2:#3A3A3A;
+  --link:#111111; --hint:#F2F2F2; --hint-ink:#111111;
+  /* status: muted, all >= 6.5:1 on white; never colour alone (shape + label) */
+  --ok:#2E6B00; --warn:#7A4E00; --err:#A4262C; --info:#4A4A4A;
+  --ok-bg:#F1F6EC; --warn-bg:#F7F3EA; --err-bg:#F8EEEE;
+  --font:'Inter',ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
+  --shadow:0 1px 4px rgba(0,0,0,.12);
+  --hdr:56px; --sw:64px; --sw-cur:var(--sw);
+  --acc:#2E6B00; --acc-h:#245500; --acc-bg:#EEF5E6;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--page);color:var(--ink)}
+body{font-family:var(--font);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer}
+input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3{margin:0;font-weight:400;letter-spacing:-.01em}
+.num{font-variant-numeric:tabular-nums}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.i{width:18px;height:18px;flex:none;vertical-align:-4px}
+
+/* brand bar */
+.hdr{position:fixed;top:0;left:0;right:0;height:var(--hdr);background:var(--surface);border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 24px;z-index:40}
+.brand{display:flex;align-items:center;gap:10px}
+.brand .mark{width:28px;height:28px;border-radius:7px;background:var(--ink);color:#fff;display:grid;place-items:center;font-size:16px;font-weight:500}
+.brand .wm{font-size:19px;font-weight:500;letter-spacing:-.01em}
+.brand .appn{margin-left:8px;padding-left:16px;border-left:1px solid var(--line);font-size:15px;color:var(--ink-2)}
+.apps{margin-left:auto;display:flex;gap:22px;font-size:14px;font-weight:500;align-self:stretch}
+.apps button{background:none;border:0;padding:0 2px;border-bottom:3px solid transparent;color:var(--ink-2)}
+.apps button.on{border-bottom-color:var(--ink);color:var(--ink)}
+
+/* sidebar */
+.side{position:fixed;top:var(--hdr);bottom:0;left:0;width:var(--sw);background:var(--side);z-index:35;display:flex;flex-direction:column;transition:width .2s}
+body.side-open{--sw-cur:232px}
+body.side-open .side{width:232px}
+.side .applogo{height:66px;display:flex;align-items:center;gap:12px;padding:0 12px;border-bottom:2px solid #fff;margin:0 8px;color:#fff}
+.side .applogo .c{width:40px;height:40px;border-radius:50%;background:#fff;color:var(--ink);display:grid;place-items:center;flex:none}
+.side .applogo .c .i{width:24px;height:24px}
+.side .applogo b{font-weight:500;white-space:nowrap;overflow:hidden}
+.side .tog{position:absolute;top:80px;right:-12px;width:24px;height:24px;border-radius:50%;border:2px solid #fff;background:var(--ink);color:#fff;display:grid;place-items:center;padding:0}
+.side .tog .i{width:14px;height:14px;transition:transform .2s}
+.side-open .side .tog .i{transform:rotate(180deg)}
+.side nav{display:flex;flex-direction:column;gap:6px;padding:18px 0;flex:1;overflow:hidden}
+.side .gap{height:40px;flex:none}
+.side .grow{flex:1}
+.side .sep{border-top:1px solid var(--side-2);margin:8px 0}
+.si{position:relative;display:flex;align-items:center;gap:14px;height:44px;margin:0 14px;padding:0 4px;background:none;border:0;color:#fff;border-radius:6px;white-space:nowrap;text-align:left}
+.si .ib{width:36px;height:36px;border-radius:6px;display:grid;place-items:center;flex:none}
+.si .ib .i{width:22px;height:22px}
+.si span.l{font-size:14px;opacity:0;transition:opacity .15s}
+.side-open .side .si span.l{opacity:1}
+.si:hover .ib{background:var(--side-2)}
+.si.on .ib{background:var(--lime);color:var(--ink)}
+/* count badge: lime on the dark rail (12:1 with black text), ringed in the rail colour so it separates from the icon and from the lime active state */
+.si .badge{position:absolute;top:-3px;left:26px;min-width:20px;height:20px;border-radius:99px;background:var(--lime);color:var(--ink);font-size:12px;font-weight:700;line-height:1;display:grid;place-items:center;padding:0 5px;box-shadow:0 0 0 2px var(--side);font-variant-numeric:tabular-nums}
+.si.on .badge{background:#fff}
+/* expanded rail: the count moves from the icon to the end of the row */
+.si .cnt{display:none}
+.side-open .side .si .badge{display:none}
+.side-open .side .si .cnt{display:grid;position:static;margin-left:auto}
+
+/* main */
+main{margin-left:var(--sw-cur);transition:margin-left .2s;padding:calc(var(--hdr) + 20px) 24px 80px;min-height:100vh}
+.crumbs{display:flex;gap:10px;align-items:center;font-size:13px;margin:0 0 18px;flex-wrap:wrap}
+.crumbs button{background:none;border:0;padding:0;font-size:13px}
+.crumbs button:hover{text-decoration:underline}
+.crumbs .i{width:12px;height:12px;color:var(--ink-2)}
+.crumbs b{font-weight:600;color:var(--ink)}
+.card{background:var(--surface);border-radius:8px;box-shadow:var(--shadow);padding:22px 24px;position:relative;min-width:0}
+.card-h{display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.card-h h2{font-size:20px}
+.card-h .r{margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.more{width:32px;height:28px;border:0;background:none;border-radius:4px;display:grid;place-items:center;font-size:20px;line-height:1;letter-spacing:1px;padding-bottom:8px}
+.more:hover{background:var(--zebra)}
+.row{display:grid;gap:20px;margin-bottom:20px}
+.r2{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.r3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px 24px}
+.facts.c2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.f b{display:block;font-weight:600;font-size:15px}
+.f span,.f div{font-size:15px}
+.f.full{grid-column:1/-1}
+.f{min-width:0;overflow-wrap:anywhere}
+.f .link{text-align:left;display:inline}
+.dotted{border-bottom:1px dotted var(--ink);cursor:help}
+.link{background:none;border:0;padding:0;color:var(--link);text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px;font-weight:500;display:inline-flex;align-items:center;gap:4px;font-size:15px}
+.link .i{width:14px;height:14px}
+.link:hover{text-decoration-thickness:2px}
+.muted{color:var(--ink-2)}
+.small{font-size:13px}
+
+/* buttons */
+.btn{height:42px;border:1px solid var(--ink);background:var(--surface);color:var(--ink);border-radius:4px;padding:0 24px;font-size:16px;font-weight:500;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap}
+.btn:hover{background:var(--zebra)}
+.btn-p{background:var(--acc);border-color:var(--acc);color:#fff}
+.btn-p:hover{background:var(--acc-h);border-color:var(--acc-h)}
+.btn-block{width:100%}
+.btn-sm{height:36px;padding:0 16px;font-size:15px}
+.btn:disabled{background:#EDEDED;border-color:#EDEDED;color:#6B6B6B;cursor:not-allowed}
+.ibtn{width:30px;height:30px;border:1px solid var(--ink);border-radius:4px;background:var(--surface);display:grid;place-items:center;padding:0;position:relative}
+.ibtn .i{width:18px;height:18px}
+.ibtn:hover{background:var(--zebra)}
+.ibtn .rd{position:absolute;top:-4px;right:-4px;width:9px;height:9px;border-radius:50%;background:var(--err)}
+.split-btn{display:inline-flex;gap:6px}
+.split-btn .btn:last-child{padding:0 10px}
+
+/* form fields */
+.fl{position:relative;border:1px solid var(--line-2);border-radius:4px;background:var(--surface);min-width:220px;height:44px}
+.fl label{position:absolute;left:12px;top:4px;font-size:11px;color:var(--ink-2);pointer-events:none}
+.fl select,.fl input{appearance:none;-webkit-appearance:none;border:0;background:transparent;width:100%;height:100%;padding:16px 36px 2px 12px;font-size:15px;font-weight:500;outline:none}
+.fl input{padding-right:12px;font-weight:400}
+.fl .i{position:absolute;right:10px;top:13px;pointer-events:none}
+.fl:focus-within{border-color:var(--ink)}
+.fl.err{border-color:var(--err)}
+.fl.ta{height:auto}
+.fl.ta textarea{border:0;outline:none;width:100%;padding:20px 12px 8px;min-height:160px;resize:vertical;font-size:15px;line-height:1.5;background:transparent}
+.ferr{color:var(--err);font-size:13px;margin-top:4px}
+.search{display:flex;height:42px;border:1px solid var(--line-2);border-radius:4px;overflow:hidden;background:var(--surface);min-width:260px}
+.search input{border:0;outline:none;flex:1;padding:0 12px;font-size:14px;min-width:0}
+.search .clr{border:0;background:none;width:34px;display:grid;place-items:center;color:var(--ink-2)}
+.search .go{border:0;border-left:1px solid var(--line-2);background:#E6E6E6;width:42px;display:grid;place-items:center}
+.seg{display:inline-flex;border:1px solid var(--ink);border-radius:4px;overflow:hidden;height:42px;flex:none}
+.seg button{border:0;border-right:1px solid var(--ink);background:var(--surface);padding:0 22px;font-size:15px;font-weight:500}
+.seg button:last-child{border-right:0}
+.seg button.on{background:#E3E3E3}
+.toolbar{display:flex;gap:16px;align-items:center;margin-bottom:18px;flex-wrap:wrap}
+.toolbar .r{margin-left:auto;display:flex;gap:12px;flex-wrap:wrap}
+.chk{display:inline-flex;align-items:center;gap:10px;cursor:pointer;font-size:15px}
+.chk input{width:20px;height:20px;accent-color:var(--ink);margin:0}
+
+/* tables */
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th{text-align:left;font-weight:600;padding:10px 14px;white-space:nowrap}
+th .srt{display:inline-block;width:9px;margin-right:6px;font-size:10px;line-height:.6;vertical-align:1px}
+tbody{border:1px solid var(--line)}
+td{padding:12px 14px;vertical-align:middle}
+tbody tr:nth-child(odd) td{background:var(--zebra)}
+tbody tr.click{cursor:pointer}
+tbody tr.click:hover td{background:#EAEAEA}
+tbody tr.sel td{background:#DCDCDC!important}
+tbody tr.child td:nth-child(2){padding-left:34px}
+tbody tr.hl td{background:#EDEDED!important}
+tbody tr.hl td:first-child{box-shadow:inset 4px 0 0 var(--ink)}
+td.act{text-align:right;white-space:nowrap;width:1%}
+td.act .ibtn{display:inline-grid;margin-left:6px}
+.exp{width:26px;height:26px;border:0;background:none;display:grid;place-items:center;padding:0}
+.exp .i{transition:transform .15s}
+.exp.open .i{transform:rotate(90deg)}
+.cf{display:flex;align-items:center;gap:6px}
+.trunc{max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ul{border-bottom:1px dotted var(--ink)}
+.empty td{text-align:center;font-size:14px;font-weight:500;padding:34px}
+.pager{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:18px;font-size:14px}
+.pager .pg{width:24px;height:24px;border:0;background:none;display:grid;place-items:center;padding:0;color:var(--ink-2)}
+.pager .pg.on{background:var(--ink);color:#fff;border-radius:3px;font-weight:600}
+.pager .box{border:1px solid var(--line-2);border-radius:3px;width:26px;height:26px;display:grid;place-items:center}
+
+/* status */
+.st{display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.sti{width:16px;height:16px;display:grid;place-items:center;flex:none;font-size:11px;font-weight:700;line-height:1}
+.sti.warn{width:18px;background:var(--warn);color:#fff;clip-path:polygon(50% 0,100% 100%,0 100%);padding-top:4px;font-size:10px}
+.sti.err{background:var(--err);color:#fff;border-radius:50%}
+.sti.ok{color:var(--ok)}
+.sti.ok .i,.sti.info .i{width:18px;height:18px}
+.sti.info{color:var(--info)}
+.sti.mute{color:var(--ink-3)}
+
+/* hint */
+.hint{background:var(--hint);padding:14px 16px;font-size:15px;color:var(--ink);border-radius:2px;border-left:4px solid var(--info)}
+.hint b{font-weight:600}
+.hint .acts{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+.hint.warn{background:var(--warn-bg);border-left-color:var(--warn)}
+.hint.err{background:var(--err-bg);border-left-color:var(--err)}
+.hint.ok{background:var(--ok-bg);border-left-color:var(--ok)}
+.next-hint{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:20px}
+.next-hint .t{flex:1;min-width:260px}
+.next-hint .acts{margin-top:0}
+
+/* dropzone */
+.drop{border:1px dashed var(--ink);border-radius:4px;padding:18px;text-align:center;max-width:400px;margin:0 auto 18px;font-size:13px;background:none;width:100%;display:block}
+.drop:hover{background:var(--zebra)}
+.drop .i{width:28px;height:28px;margin-bottom:4px}
+.drop b{display:block;font-weight:600}
+.drop .lk{color:var(--link);text-decoration:underline;text-underline-offset:3px;font-weight:500;font-size:15px;display:block;margin:4px 0}
+
+/* context menu */
+.menu{position:absolute;z-index:45;background:var(--surface);box-shadow:0 4px 18px rgba(0,0,0,.18);border-radius:4px;min-width:240px;padding:6px 0}
+.menu button{display:block;width:100%;text-align:left;border:0;background:none;padding:10px 16px;font-size:15px}
+.menu button:hover{background:var(--zebra)}
+.menu button:disabled{color:var(--ink-3);cursor:default;background:none}
+
+/* collapse handle */
+.handle{display:flex;justify-content:center;margin:-10px 0 -8px;position:relative;z-index:2}
+.handle button{width:36px;height:36px;border-radius:50%;border:0;background:var(--surface);box-shadow:var(--shadow);display:grid;place-items:center}
+
+/* plan view */
+.planwrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start;position:relative}
+.planwrap.wide{grid-template-columns:minmax(0,1fr)}
+.planwrap.wide .vlist{display:none}
+.viewer{padding:0;overflow:hidden}
+.viewer .vh{display:flex;align-items:center;gap:14px;padding:16px 24px;flex-wrap:wrap}
+.viewer .vh h2{font-size:20px}
+.viewer .vh .fl{margin-left:auto;min-width:300px}
+.canvas{position:relative;aspect-ratio:4/3;background:#4E6B3A}
+.canvas svg.map{width:100%;height:100%;display:block}
+.canvas .pgctl{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:8px}
+.canvas .pgctl button{width:30px;height:30px;border:0;border-radius:3px;background:#fff;display:grid;place-items:center;box-shadow:var(--shadow)}
+.canvas .pgctl button:disabled{opacity:.5}
+.canvas .pgctl .box{background:#fff;border-radius:3px;padding:4px 10px;font-size:13px;display:flex;align-items:center;gap:6px;box-shadow:var(--shadow)}
+.canvas .pgctl .box b{border:1px solid var(--line-2);border-radius:3px;padding:0 6px;font-weight:500}
+.canvas .zoom{position:absolute;right:12px;bottom:14px;display:flex;gap:6px;align-items:center}
+.canvas .zoom span{background:#fff;border-radius:3px;padding:4px 10px;font-size:13px;box-shadow:var(--shadow)}
+.canvas .zoom button{width:28px;height:28px;border:0;background:#fff;border-radius:3px;box-shadow:var(--shadow);display:grid;place-items:center}
+.collapse{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:36px;height:36px;border-radius:50%;border:0;background:#fff;box-shadow:var(--shadow);display:grid;place-items:center;z-index:3}
+.planwrap.wide .collapse{left:12px;transform:translateY(-50%)}
+.pin{cursor:pointer}
+table.compact{font-size:14px}
+table.compact th,table.compact td{padding:10px 8px}
+table.compact tbody tr.child td:nth-child(2){padding-left:20px}
+.addic{width:30px;height:30px;border:0;background:none;display:grid;place-items:center;padding:0}
+.addic .i{width:22px;height:22px}
+
+/* vorgang communication */
+.comm{display:grid;grid-template-columns:minmax(0,38fr) minmax(0,62fr);gap:20px;align-items:stretch}
+.comm .list{border:1px solid var(--line);min-height:420px}
+.comm .list table tbody{border:0}
+.pane{border:1px solid var(--line);min-height:420px;display:flex;flex-direction:column}
+.pane .tabs{display:flex;background:var(--zebra);border-bottom:1px solid var(--line)}
+.pane .tabs button{border:0;background:none;padding:10px 16px;font-size:14px;font-weight:500;display:flex;gap:8px;align-items:center}
+.pane .tabs button.on{background:var(--surface);box-shadow:inset 0 -2px 0 var(--ink)}
+.pane .pb{padding:20px 24px;flex:1}
+.pane .pb h3{font-size:18px;font-weight:600}
+.pane .meta{display:grid;grid-template-columns:70px 1fr;gap:8px 12px;margin:16px 0;font-size:15px}
+.pane .meta dt{color:var(--ink-2)}
+.pane .meta dd{margin:0}
+.pane .body{white-space:pre-line;font-size:15px}
+.att{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.att span{display:inline-flex;gap:6px;align-items:center;border:1px solid var(--line-2);border-radius:3px;padding:4px 10px;font-size:13px}
+.cic{position:relative;display:inline-grid;place-items:center;width:28px;height:24px}
+.cic .i{width:22px;height:22px}
+.cic i{position:absolute;right:-1px;bottom:-1px;width:10px;height:10px;border-radius:50%;border:1.5px solid #fff}
+.rem td{padding:11px 14px}
+.rem .over{color:var(--err);font-weight:500}
+.rem em{font-size:12px;color:var(--ink-2)}
+
+/* overlay page */
+.ov{position:fixed;top:var(--hdr);left:var(--sw-cur);transition:left .2s;right:0;bottom:0;background:var(--surface);z-index:30;display:flex;flex-direction:column;animation:fade .15s}
+.ov-h{display:flex;align-items:center;padding:26px 30px 18px;border-bottom:1px solid var(--line)}
+.ov-h h1{font-size:32px;font-weight:300}
+.ov-h .x{margin-left:auto;width:40px;height:40px;border:0;background:none;display:grid;place-items:center}
+.ov-h .x .i{width:24px;height:24px}
+.ov-b{flex:1;overflow-y:auto;padding:28px 30px 40px}
+.ov-b .col{max-width:820px}
+.ov-f{border-top:1px solid var(--line);padding:16px 30px;display:flex;gap:20px;align-items:center}
+.ov-f .l{font-size:15px}
+.ov-f .acts{display:flex;gap:16px;margin-left:auto;flex-wrap:wrap}
+.ov-f > .btn-p{margin-left:4px}
+.ov-f.left .acts{margin-left:40px}
+.sec{margin-bottom:28px}
+.sec h3{font-size:18px;font-weight:600;margin-bottom:4px}
+.sec p.d{margin:0 0 14px;font-size:15px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.fgrid .full{grid-column:1/-1}
+.letter{border:1px solid var(--line);box-shadow:0 2px 12px rgba(0,0,0,.08);padding:40px 48px;max-width:720px;white-space:pre-line;font-size:14px;line-height:1.65}
+.letter .lh{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-2);margin-bottom:28px}
+
+/* modal */
+.mbg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:50;display:grid;place-items:center;padding:20px;animation:fade .15s}
+@keyframes fade{from{opacity:0}}
+.modal{background:var(--surface);border-radius:4px;width:100%;max-width:620px;max-height:calc(100vh - 40px);display:flex;flex-direction:column}
+.modal.wide{max-width:900px}
+.modal .mh{display:flex;align-items:flex-start;gap:12px;padding:24px 28px 10px}
+.modal .mh h2{font-size:24px;font-weight:300}
+.modal .mh .x{margin-left:auto;width:36px;height:36px;border:0;background:none;display:grid;place-items:center}
+.modal .mb{padding:10px 28px 20px;overflow-y:auto}
+.modal .mf{display:flex;gap:14px;justify-content:flex-end;padding:16px 28px 24px;flex-wrap:wrap}
+.opts{display:grid;gap:10px}
+.opt{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line-2);border-radius:4px;padding:12px 14px;cursor:pointer;background:var(--surface);text-align:left;width:100%}
+.opt input{width:18px;height:18px;accent-color:var(--ink);margin:2px 0 0}
+.opt b{display:block;font-weight:600}
+.opt span{font-size:13px;color:var(--ink-2)}
+.opt.on{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);background:var(--zebra)}
+.spinner{width:18px;height:18px;border:2px solid rgba(0,0,0,.15);border-top-color:var(--ink);border-radius:50%;animation:spin .7s linear infinite;flex:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* KPI strip */
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;margin-bottom:22px}
+.kpi{border-left:2px solid var(--ink);padding:2px 16px}
+.kpi .k{font-size:13px;font-weight:600;display:flex;gap:8px;align-items:center}
+.kpi .v{font-size:32px;font-weight:500;margin:4px 0 0;letter-spacing:-.02em}
+.kpi .s{font-size:13px}
+.kpi .s em{font-style:normal;font-weight:600}
+.kpi .s .up{color:var(--warn)}
+.kpi .s .dn{color:var(--ok)}
+.news td:first-child{font-weight:500}
+.quick{display:flex;gap:16px;flex-wrap:wrap}
+
+/* toast */
+.toasts{position:fixed;top:calc(var(--hdr) + 16px);right:24px;z-index:60;display:grid;gap:8px;width:min(420px,calc(100% - 32px))}
+.toast{background:var(--surface);border-left:4px solid var(--ok);color:var(--ink);padding:14px 16px;font-size:15px;display:flex;gap:10px;align-items:center;box-shadow:0 6px 20px rgba(0,0,0,.15);animation:fade .2s}
+.toast .i{color:var(--ok)}
+.toast.info{border-left-color:var(--ink)}
+.toast.info .i{color:var(--ink)}
+
+/* prototype controls (not part of the product UI) */
+body.shot .proto{display:none}
+.proto{position:fixed;right:20px;bottom:20px;z-index:55;font-size:13px;transition:bottom .2s}
+body.has-ov .proto{bottom:96px}
+.proto > button{height:38px;border-radius:99px;border:0;background:var(--ink);color:#fff;padding:0 16px;display:flex;align-items:center;gap:8px;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+.proto > button .i{color:#fff;width:16px;height:16px}
+.proto .pp{position:absolute;right:0;bottom:48px;width:280px;background:var(--ink);color:#fff;border-radius:10px;padding:14px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.proto .pp p{margin:0 0 10px;color:#BDBDBD;line-height:1.4}
+.proto .pp b{color:#fff;font-weight:500}
+.proto .pp .acts{display:grid;gap:6px}
+.proto .pp button{height:32px;border-radius:6px;border:1px solid #555;background:none;color:#fff;font-size:13px;text-align:left;padding:0 10px}
+.proto .pp button:hover{border-color:#fff}
+.proto .pp button:disabled{opacity:.4;cursor:default}
+
+/* secondary pages */
+.search.wide{width:100%;max-width:720px;height:48px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.chip{border:1px solid var(--line-2);background:var(--surface);border-radius:99px;padding:4px 12px;font-size:13px}
+.chip:hover{border-color:var(--ink)}
+.bars{display:grid;gap:14px}
+.bar{display:grid;grid-template-columns:minmax(120px,220px) minmax(0,1fr) 40px;gap:12px;align-items:center;font-size:14px}
+.bar .bt{height:12px;background:var(--zebra);border:1px solid var(--line);border-radius:2px;overflow:hidden;display:block}
+.bar .bt i{display:block;height:100%;background:var(--ink)}
+.bar b{text-align:right;font-weight:600}
+.bar.mini{grid-template-columns:120px 48px;display:inline-grid}
+.nlist{display:grid}
+.nitem{display:flex;gap:14px;align-items:flex-start;padding:14px 6px;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;width:100%}
+.nitem:hover{background:var(--zebra)}
+.nitem .t{flex:1;min-width:0;display:grid;gap:2px}
+.nitem .t b{font-weight:500}
+.nitem.unread .t b{font-weight:700}
+.nitem.unread .t b::after{content:'Neu';margin-left:8px;font-size:11px;font-weight:600;border:1px solid var(--ink);border-radius:99px;padding:0 6px;vertical-align:1px}
+details.faq{border-bottom:1px solid var(--line)}
+details.faq summary{cursor:pointer;padding:14px 0;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:12px}
+details.faq summary::-webkit-details-marker{display:none}
+details.faq summary::after{content:'+';font-weight:400;font-size:22px;line-height:1}
+details.faq[open] summary::after{content:'–'}
+details.faq p{margin:0 0 16px;max-width:760px}
+.rearr{display:grid;gap:10px;list-style:none;margin:0;padding:0}
+.rr{display:flex;gap:16px;align-items:center;border:1px solid var(--line-2);border-radius:4px;padding:10px 12px}
+.thumb{width:112px;aspect-ratio:4/3;border:1px solid var(--line);flex:none;overflow:hidden}
+.thumb svg{width:100%;height:100%;display:block}
+.radios{display:flex;gap:28px;flex-wrap:wrap;margin-top:10px}
+.canvas{overflow:auto}
+body.reduce *,body.reduce *::before{transition:none!important;animation:none!important}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* responsive */
+@media (max-width:1180px){
+  .r3{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .r3 > :last-child{grid-column:1/-1}
+  .kpis{grid-template-columns:repeat(3,minmax(0,1fr));row-gap:16px}
+  .planwrap,.comm{grid-template-columns:minmax(0,1fr)}
+  .collapse{display:none}
+}
+@media (max-width:860px){
+  .r2,.r3{grid-template-columns:minmax(0,1fr)}
+  .r3 > :last-child{grid-column:auto}
+  .facts{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .fgrid{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:600px){
+  :root{--hdr:52px;--sw:52px}
+  body.side-open{--sw-cur:var(--sw)}
+  body.side-open .side{width:220px;box-shadow:8px 0 24px rgba(0,0,0,.3)}
+  .hdr{padding:0 14px}
+  .brand .appn{display:none}
+  main{padding:calc(var(--hdr) + 14px) 12px 90px}
+  .side .applogo{padding:0 4px;margin:0 4px}
+  .side .applogo .c{width:36px;height:36px}
+  .si{margin:0 4px;padding:0 4px}
+  .card{padding:18px 16px}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .facts,.facts.c2{grid-template-columns:minmax(0,1fr)}
+  .fl,.search{min-width:0;flex:1 1 100%}
+  .seg{overflow-x:auto;max-width:100%}
+  .seg button{padding:0 14px}
+  .ov-h{padding:18px 16px 12px}
+  .ov-h h1{font-size:24px}
+  .ov-b{padding:20px 16px 30px}
+  .ov-f{padding:12px 16px;flex-wrap:wrap}
+  .ov-f .acts,.ov-f.left .acts{margin-left:0}
+  .viewer .vh .fl{min-width:0;margin-left:0}
+  .proto{right:12px;bottom:12px}
+  .bar{grid-template-columns:minmax(0,1fr) 40px}
+  .bar .bl{grid-column:1/-1}
+  .rr{flex-wrap:wrap}
+}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div class="brand"><span class="mark">t</span><span class="wm">telvia</span><span class="appn">Camino · Wegesicherung</span></div>
+  <div class="apps"><button class="on">Camino</button><button data-act="toast" data-v="KMDB ist nicht Teil dieses Prototyps.">KMDB</button></div>
+</header>
+<aside class="side" id="side"></aside>
+<main id="main"></main>
+<div id="layer"></div>
+<div id="menu"></div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<div class="proto" id="proto"></div>
+
+<script>
+/* ---------- icons ---------- */
+const I = {
+  route:'<path d="M6 19c0-4 4-4 6-7s0-7 6-7"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+  home:'<path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/>',
+  grid:'<rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/>',
+  mail:'<rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="m3 7 9 6 9-6"/>',
+  contact:'<rect x="5" y="3" width="14" height="18" rx="1.5"/><circle cx="12" cy="10" r="2.5"/><path d="M8.5 16c.7-1.6 2-2.5 3.5-2.5s2.8.9 3.5 2.5"/>',
+  clip:'<rect x="5" y="4" width="14" height="17" rx="1.5"/><path d="M9 4V3h6v1M8.5 9h7M8.5 12.5h7M8.5 16h5"/>',
+  cloud:'<path d="M7 18a4 4 0 0 1-.5-8A5.5 5.5 0 0 1 17 9a4.5 4.5 0 0 1 .5 9"/><path d="M12 12v7M9.5 14.5 12 12l2.5 2.5"/>',
+  cardp:'<rect x="3" y="6" width="18" height="13" rx="1.5"/><path d="M3 10h18"/>',
+  chart:'<path d="M4 20V5h3v15M10.5 20v-9h3v9M17 20v-6h3v6"/>',
+  news:'<rect x="3" y="5" width="18" height="15" rx="1.5"/><path d="M7 9h10M7 12.5h4M7 16h4M13.5 12.5H17V16h-3.5z"/>',
+  bell:'<path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/>',
+  help:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7M12 17h.01"/>',
+  user:'<circle cx="11" cy="8" r="4"/><path d="M3 21c1.4-4 4.3-6 8-6 1.6 0 3 .4 4.2 1.1M16 19h5M18.5 16.5 21 19l-2.5 2.5"/>',
+  chev:'<path d="m9 6 6 6-6 6"/>', chevd:'<path d="m6 9 6 6 6-6"/>', chevu:'<path d="m6 15 6-6 6 6"/>', back:'<path d="m15 6-6 6 6 6"/>',
+  first:'<path d="m18 6-6 6 6 6M11 6l-6 6 6 6"/>', last:'<path d="m6 6 6 6-6 6M13 6l6 6-6 6"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>', x:'<path d="M6 6l12 12M18 6 6 18"/>', check:'<path d="m5 12 4.5 4.5L19 7"/>',
+  gear:'<circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"/>',
+  clear:'<path d="M9 6h11v12H9l-6-6z"/><path d="m12 9.5 5 5M17 9.5l-5 5"/>',
+  letter:'<path d="M5 9V4h14v5"/><rect x="3" y="9" width="18" height="8" rx="1.5"/><path d="M7 14h10v6H7z"/>',
+  inbox:'<path d="M12 3v9M8.5 8.5 12 12l3.5-3.5"/><path d="M3 13h5l1.5 3h5l1.5-3h5v7H3z"/>',
+  file:'<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/>',
+  fileplus:'<path d="M6 3h8l4 4v6"/><path d="M14 3v4h4M6 3v18h7"/><circle cx="18" cy="18" r="4"/><path d="M18 16v4M16 18h4"/>',
+  clip2:'<path d="m20 11-8 8a5 5 0 0 1-7-7l8.5-8.5a3.3 3.3 0 0 1 4.7 4.7L9.5 17a1.7 1.7 0 0 1-2.4-2.4L15 6.8"/>',
+  person:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
+  envelope:'<rect x="3" y="5" width="18" height="14" rx="1"/><path d="m3 6 9 7 9-7"/>',
+  info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  note:'<path d="M5 4h10l4 4v12H5z"/><path d="m9 15 6.5-6.5 1.5 1.5L10.5 16.5H9z"/>',
+  phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a1 1 0 0 1-1 1A16 16 0 0 1 4 5a1 1 0 0 1 1-1"/>',
+  pages:'<rect x="8" y="3" width="12" height="14" rx="1"/><path d="M16 21H5V7"/>',
+  archive:'<rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v11h14V9M10 13h4"/>',
+  fast:'<path d="M4 6l7 6-7 6zM13 6l7 6-7 6z"/>',
+  play:'<path d="M7 5v14l11-7z"/>',
+  kp1:'<rect x="4" y="3" width="16" height="18" rx="1.5"/><path d="M8 8h8M8 12h8M8 16h5"/>',
+  kp2:'<path d="M3 12h9M9 9l3 3-3 3"/><circle cx="17" cy="6" r="2"/><circle cx="17" cy="18" r="2"/><path d="M15 12h4"/>',
+  kp3:'<path d="M20 12a8 8 0 0 1-14 5.3M4 12A8 8 0 0 1 18 6.7"/><path d="M18 3v4h-4M6 21v-4h4"/>',
+  copy:'<rect x="8" y="8" width="12" height="12" rx="1.5"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/>',
+  up:'<path d="M12 19V5M6 11l6-6 6 6"/>', down:'<path d="M12 5v14M6 13l6 6 6-6"/>',
+  edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>', trash:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>',
+  kp4:'<rect x="4" y="4" width="16" height="16" rx="1.5"/><path d="m7 15 3.5-3.5 2.5 2.5L17 9"/>',
+};
+const ic = (n, cls='') => `<svg class="i ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[n]||''}</svg>`;
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const srt = '<span class="srt">▲<br>▼</span>';
+const th = (l) => `<th>${srt}${l}</th>`;
+
+/* ---------- simulated time ---------- */
+const BASE = new Date(2026, 9, 29, 9, 30);
+const now = () => new Date(BASE.getTime() + S.dayOffset * 864e5);
+const fmt = d => d ? new Date(d).toLocaleDateString('de-DE', {day:'2-digit', month:'2-digit', year:'numeric'}) : '–';
+const fmtT = d => new Date(d).toLocaleString('de-DE', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'}).replace(',', '');
+const addDays = (d, n) => new Date(new Date(d).getTime() + n * 864e5);
+const daysBetween = (a, b) => Math.round((new Date(b) - new Date(a)) / 864e5);
+
+/* ---------- domain ---------- */
+const CATS = {
+  wbl:  {nm:'Wegebaulastträger', reasons:['Gemeinde','Kreisstraße','Landesstraße','Geh- und Radweg'], fiktion:90},
+  beh:  {nm:'Behördliche Genehmigungen', reasons:['Naturschutz','Gewässerkreuzung','Denkmalschutz','Verkehrsrechtliche Anordnung']},
+  kmb:  {nm:'Kampfmittel', reasons:['Kampfmittelauskunft','Luftbildauswertung']},
+  ve:   {nm:'Ver- & Entsorger', reasons:['Leitungsauskunft','Stellungnahme zur Trasse'], remind:28},
+  priv: {nm:'Private Grundstückseigentümer', reasons:['Gestattung Grundstücksnutzung','Grundstückseigentümererklärung (GEE)']},
+};
+const CAT_KEYS = Object.keys(CATS);
+const VERTRAG = [
+  {k:'gest', nm:'Gestattungsvertrag', d:'Standard für Hausanschluss und kurze Querungen.'},
+  {k:'mit', nm:'Mitbenutzungsvertrag', d:'Mitnutzung bestehender Leerrohre oder Trassen.'},
+  {k:'ding', nm:'Mitbenutzungsvertrag mit dinglicher Sicherung', d:'Bei hochwertigen TK-Linien oder fehlenden Trassenalternativen anzustreben.'},
+];
+const STATUS = {
+  draft:    {nm:'Entwurf', k:'warn'},
+  ready:    {nm:'Bereit zum Versand', k:'warn'},
+  sent:     {nm:'Antrag versendet', k:'info'},
+  reply:    {nm:'Rückläufer unbewertet', k:'err'},
+  clarify:  {nm:'Klärung Nebenbestimmungen', k:'warn'},
+  revise:   {nm:'Überarbeitung erforderlich', k:'err'},
+  approved: {nm:'Zustimmung erhalten', k:'ok'},
+  deemed:   {nm:'Zustimmungsfiktion eingetreten', k:'ok'},
+  secured:  {nm:'Weg gesichert', k:'ok'},
+  archived: {nm:'Archiviert', k:'ok'},
+  closed:   {nm:'Außerordentlich geschlossen', k:'mute'},
+};
+const FINAL = ['archived','closed'];
+const DONE = ['secured','archived','closed'];
+const sti = k => k==='ok' ? `<span class="sti ok">${ic('check')}</span>` : k==='info' ? `<span class="sti info">${ic('clock')}</span>` : k==='mute' ? `<span class="sti mute">–</span>` : `<span class="sti ${k}">!</span>`;
+const stat = (k, l) => `<span class="st">${sti(k)}${esc(l)}</span>`;
+const vStat = st => stat(STATUS[st].k, STATUS[st].nm);
+
+const BOOK0 = [
+  {id:'c1', org:'Gemeinde Lindenfeld', dept:'Tiefbauamt', email:'tiefbau@lindenfeld.example', cat:'wbl', onkz:'2594-1'},
+  {id:'c2', org:'Kreis Haselbach', dept:'Straßenverkehrsamt', email:'kreisstrassen@kreis-haselbach.example', cat:'wbl', onkz:'2594-1'},
+  {id:'c3', org:'Gemeinde Oberwies', dept:'Bauamt', email:'bauamt@oberwies.example', cat:'wbl', onkz:'2596-2'},
+  {id:'c4', org:'Kreis Haselbach', dept:'Untere Naturschutzbehörde', email:'natur@kreis-haselbach.example', cat:'beh', onkz:'2594-1'},
+  {id:'c5', org:'Kreis Haselbach', dept:'Untere Wasserbehörde', email:'wasser@kreis-haselbach.example', cat:'beh', onkz:'2594-1'},
+  {id:'c13', org:'Gemeinde Lindenfeld', dept:'Ordnungsamt / Verkehrsbehörde', email:'ordnung@lindenfeld.example', cat:'beh', onkz:'2594-1'},
+  {id:'c6', org:'Kampfmittelbeseitigungsdienst', dept:'Bezirk Nord', email:'auskunft@kbd-nord.example', cat:'kmb', onkz:'2594-1'},
+  {id:'c7', org:'Stadtwerke Lindenfeld', dept:'Netzauskunft Strom/Gas', email:'planauskunft@sw-lindenfeld.example', cat:'ve', onkz:'2594-1'},
+  {id:'c8', org:'Wasserverband Haselbach', dept:'Leitungsauskunft', email:'leitung@wv-haselbach.example', cat:'ve', onkz:'2594-1'},
+  {id:'c9', org:'Fernwärme Lindenfeld', dept:'Netzplanung', email:'netz@fw-lindenfeld.example', cat:'ve', onkz:'2594-1'},
+  {id:'c10', org:'Glasnetz Regio', dept:'Trassenauskunft', email:'trassen@glasnetz-regio.example', cat:'ve', onkz:'2594-1'},
+  {id:'c11', org:'Erika Musterfrau', dept:'Grundstückseigentümerin', email:'', postal:'Feldweg 3, 12345 Lindenfeld', cat:'priv', onkz:'2594-1', person:true},
+  {id:'c12', org:'Agrar GbR Beispielhof', dept:'Grundstückseigentümer', email:'', postal:'Am Hof 1, 12345 Lindenfeld', cat:'priv', onkz:'2594-1', person:true},
+];
+const BOOK = [];
+const PERSONS = {c1:[{anrede:'Frau', name:'Müller, Maria', fn:'Sachbearbeitung Tiefbau', tel:'+49 1234 5678-12', pub:true}], c5:[{anrede:'Herr', name:'Nolte, Hans', fn:'Wasserrecht', tel:'+49 1234 9876-40', pub:true}], c7:[{anrede:'Keine Angabe', name:'Planauskunft (Funktionspostfach)', fn:'Netzauskunft', tel:'+49 1234 4455-0', pub:true}]};
+const contact = id => BOOK.find(c => c.id === id);
+const ord = pl => pl.order || (pl.order = Array.from({length:pl.pages}, (_, i) => i + 1));
+const WFMT = {
+  'P25941F11MPKP520hb': {auftrag:'02594_002FTTH_PK', desc:'HK_1R/104_6_02594_002_FTTH_V7001_V7013_V7002', list:[
+    {nr:'000123456901', onkz:'2594-1', desc:'HVT_02594_000_02 · Haselbacher Weg'},
+    {nr:'000123456902', onkz:'2594-1', desc:'HVT_02594_000_02 · Mühlenstraße'},
+    {nr:'000123456903', onkz:'2594-1', desc:'HVT_02594_000_02 · Kreisstraße K 12'},
+    {nr:'000123456904', onkz:'2596-2', desc:'HVT_02596_000_02 · Oberwies Ortskern'},
+  ]},
+};
+
+/* ---------- state ---------- */
+let S;
+function seed(){
+  const t0 = BASE;
+  BOOK.splice(0, BOOK.length, ...BOOK0.map(k => ({...k, ch:k.person ? 'Brief' : 'E-Mail', link:k.person ? '' : 'www.' + (k.email.split('@')[1] || ''), persons:(PERSONS[k.id] || []).map(x => ({...x, at:addDays(t0, -90)}))})));
+  S = {
+    view:'dashboard', pid:null, vid:null, ptab:'vorgaenge', dtab:'erinnerungen', vtab:'komm', ptype:'Brief',
+    planPage:1, planWide:false, sideOpen:false, dayOffset:0, layer:null, menu:null, proto:false,
+    filter:{mine:true, open:true, q:''}, expanded:{}, catOpen:{}, highlight:null, selMsg:null, selLog:null, paneTab:'emp', onlyManual:false,
+    projects:[
+      {id:'p1', pid:'P25941F11MPKP520aa', auftrag:'02594_001FTTH_PK', onkz:'2594-1', type:'FTTH PK Push (DU 0403)', pti:'PTI Nord 11', owner:'Max Mustermann', mail:'m.mustermann@telvia.example', desc:'Ausbau Lindenfeld-Nord', long:'HK_1R/102_6_02594_001_FTTH_V7001_V7013_V7002_V1009 · Glasfaserausbau Lindenfeld-Nord inklusive Gewerbegebiet.', closed:false,
+       sm:[{nr:'000123456794', onkz:'2594-1', desc:'HVT_02594_000_02 · Lindenfeld Nord'},{nr:'000123456795', onkz:'2594-1', desc:'HVT_02594_000_02 · Gewerbegebiet'}],
+       ba:[{id:'b1', name:'Dorfstraße', ort:'Lindenfeld', start:'2026-11-16', end:'2027-03-31'}],
+       plans:[{id:'pl1', name:'trassenplan-lindenfeld-nord.pdf', pages:3, date:addDays(t0,-20)}]},
+      {id:'p2', pid:'P25941F11MPKP520cc', auftrag:'02595_001FTTH_PK', onkz:'2595-1', type:'FTTH PK Push (DU 0403)', pti:'PTI Nord 11', owner:'Max Mustermann', mail:'m.mustermann@telvia.example', desc:'Ausbau Birkenhain', long:'HK_1R/103_6_02595_001_FTTH_V7001_V7014', closed:false,
+       sm:[{nr:'000123456882', onkz:'2595-1', desc:'HVT_02595_000_02 · Birkenhain'}], ba:[{id:'b2', name:'Ortskern', ort:'Birkenhain', start:'2026-09-01', end:'2026-12-18'}], plans:[]},
+      {id:'p3', pid:'P25941F11MPKP520dd', auftrag:'02599_001FTTH_PK', onkz:'2544-1', type:'FTTH Förderprojekt', pti:'PTI Nord 11', owner:'Julia Beispiel', mail:'j.beispiel@telvia.example', desc:'Ausbau Talheim', long:'HK_1R/102_6_02599_001_FTTH_V7002_V7003', closed:true,
+       sm:[{nr:'000123456796', onkz:'2544-1', desc:'HVT_02599_000_02 · Talheim'}], ba:[], plans:[]},
+    ],
+    vorgaenge:[], seq:100,
+    q:{}, bk:{cat:'a', onkz:'a'}, ttab:'alle', ztab:'open', selIn:null, newsOpen:null, readNotifs:[], noteBy:'a', zoom:100,
+    settings:{daily:true, inMail:true, fiktion:true, reduce:false, time:'7:00 Uhr', scope:'Nur meine Projekte', vertretung:'Keine Vertretung', sig:'Max Mustermann\nTelvia GmbH · PTI Nord 11'},
+    frames:[
+      {id:'r1', name:'Rahmenvertrag_Agrarverband_Haselbach.pdf', ort:'Lindenfeld; Haselbach', fach:'Private Grundstückseigentümer', org:'Agrar GbR Beispielhof', valid:new Date(2028, 11, 31), note:'Gilt für alle landwirtschaftlichen Flächen des Verbands. Ein Gestattungsvertrag im Einzelfall ist nicht erforderlich.'},
+      {id:'r2', name:'RV_Stadtwerke_Lindenfeld_Mitverlegung.pdf', ort:'Lindenfeld', fach:'Ver- & Entsorger', org:'Stadtwerke Lindenfeld', valid:new Date(2027, 5, 30)},
+      {id:'r3', name:'Rahmenvereinbarung_Kreisstrassen_Haselbach.pdf', ort:'Kreis Haselbach', fach:'Wegebaulastträger', org:'Kreis Haselbach', valid:new Date(2029, 2, 31)},
+    ],
+    inbox:[
+      {id:'i1', at:addDays(t0,-2), from:'poststelle@kreis-haselbach.example', subj:'Eingangsbestätigung Az. 66.3-2026-118', body:'Sehr geehrte Damen und Herren,\n\nwir bestätigen den Eingang Ihres Schreibens. Bitte geben Sie bei Rückfragen das Aktenzeichen an.\n\nMit freundlichen Grüßen\nPoststelle Kreis Haselbach', att:['Eingangsbestaetigung.pdf']},
+      {id:'i2', at:addDays(t0,-5), from:'bauamt@oberwies.example', subj:'Rückfrage zum Breitbandausbau Oberwies', body:'Guten Tag,\n\nwir haben gehört, dass der Ausbau im Ortskern geplant ist. Wann ist mit einem Antrag zu rechnen?\n\nFreundliche Grüße\nBauamt Oberwies', att:[]},
+    ],
+    payments:[],
+  };
+  const mk = o => { const v = Object.assign({id:'v'+(S.seq++), contacts:[], comms:[], log:[], pages:[], notes:[], notify:{in:true, rem:true, fik:true}, vertrag:null, sentAt:null, reminder:null}, o); S.vorgaenge.push(v); return v; };
+  const L = (v, at, t, d, st, manual) => v.log.push({at, t, d, st, manual:!!manual});
+  const v1 = mk({pid:'p1', cat:'wbl', grund:'Gemeinde', desc:'Querung Dorfstraße / Mühlenweg', sm:['000123456794'], ba:'b1', pages:[1,2], status:'sent', contacts:['c1'], sentAt:addDays(t0,-40)});
+  v1.comms.push({id:'m1', dir:'out', ch:'E-Mail', at:addDays(t0,-40), to:'tiefbau@lindenfeld.example', subj:'Antrag auf Zustimmung nach § 127 TKG – Dorfstraße', body:'Sehr geehrte Damen und Herren,\n\nhiermit beantragen wir die Zustimmung zur Verlegung einer Telekommunikationslinie gemäß § 127 TKG. Planunterlagen und Bauzeitenplan liegen bei.\n\nMit freundlichen Grüßen\nMax Mustermann', att:['Trassenplan_S1-2.pdf','Bauzeitenplan.pdf']});
+  L(v1, addDays(t0,-41), 'Vorgang angelegt', 'Aus Planauswertung, Seite 1 und 2.', 'draft');
+  L(v1, addDays(t0,-41), 'Kontakt hinzugefügt', 'Gemeinde Lindenfeld · Tiefbauamt als Hauptkontakt.', 'ready');
+  L(v1, addDays(t0,-40), 'Ausgehende E-Mail', 'Antrag versendet. Frist der Zustimmungsfiktion gestartet (3 Monate).', 'sent');
+  const v2 = mk({pid:'p1', cat:'ve', grund:'Leitungsauskunft', desc:'Leitungsauskunft Stadtwerke', sm:['000123456794','000123456795'], ba:'b1', pages:[1], status:'reply', contacts:['c7'], sentAt:addDays(t0,-24)});
+  v2.comms.push({id:'m2', dir:'out', ch:'E-Mail', at:addDays(t0,-24), to:'planauskunft@sw-lindenfeld.example', subj:'Leitungsauskunft Trasse Lindenfeld-Nord', body:'Bitte um Auskunft über vorhandene Leitungen im markierten Trassenbereich.', att:['Trassenplan_S1.pdf']},
+    {id:'m3', dir:'in', ch:'E-Mail', at:addDays(t0,-1), from:'planauskunft@sw-lindenfeld.example', subj:'AW: Leitungsauskunft Trasse Lindenfeld-Nord', body:'Im angefragten Bereich befinden sich Mittelspannungskabel (20 kV) und eine Gasleitung DN 100.\nBei Arbeiten im Schutzstreifen ist eine Einweisung vor Ort erforderlich. Bestandspläne anbei.', att:['Bestandsplan_Strom.pdf','Bestandsplan_Gas.pdf']});
+  L(v2, addDays(t0,-24), 'Ausgehende E-Mail', 'Anschreiben aus Vorlage versendet.', 'sent');
+  L(v2, addDays(t0,-1), 'Eingehende E-Mail', 'Automatisch dem Vorgang zugeordnet.', 'reply');
+  const v3 = mk({pid:'p1', cat:'kmb', grund:'Kampfmittelauskunft', desc:'Auskunft gesamte Trasse', sm:['000123456794'], ba:'b1', pages:[1,2,3], status:'secured', contacts:['c6'], sentAt:addDays(t0,-60)});
+  v3.comms.push({id:'m4', dir:'in', ch:'Brief', at:addDays(t0,-30), from:'Kampfmittelbeseitigungsdienst Bezirk Nord', subj:'Ergebnis Luftbildauswertung', body:'Für den angefragten Bereich liegen keine Hinweise auf Kampfmittel vor.', att:['Bescheid_KBD.pdf'], rated:'Zustimmung erhalten'});
+  L(v3, addDays(t0,-60), 'Ausgehender Brief', 'Anfrage Kampfmittelauskunft versendet.', 'sent');
+  L(v3, addDays(t0,-30), 'Rückläufer bewertet', 'Zustimmung erhalten.', 'approved');
+  L(v3, addDays(t0,-29), 'Status aktualisiert', 'Weg als gesichert markiert.', 'secured');
+  const v4 = mk({pid:'p1', cat:'priv', grund:'Gestattung Grundstücksnutzung', desc:'Flurstück 112/4 – Querung Acker', sm:['000123456795'], ba:'b1', pages:[3], status:'draft'});
+  L(v4, addDays(t0,-10), 'Vorgang angelegt', 'Aus Planauswertung, Seite 3.', 'draft');
+  const v5 = mk({pid:'p1', cat:'beh', grund:'Gewässerkreuzung', desc:'Querung Mühlbach (Spülbohrung)', sm:['000123456794'], ba:'b1', pages:[2], status:'sent', contacts:['c5'], sentAt:addDays(t0,-35), reminder:addDays(t0,-2)});
+  v5.comms.push({id:'m5', dir:'out', ch:'Brief', at:addDays(t0,-35), to:'Kreis Haselbach · Untere Wasserbehörde', subj:'Antrag wasserrechtliche Genehmigung – Querung Mühlbach', body:'Wir beantragen die Genehmigung für die Querung des Mühlbachs im Spülbohrverfahren.', att:['Trassenplan_S2.pdf','Bohrprofil.pdf']});
+  L(v5, addDays(t0,-35), 'Ausgehender Brief', 'Brief über Druckdienstleister versendet.', 'sent');
+  L(v5, addDays(t0,-14), 'Manueller Eintrag', 'Telefonat: Sachbearbeitung bestätigt Eingang, Bearbeitung ca. 4 Wochen.', 'sent', true);
+  const v6 = mk({pid:'p2', cat:'wbl', grund:'Kreisstraße', desc:'Längsverlegung K 7', sm:['000123456882'], ba:'b2', status:'secured', contacts:['c2']});
+  L(v6, addDays(t0,-80), 'Status aktualisiert', 'Weg als gesichert markiert.', 'secured');
+  const v7 = mk({pid:'p2', cat:'ve', grund:'Leitungsauskunft', desc:'Leitungsauskunft Wasser', sm:['000123456882'], ba:'b2', status:'secured', contacts:['c8']});
+  L(v7, addDays(t0,-70), 'Status aktualisiert', 'Weg als gesichert markiert.', 'secured');
+  v1.notes.push({id:'n1', at:addDays(t0,-38), by:'m.mustermann@telvia.example', t:'Tiefbauamt bittet um Anzeige des Baubeginns 14 Tage vorher. Telefonisch vormittags gut erreichbar.'});
+  v5.notes.push({id:'n2', at:addDays(t0,-14), by:'j.beispiel@telvia.example', t:'Bohrprofil in Endfassung liegt beim Planungsbüro, kommt voraussichtlich in KW 46.'});
+  S.payments.push({id:'z1', vid:v5.id, nm:'Verwaltungsgebühr wasserrechtliche Genehmigung', amount:180, due:addDays(t0,10), paid:false}, {id:'z2', vid:v3.id, nm:'Gebühr Luftbildauswertung', amount:95, due:addDays(t0,-40), paid:true, paidAt:addDays(t0,-35)});
+}
+seed();
+
+const P = id => S.projects.find(p => p.id === id);
+const V = id => S.vorgaenge.find(v => v.id === id);
+const vOf = pid => S.vorgaenge.filter(v => v.pid === pid);
+const log = (v, t, d, manual) => v.log.push({at:now(), t, d, st:v.status, manual:!!manual});
+const unrated = v => v.comms.find(m => m.dir==='in' && !m.rated);
+
+/* ---------- tasks (dashboard) ---------- */
+function tasks(){
+  const out = [];
+  for (const v of S.vorgaenge){
+    const p = P(v.pid); if (p.owner !== 'Max Mustermann' || p.closed) continue;
+    const base = {v:v.id, sm:v.sm, pid:p.pid, onkz:p.onkz, grund:v.grund, desc:v.desc};
+    if (v.status === 'reply') out.push({...base, tab:'vorgaenge', a:'Rücklauf bewerten', date:unrated(v).at, pri:0});
+    if (v.reminder && new Date(v.reminder) <= now() && !FINAL.includes(v.status)) out.push({...base, tab:'erinnerungen', a:'Erinnerung (überfällig)', date:v.reminder, pri:1, over:true});
+    if (v.status === 'sent' && CATS[v.cat].fiktion) out.push({...base, tab:'erinnerungen', a:'Zustimmungsfiktion', date:addDays(v.sentAt, CATS[v.cat].fiktion), pri:2});
+    if (v.status === 'draft') out.push({...base, tab:'vorgaenge', a: v.cat==='priv' && !v.vertrag ? 'Vertragsart festlegen' : 'Kontakte zuweisen', date:null, pri:3});
+    if (v.status === 'ready' || v.status === 'revise') out.push({...base, tab:'vorgaenge', a:'Antrag versenden', date:null, pri:3});
+    if (v.status === 'clarify') out.push({...base, tab:'vorgaenge', a:'Nebenbestimmungen klären', date:null, pri:2});
+    if (['approved','deemed'].includes(v.status)) out.push({...base, tab:'vorgaenge', a:'Weg sichern', date:null, pri:2});
+    if (v.status === 'secured') out.push({...base, tab:'abschluesse', a:'Vorgang archivieren', date:null, pri:4});
+  }
+  for (const p of S.projects){ if (p.closed || p.owner!=='Max Mustermann') continue; const vs = vOf(p.id);
+    if (vs.length && vs.every(v => FINAL.includes(v.status))) out.push({p:p.id, sm:p.sm.map(s=>s.nr), pid:p.pid, onkz:p.onkz, grund:'–', desc:p.desc, tab:'abschluesse', a:'Wesi abschließen', date:null, pri:1}); }
+  return out.sort((a,b) => a.pri - b.pri);
+}
+
+/* ---------- shell ---------- */
+const $ = s => document.querySelector(s);
+function render(){
+  renderSide();
+  document.body.classList.toggle('reduce', !!S.settings.reduce);
+  $('#main').innerHTML = ({dashboard:vDashboard, projects:vProjects, project:vProject, plan:vPlan, vorgang:vVorgang, book:vBook, frames:vFrames, search:vSearch, inbox:vInbox, tasks:vTasks, uploads:vUploads, payments:vPayments, reports:vReports, news:vNews, notifs:vNotifs, help:vHelp, profile:vProfile}[S.view] || vDashboard)();
+  renderLayer(); renderMenu(); renderProto();
+}
+const syncOv = () => document.body.classList.toggle('has-ov', !!document.querySelector('#layer .ov'));
+function renderSide(){
+  const act = ['project','plan','vorgang'].includes(S.view) ? 'projects' : S.view==='frames' ? 'book' : S.view;
+  const n = tasks().filter(t => t.pri <= 1).length;
+  const it = (k, icn, l, badge) => `<button class="si ${act===k?'on':''}" data-act="nav" data-v="${k}" aria-label="${l}${badge?`, ${badge} neu`:''}" title="${l}${badge?` (${badge})`:''}"><span class="ib">${ic(icn)}</span>${badge?`<span class="badge" aria-hidden="true">${badge>99?'99+':badge}</span>`:''}<span class="l">${l}</span>${badge?`<span class="badge cnt" aria-hidden="true">${badge>99?'99+':badge}</span>`:''}</button>`;
+  $('#side').className = 'side'; document.body.classList.toggle('side-open', S.sideOpen);
+  $('#side').innerHTML = `<div class="applogo"><span class="c">${ic('route')}</span><b>Camino</b></div>
+    <button class="tog" data-act="sideTog" aria-label="Navigation ${S.sideOpen?'einklappen':'ausklappen'}" aria-expanded="${S.sideOpen}">${ic('chev')}</button>
+    <nav aria-label="Hauptnavigation">
+      ${it('search','search','Suche')}<div class="gap"></div>
+      ${it('dashboard','home','Dashboard', n)}${it('projects','grid','Projekte')}${it('inbox','mail','Postkorb', S.inbox.length)}${it('book','contact','Adressbuch')}
+      ${it('tasks','clip','Aufgaben')}${it('uploads','cloud','Uploads')}${it('payments','cardp','Zahlungen', S.payments.filter(z => !z.paid).length)}${it('reports','chart','Auswertungen')}${it('news','news','Camino News')}
+      <div class="grow"></div><div class="sep"></div>
+      ${it('notifs','bell','Benachrichtigungen', unreadN())}${it('help','help','Hilfe')}${it('profile','user','Profil')}
+    </nav>`;
+}
+const crumbs = (...items) => `<nav class="crumbs" aria-label="Brotkrumen"><button data-act="nav" data-v="dashboard">Camino</button>${items.map((x,i) => `${ic('chev')}${i===items.length-1 ? `<b>${esc(x.l)}</b>` : `<button data-act="${x.a}" data-v="${x.v||''}" data-id="${x.id||''}">${esc(x.l)}</button>`}`).join('')}</nav>`;
+const pager = (n=1) => `<div class="pager"><button class="pg" aria-label="Erste Seite">${ic('first')}</button><button class="pg" aria-label="Vorherige">${ic('back')}</button><button class="pg on">1</button>${n>1?'<button class="pg">2</button>':''}<button class="pg" aria-label="Nächste">${ic('chev')}</button><button class="pg" aria-label="Letzte">${ic('last')}</button><span class="box">1</span><span>Von ${n} Seite${n>1?'n':''}</span></div>`;
+const flSel = (label, act, opts, sel) => `<div class="fl"><label>${label}</label><select data-act="${act}" aria-label="${label}">${opts.map(([v,l]) => `<option value="${v}" ${v===sel?'selected':''}>${l}</option>`).join('')}</select>${ic('chevd')}</div>`;
+const searchBox = (ph, act, val='') => `<div class="search"><input type="search" placeholder="${ph}" value="${esc(val)}" ${act?`data-act="${act}"`:''} aria-label="${ph}"><button class="clr" data-act="${act||'noop'}Clr" aria-label="Eingabe löschen">${ic('clear')}</button><button class="go" aria-label="Suchen">${ic('search')}</button></div>`;
+const gear = (menu, id, extra='') => `<button class="ibtn" data-act="menu" data-v="${menu}" data-id="${id}" aria-label="Aktionen" ${extra}>${ic('gear')}</button>`;
+
+/* ---------- Dashboard ---------- */
+function vDashboard(){
+  const open = S.projects.filter(p => !p.closed);
+  const vs = S.vorgaenge.filter(v => open.some(p => p.id===v.pid));
+  const ts = tasks().filter(t => t.tab === S.dtab && hit('dash', t.a, t.desc, t.pid, t.grund, t.sm.join(' ')));
+  const k = (icn, l, v, s) => `<div class="kpi"><div class="k">${ic(icn)}${l}</div><div class="v num">${v}</div><div class="s">${s}</div></div>`;
+  return crumbs({l:'Dashboard'}) + `
+  <div class="kpis">
+    ${k('kp1','Projekte gesamt', S.projects.length, 'diese Woche <em class="dn">⌄ 4 %</em> reduziert')}
+    ${k('kp2','Aktuell offene Projekte', open.length, `davon ${open.filter(p=>p.owner==='Max Mustermann').length} in meiner Zuständigkeit`)}
+    ${k('kp3','Aktuell offene Vorgänge', vs.filter(v=>!FINAL.includes(v.status)).length, `${vs.filter(v=>v.status==='sent').length} warten auf Rückmeldung`)}
+    ${k('kp4','Wege gesichert', `${vs.filter(v=>DONE.includes(v.status)).length}/${vs.length}`, `${vs.length?Math.round(vs.filter(v=>DONE.includes(v.status)).length/vs.length*100):0} % der offenen Projekte`)}
+    ${k('kp4','Ø Rückantwortdauer Behörden','16 Tage','diese Woche <em class="up">⌃ 4 %</em> gesteigert')}
+  </div>
+  <section class="card" style="margin-bottom:20px"><div class="card-h"><h2>Aufgaben</h2><span class="r"><button class="ibtn" style="width:42px;height:42px" data-act="remSet" aria-label="Erinnerungseinstellungen">${ic('bell')}</button></span></div>
+    <div class="toolbar">${flSel('Ansicht','noop',[['r','Mein Ressort'],['a','Alle Ressorts']],'r')}
+      <div class="seg" role="tablist">${[['erinnerungen','Erinnerungen'],['vorgaenge','Vorgänge'],['abschluesse','Abschlüsse']].map(([key,l]) => `<button role="tab" aria-selected="${S.dtab===key}" class="${S.dtab===key?'on':''}" data-act="dtab" data-v="${key}">${l}</button>`).join('')}</div>
+      <div class="r">${flSel(S.dtab==='erinnerungen'?'Erinnerungen':'Aufgaben','noop',[['a','Alle']],'a')}${qBox('Wonach suchen Sie?','dash')}</div></div>
+    ${taskTable(ts)}
+    ${pager()}
+  </section>
+  <div class="row r2" style="grid-template-columns:minmax(0,2fr) minmax(0,1fr)">
+    <section class="card"><div class="card-h"><h2>Camino News</h2><span class="r"><button class="link" data-act="nav" data-v="news">Alle News ${ic('chev')}</button></span></div><div class="tw"><table class="news"><tbody>
+      ${NEWS.slice(0,3).map(n => `<tr class="click" data-act="newsOpen" data-v="${n.id}"><td>${esc(n.t)}</td><td class="num">${n.d}</td><td><div class="trunc">${esc(n.x)}</div></td></tr>`).join('')}
+    </tbody></table></div></section>
+    <section class="card"><div class="card-h"><h2>Schnellzugriffe</h2></div><div class="quick"><button class="btn" data-act="newProject">Neues Projekt</button><button class="btn" data-act="nav" data-v="projects">Zuletzt besucht</button><button class="btn" data-act="nav" data-v="search">Suche</button><button class="btn" data-act="nav" data-v="book">Adressbuch</button></div></section>
+  </div>`;
+}
+
+/* ---------- Projects ---------- */
+function projStatus(p){
+  if (p.closed) return stat('ok','Abgeschlossen');
+  const vs = vOf(p.id);
+  if (vs.some(v => ['reply','revise'].includes(v.status))) return stat('err','Aktion erforderlich');
+  if (vs.length && vs.every(v => DONE.includes(v.status))) return stat('ok','Gesichert');
+  return stat('warn','In Bearbeitung');
+}
+function vProjects(){
+  const f = S.filter;
+  let ps = S.projects.filter(p => (!f.mine || p.owner==='Max Mustermann') && (!f.open || !p.closed));
+  if (f.q){ const q = f.q.toLowerCase(); ps = ps.filter(p => [p.pid,p.auftrag,p.desc,p.long,p.onkz,...p.sm.map(s=>s.nr)].join(' ').toLowerCase().includes(q)); }
+  return crumbs({l:'Projekte'}) + `<section class="card"><div class="card-h"><h2>Projekt- und SM-Auftragsübersicht</h2></div>
+    <div class="toolbar">${flSel('Zuständigkeit','fMine',[['1','Meine Projekte'],['0','Alle Projekte der PTI']], f.mine?'1':'0')}${flSel('Projekt-Status','fOpen',[['1','Nur offene Projekte'],['0','Alle Projekte']], f.open?'1':'0')}${searchBox('Projekt Übersicht durchsuchen','fQ',f.q)}
+      <div class="r"><button class="btn btn-p" data-act="newProject">Neues Projekt</button></div></div>
+    <div class="tw"><table><thead><tr><th style="width:34px"></th>${th('Projekt-ID/SM-Auftrag')}${th('ONKZ-ASB')}${th('Auftragsnummer AG')}${th('Hauptbearbeiter')}${th('Beschreibung')}${th('Status')}<th></th></tr></thead>
+    <tbody>${ps.map(p => { const o = S.expanded[p.id]; const onk = [...new Set(p.sm.map(s=>s.onkz))];
+      return `<tr class="click" data-act="openP" data-id="${p.id}"><td><button class="exp ${o?'open':''}" data-act="expand" data-id="${p.id}" aria-expanded="${!!o}" aria-label="SM-Aufträge anzeigen">${ic('chev')}</button></td>
+        <td class="num">${esc(p.pid)} <b>(${p.sm.length})</b></td><td class="num">${onk[0]}${onk.length>1?` <b>(+${onk.length-1})</b>`:''}</td><td>${esc(p.auftrag)}</td><td>${esc(p.mail)}</td><td><div class="trunc"><span class="ul">${esc(p.desc)}</span></div></td><td>${projStatus(p)}</td><td class="act">${gear('project', p.id)}</td></tr>` +
+        (o ? p.sm.map(s => `<tr class="child"><td></td><td class="num">${s.nr}</td><td class="num">${s.onkz}</td><td></td><td></td><td>${esc(s.desc)}</td><td>${stat('warn','In Bearbeitung')}</td><td></td></tr>`).join('') : '');
+    }).join('') || '<tr class="empty"><td colspan="8">Keine Projekte gefunden.</td></tr>'}</tbody></table></div>
+    ${pager()}</section>`;
+}
+
+/* ---------- Project detail ---------- */
+function catStatus(items){
+  if (!items.length) return stat('mute','Keine Vorgänge');
+  if (items.some(v => ['reply','revise'].includes(v.status))) return stat('err','Aktion erforderlich');
+  if (items.every(v => DONE.includes(v.status))) return stat('ok','Gesichert');
+  return stat('warn','In Bearbeitung');
+}
+function vorgangRows(p, vs, cols){
+  return CAT_KEYS.map(k => {
+    const items = vs.filter(v => v.cat===k), o = S.catOpen[k] ?? items.length>0;
+    const cat = `<tr class="click" data-act="catToggle" data-v="${k}"><td><button class="exp ${o?'open':''}" aria-expanded="${o}" aria-label="${CATS[k].nm} ausklappen">${ic('chev')}</button></td><td colspan="${cols==='plan'?3:5}">${CATS[k].nm} (${items.length})</td>${cols==='plan' ? `<td class="act">${p.closed?'':`<button class="addic" data-act="newVorgang" data-cat="${k}" data-page="${S.planPage}" aria-label="Vorgang auf dieser Planseite anlegen" title="Vorgang auf Seite ${S.planPage} anlegen">${ic('fileplus')}</button>`}</td>` : `<td>${catStatus(items)}</td><td class="act">${p.closed?'':gear('cat', k)}</td>`}</tr>`;
+    const kids = o ? items.map(v => { const c = v.contacts[0] && contact(v.contacts[0]);
+      return cols==='plan'
+        ? `<tr class="click child ${S.highlight===v.id?'hl':''}" data-act="openV" data-id="${v.id}"><td></td><td>${esc(v.grund)}</td><td><div class="trunc" style="max-width:150px">${esc(v.desc)}</div></td><td class="num">${v.sm[0].slice(-6)}${v.sm.length>1?` <b>(+${v.sm.length-1})</b>`:''}</td><td class="num">${v.pages.length?`[${v.pages.join(', ')}]`:'–'}</td></tr>`
+        : `<tr class="click child ${S.highlight===v.id?'hl':''}" data-act="openV" data-id="${v.id}"><td></td><td>${esc(v.grund)}</td><td><div class="trunc" style="max-width:240px">${esc(v.desc)}</div></td><td class="num">${v.sm.join(', ')}</td><td class="num">${v.pages.join(', ')||'–'}</td><td>${c?esc(c.org):'<span class="muted">–</span>'}</td><td>${vStat(v.status)}</td><td class="act">${gear('vorgang', v.id)}</td></tr>`;
+    }).join('') : '';
+    return cat + kids;
+  }).join('');
+}
+function vProject(){
+  const p = P(S.pid), vs = vOf(p.id);
+  const done = vs.filter(v => DONE.includes(v.status)).length;
+  const ba = p.ba[0];
+  let tab = '';
+  const fv = vs.filter(v => hit('pt', v.desc, v.grund, CATS[v.cat].nm, v.sm.join(' '), contact(v.contacts[0])?.org || ''));
+  if (S.ptab==='vorgaenge') tab = `<div class="tw"><table><thead><tr><th style="width:34px"></th>${th('Kategorie/Antragsgrund')}${th('Beschreibung')}${th('SM-A Nummer(n)')}${th('Seiten')}${th('Organisation/Ansprechpartner')}${th('Status')}<th></th></tr></thead><tbody>${vorgangRows(p, fv)}</tbody></table></div>`;
+  if (S.ptab==='sm') tab = `<div class="tw"><table><thead><tr>${th('SM-Auftrag')}${th('ONKZ-ASB')}${th('Beschreibung')}${th('Vorgänge')}</tr></thead><tbody>${p.sm.filter(s => hit('pt', s.nr, s.desc, s.onkz)).map(s => `<tr><td class="num">${s.nr}</td><td class="num">${s.onkz}</td><td>${esc(s.desc)}</td><td class="num">${vs.filter(v=>v.sm.includes(s.nr)).length}</td></tr>`).join('')}</tbody></table></div>`;
+  if (S.ptab==='ba') tab = `<div class="tw"><table><thead><tr>${th('Bauabschnitt')}${th('Ort')}${th('Baubeginn')}${th('Bauende')}${th('Vorgänge')}<th></th></tr></thead><tbody>${p.ba.filter(b => hit('pt', b.name, b.ort)).map(b => `<tr><td>${esc(b.name)}</td><td>${esc(b.ort)}</td><td class="num">${fmt(b.start)}</td><td class="num">${fmt(b.end)}</td><td class="num">${vs.filter(v=>v.ba===b.id).length}</td><td class="act">${p.closed?'':`<button class="ibtn" data-act="baEdit" data-id="${b.id}" aria-label="Bauabschnitt ${esc(b.name)} bearbeiten">${ic('edit')}</button>`}</td></tr>`).join('') || '<tr class="empty"><td colspan="6">Kein Bauabschnitt hinterlegt.</td></tr>'}</tbody></table></div>`;
+  const noPlan = !p.closed && !p.plans.length;
+  return crumbs({l:'Projekte', a:'nav', v:'projects'}, {l:p.pid}) + `
+  ${noPlan ? `<div class="hint next-hint"><div class="t"><b>Hinweis:</b> Laden Sie im Bereich „Pläne“ den Trassenplan hoch. Anschließend können Sie in „Plan auswerten“ Vorgänge direkt an Planseiten anlegen.</div></div>` : ''}
+  <div class="row r2">
+    <section class="card"><div class="card-h"><h2>Projektdetailansicht</h2><span class="r">${p.closed ? stat('ok','Wesi abgeschlossen') : `<button class="btn btn-p" data-act="closeProject">Wesi abschließen</button>`}<button class="more" data-act="menu" data-v="projectMore" data-id="${p.id}" aria-label="Weitere Aktionen">…</button></span></div>
+      <div class="facts">
+        <div class="f"><b>Status</b>${projStatus(p)}</div><div class="f"><b>Projekt-ID</b><span class="num">${esc(p.pid)}</span></div><div class="f"><b>Auftragsnummer</b><span>${esc(p.auftrag)}</span></div>
+        <div class="f"><b>Zuständig</b><span>${esc(p.pti)}</span></div><div class="f"><b>ONKZ-ASB</b><span class="num">${esc(p.onkz)}${p.sm.length>1?` <b style="display:inline">(+${p.sm.length-1})</b>`:''}</span></div><div class="f"><b>Art des Projektes</b><span>${esc(p.type)}</span></div>
+        <div class="f"><b>Hauptbearbeiter</b><button class="link" data-act="copy" data-v="${esc(p.mail)}" title="E-Mail-Adresse kopieren" style="text-align:left">${esc(p.mail)} ${ic('copy')}</button></div><div class="f"><b>Bauabschnitt</b><span>${ba?`<span class="dotted" title="${fmt(ba.start)} – ${fmt(ba.end)}">${esc(ba.name)}</span>`:'–'}</span></div><div class="f"><b>Fortschritt</b><span class="num">${done} von ${vs.length} Wegen gesichert</span></div>
+        <div class="f full"><b>Projektbeschreibung</b><div>${esc(p.long)} <button class="link" data-act="projInfo" data-id="${p.id}">Mehr Informationen ${ic('chev')}</button></div></div>
+      </div></section>
+    <section class="card"><div class="card-h"><h2>Pläne</h2>${p.plans.length?`<span class="r"><button class="btn btn-sm" data-act="openPlan">Plan auswerten</button></span>`:''}</div>
+      ${p.closed?'':`<button class="drop" data-act="uploadPlan">${ic('cloud')}<b>Dateien hierhin ziehen</b>oder<span class="lk">Durchsuchen ↑</span>Bis zu 5 Dateien je 250 MB im Format PDF.</button>`}
+      <div class="tw"><table><thead><tr>${th('Plandatei')}${th('Seiten mit Vorgang')}${th('Letzte Änderung')}${th('Status')}<th></th></tr></thead><tbody>${p.plans.map(pl => { const used = [...new Set(vs.flatMap(v=>v.pages))].length;
+        return `<tr class="click" data-act="openPlan"><td>${esc(pl.name)}</td><td class="num">${used} von ${pl.pages}</td><td class="num">${fmtT(pl.date)}</td><td>${used===pl.pages?stat('ok','Ausgewertet'):stat('warn','In Auswertung')}</td><td class="act">${gear('plan', pl.id)}</td></tr>`; }).join('') || '<tr class="empty"><td colspan="5">Die hochgeladenen Dokumente werden hier eingefügt.</td></tr>'}</tbody></table></div>
+    </section>
+  </div>
+  <section class="card"><div class="card-h"><h2>Übersicht Vorgänge</h2></div>
+    <div class="toolbar"><div class="seg" role="tablist">${[['vorgaenge',`Vorgänge (${vs.length})`],['sm',`SM-Aufträge (${p.sm.length})`],['ba',`Bauabschnitte (${p.ba.length})`]].map(([k,l]) => `<button role="tab" aria-selected="${S.ptab===k}" class="${S.ptab===k?'on':''}" data-act="ptab" data-v="${k}">${l}</button>`).join('')}</div>
+      ${qBox('Tabelle durchsuchen','pt')}
+      ${p.closed?'':`<div class="r">${S.ptab==='ba' ? `<button class="btn btn-p" data-act="baNew">Bauabschnitt hinzufügen</button>` : S.ptab==='sm' ? `<button class="btn" data-act="syncWfmt">Aus WFMT aktualisieren</button><button class="btn btn-p" data-act="smAdd">SM-Auftrag hinzufügen</button>` : `<button class="btn" data-act="bulkVE">Ver- & Entsorger anschreiben</button><button class="btn btn-p" data-act="newVorgang">Neuer Vorgang</button>`}</div>`}</div>
+    ${tab}${pager()}
+  </section>`;
+}
+
+/* ---------- Plan evaluation ---------- */
+function planSvg(p, page, pos = page){
+  const vs = vOf(p.id).filter(v => v.pages.includes(pos));
+  const fields = [
+    'M0 0H230L190 170H0Z','M230 0H420L400 150L190 170Z','M420 0H640V180L400 150Z','M0 170H190L170 330H0Z','M190 170L400 150L420 320L170 330Z','M400 150L640 180V340L420 320Z','M0 330H170L160 480H0Z','M170 330L420 320L440 480H160Z','M420 320L640 340V480H440Z'];
+  const tones = ['#6E8B4E','#8A9A5B','#5F7A45','#9AA36A','#7B9152','#A5A774','#668348','#8E9C60','#738C4C'];
+  const shift = (page-1) * 2;
+  const roads = {1:[['M0 250 C 160 230, 300 175, 420 165 S 600 120, 640 110','Burgdorfer Aue',[300,182,-12]],['M200 0 L 175 480','Feldweg',[205,420,-86]],['M410 0 L 432 480','Mühlenweg',[442,80,86]]],
+    2:[['M0 120 C 180 140, 300 210, 400 260 S 560 330, 640 340','Dorfstraße',[260,190,24]],['M130 0 L 170 480','Lindenweg',[175,420,-84]],['M520 0 L 480 480','K 12',[530,60,-85]]],
+    3:[['M0 300 C 200 290, 380 230, 640 220','Haselbacher Weg',[380,250,-8]],['M300 0 L 320 480','Am Hof',[330,420,-87]],['M560 0 C 540 200, 600 320, 560 480','Grabenweg',[590,140,80]]]}[page];
+  const route = {1:'M30 260 C 170 240, 300 190, 420 178 S 590 132, 630 120',2:'M20 130 C 180 152, 300 222, 400 272 S 560 340, 630 350',3:'M20 312 C 200 300, 380 244, 630 232'}[page];
+  const water = page===2 ? '<path d="M0 430 C 160 390, 260 450, 400 410 S 560 370, 640 390" stroke="#5B87A8" stroke-width="12" fill="none" opacity=".85"/><text x="480" y="372" font-size="13" fill="#E9F3FA" font-family="Inter">Mühlbach</text>' : '';
+  const plot = page===3 ? '<path d="M380 270 L560 262 L570 400 L390 410Z" fill="none" stroke="#FFF" stroke-width="2" stroke-dasharray="6 4"/><text x="400" y="296" font-size="13" fill="#fff" font-family="Inter">Flurstück 112/4</text>' : '';
+  const pts = [[150,248],[330,196],[500,150],[260,300],[560,240]];
+  const pins = vs.map((v,i) => { const pt = pts[(i + page) % pts.length]; const hl = S.highlight===v.id;
+    return `<g class="pin" data-act="openV" data-id="${v.id}" transform="translate(${pt[0]} ${pt[1]})"><path d="M0 0 C -10 -14 -14 -20 -14 -27 A 14 14 0 1 1 14 -27 C 14 -20 10 -14 0 0Z" fill="${hl?'#C8F542':'#111'}" stroke="#fff" stroke-width="2"/><text y="-22" text-anchor="middle" font-size="12" font-weight="600" fill="${hl?'#111':'#fff'}" font-family="Inter">${i+1}</text><title>${esc(v.desc)}</title></g>`; }).join('');
+  return `<svg class="map" viewBox="0 0 640 480" role="img" aria-label="Luftbild mit Trasse, Seite ${pos > 0 ? pos : page}" ${pos > 0 && S.zoom > 100 ? `style="width:${S.zoom}%;height:${S.zoom}%"` : ''}>
+    ${fields.map((d,i) => `<path d="${d}" fill="${tones[(i+shift)%tones.length]}"/>`).join('')}
+    ${fields.map(d => `<path d="${d}" fill="none" stroke="#4A6236" stroke-width="1" opacity=".6"/>`).join('')}
+    ${water}${plot}
+    ${roads.map(([d]) => `<path d="${d}" stroke="#D8D4C4" stroke-width="9" fill="none"/>`).join('')}
+    ${roads.map(([,l,[x,y,r]]) => `<text x="${x}" y="${y}" transform="rotate(${r} ${x} ${y})" font-size="14" fill="#fff" font-family="Inter" style="paint-order:stroke" stroke="#2F4A2A" stroke-width="2.5">${l}</text>`).join('')}
+    <path d="${route}" stroke="#fff" stroke-width="3.5" stroke-dasharray="2 5" stroke-linecap="round" fill="none"/>
+    ${pins}</svg>`;
+}
+function vPlan(){
+  const p = P(S.pid), vs = vOf(p.id), pl = p.plans[0], pg = S.planPage;
+  return crumbs({l:'Projekte', a:'nav', v:'projects'}, {l:p.pid, a:'openP', id:p.id}, {l:'Planauswertung'}) + `
+  <h1 style="font-size:20px;font-weight:500;margin:-4px 0 16px">Plan auswerten</h1>
+  <div class="planwrap ${S.planWide?'wide':''}">
+    <section class="card vlist"><div class="card-h"><h2>Vorgänge (${vs.length})</h2><span class="r"><button class="link" data-act="catAll">${CAT_KEYS.every(k => S.catOpen[k] ?? vs.some(v=>v.cat===k)) ? 'Alle Kategorien einklappen' : 'Alle Kategorien ausklappen'}</button></span></div>
+      <div class="tw"><table class="compact"><thead><tr><th style="width:30px"></th>${th('Kategorie/Antragsgrund')}${th('Beschreibung')}${th('SM-A')}<th>Seiten</th></tr></thead><tbody>${vorgangRows(p, vs, 'plan')}</tbody></table></div>
+      <p class="small muted" style="margin:14px 0 0">Mit ${ic('fileplus')} legen Sie einen Vorgang an, der direkt mit der geöffneten Planseite verknüpft ist.</p>
+    </section>
+    <button class="collapse" data-act="planWide" aria-label="${S.planWide?'Vorgänge einblenden':'Vorgänge ausblenden'}">${ic(S.planWide?'chev':'back')}</button>
+    <section class="card viewer"><div class="vh"><h2>Pläne</h2><button class="link" data-act="rearr" data-id="${p.id}">Neu arrangieren</button><div class="fl"><label>Ausgewählte Plandatei</label><select aria-label="Ausgewählte Plandatei"><option>[${fmtT(pl.date)}] ${esc(pl.name)}</option></select>${ic('chevd')}</div></div>
+      <div class="canvas">${planSvg(p, ord(pl)[pg-1], pg)}
+        <div class="pgctl"><button data-act="page" data-v="${pg-1}" ${pg<=1?'disabled':''} aria-label="Vorherige Seite">${ic('back')}</button><span class="box">Seite <b>${pg}</b> von ${pl.pages}</span><button data-act="page" data-v="${pg+1}" ${pg>=pl.pages?'disabled':''} aria-label="Nächste Seite">${ic('chev')}</button></div>
+        <div class="zoom"><span role="status">${S.zoom} %</span><button aria-label="Verkleinern" data-act="zoom" data-v="-25" ${S.zoom<=100?'disabled':''}>–</button><button aria-label="Vergrößern" data-act="zoom" data-v="25" ${S.zoom>=200?'disabled':''}>+</button></div>
+      </div></section>
+  </div>
+  <p style="margin:18px 0 0"><button class="link" data-act="openP" data-id="${p.id}">${ic('back')} Zurück zur Wesi</button></p>`;
+}
+
+/* ---------- Vorgang detail ---------- */
+function nextHint(v){
+  const c = CATS[v.cat], b = (a,l,p) => `<button class="btn btn-sm ${p?'btn-p':''}" data-act="${a}">${l}</button>`;
+  if (v.printPending){ const m = v.comms.find(x => x.id===v.printPending);
+    return ['warn', m.printed ? 'Der Brief wurde gedruckt. Quittieren Sie den Versand, sobald er zur Post gegeben wurde. Erst dann starten die Fristen.' : `Der Brief umfasst ${m.sheets} Blätter und kann nicht automatisch versendet werden. Drucken Sie ihn manuell und quittieren Sie anschließend den Versand.`, b('print','Manueller Druck', !m.printed) + b('quit','Manuellen Versand quittieren', m.printed)]; }
+  switch (v.status){
+    case 'draft': return v.cat==='priv' && !v.vertrag
+      ? ['warn','Damit Sie am Vorgang Privatgrund fortfahren können, müssen Sie die Vertragsart festlegen.', b('vertrag','Vertragsart festlegen',1)]
+      : ['','Bitte geben Sie die Kontakte an, mit denen Sie innerhalb dieses Vorgangs zusammenarbeiten und kommunizieren.', b('contacts','Kontakte hinzufügen',1)];
+    case 'ready': return ['','Die Kontakte sind hinterlegt. Erstellen Sie das Anschreiben aus einer Vorlage. Die verknüpften Planseiten werden automatisch angehängt.', b('compose', v.cat==='priv'||S.ptype==='Brief'?'Brief versenden':'E-Mail senden',1)];
+    case 'revise': return ['err','Durch die Bewertung „Überarbeitung erforderlich“ wurden vorhandene Fristen zurückgesetzt. Ergänzen Sie die Unterlagen und versenden Sie den Antrag erneut.', b('contacts','Kontakte bearbeiten')+b('compose','Erneut versenden',1)];
+    case 'sent': { const el = daysBetween(v.sentAt, now());
+      return ['', c.fiktion ? `Antrag versendet am ${fmt(v.sentAt)}. Liegt bis zum ${fmt(addDays(v.sentAt,c.fiktion))} keine Entscheidung vor, gilt die Zustimmung nach § 127 Abs. 3 TKG als erteilt.` : c.remind && el < 28 ? `Es sind noch keine 4 Wochen seit dem Versand vergangen. Diese Zeit wird Ver- und Entsorgern üblicherweise eingeräumt.` : `Antrag versendet am ${fmt(v.sentAt)}. Setzen Sie bei Bedarf eine Erinnerung.`, b('reminder','Erinnerung setzen')]; }
+    case 'reply': return ['warn','Eine neue Nachricht ist eingegangen. Statusänderungen sind erst möglich, wenn alle eingehenden Nachrichten bewertet wurden.', b('rate','Rückläufer bewerten',1)];
+    case 'clarify': return ['warn','Die Zustimmung enthält Nebenbestimmungen. Klären Sie diese mit dem Kontakt und dokumentieren Sie das Gespräch.', b('note','Gesprächsmitschrift')+b('clarified','Klärung abgeschlossen',1)];
+    case 'approved': case 'deemed': return ['ok', v.status==='deemed' ? 'Die Frist nach § 127 Abs. 3 TKG ist ohne Entscheidung abgelaufen. Die Zustimmung gilt als erteilt.' : 'Die Zustimmung liegt vor. Bestätigen Sie, dass der Weg für den Bau gesichert ist.', b('secure','Weg gesichert',1)];
+    case 'secured': return ['ok','Der Weg ist gesichert. Archivieren Sie Zustimmung und vertragsrelevante Dokumente in der VVGE.', b('archive','Vorgang archivieren',1)];
+    default: return null;
+  }
+}
+function commIcon(m){
+  const color = m.dir==='in' ? (m.rated ? 'var(--ok)' : 'var(--err)') : m.manual && !m.quit ? 'var(--warn)' : 'var(--ok)';
+  return `<span class="cic">${ic(m.dir==='in' ? 'inbox' : m.ch==='Brief' ? 'letter' : 'mail')}<i style="background:${color}"></i></span>`;
+}
+function vVorgang(){
+  const v = V(S.vid), p = P(v.pid), c = CATS[v.cat], ba = p.ba.find(b => b.id===v.ba);
+  const nh = nextHint(v);
+  const k0 = v.contacts[0] && contact(v.contacts[0]);
+  const rems = [];
+  if (v.reminder) rems.push({l:'Erinnerung zum', d:v.reminder, over:new Date(v.reminder)<=now() && !FINAL.includes(v.status), act:true});
+  if (v.status==='sent' && c.fiktion){ const d = addDays(v.sentAt, c.fiktion); rems.push({l:'Zustimmungsfiktion zum', d, soon: daysBetween(now(), d) <= 30}); }
+  const lastIn = v.comms.filter(m=>m.dir==='in').slice(-1)[0]; if (lastIn) rems.push({l:'Eingegangene Nachricht am', d:lastIn.at});
+  if (v.sentAt) rems.push({l:'Versendet am', d:v.sentAt});
+  const msgs = v.comms.slice().reverse();
+  const sel = msgs.find(m => m.id===S.selMsg) || msgs[0];
+  const logs = v.log.slice().reverse().filter(l => !S.onlyManual || l.manual);
+  const selL = logs[S.selLog ?? 0];
+  const priv = v.cat==='priv', ch = priv ? 'Brief' : S.ptype;
+  const canSend = ['ready','revise','sent','clarify'].includes(v.status);
+  const logIc = t => t.includes('Eingehend') ? 'inbox' : t.includes('Brief') ? 'letter' : t.includes('E-Mail') ? 'mail' : t.includes('Kontakt') ? 'person' : t.includes('Manuell') ? 'note' : t.includes('Seiten')||t.includes('angelegt') ? 'pages' : t.includes('archiv') ? 'archive' : 'check';
+
+  const commPane = !sel ? `<div class="pb"><div class="hint"><b>Hinweis:</b> Für diesen Vorgang gibt es noch keine Kommunikation. ${canSend||v.status==='ready'?'Erstellen Sie über „'+(ch==='Brief'?'Brief versenden':'E-Mail senden')+'“ das erste Anschreiben.':''}</div></div>` : `
+    <div class="tabs"><button class="${S.paneTab==='emp'?'on':''}" data-act="paneTab" data-v="emp">${ic('person')}${sel.dir==='in'?'Absender':'Empfänger'}</button><button class="${S.paneTab==='att'?'on':''}" data-act="paneTab" data-v="att">${ic('clip2')}Anlagen (${sel.att?.length||0})</button></div>
+    <div class="pb">${S.paneTab==='att' ? `<div class="att" style="margin-top:0">${(sel.att||[]).map(a=>`<span>${ic('file')}${esc(a)}</span>`).join('') || '<span class="muted">Keine Anlagen</span>'}</div>` : `
+      <h3>${esc(sel.subj)}</h3>
+      <dl class="meta"><dt>${sel.dir==='in'?'Von:':'An:'}</dt><dd>${esc(sel.dir==='in'?sel.from:sel.to)}</dd><dt>Kanal:</dt><dd>${sel.dir==='in'?'Eingehend':'Ausgehend'} · ${sel.ch}</dd><dt>Datum:</dt><dd class="num">${fmtT(sel.at)}</dd></dl>
+      <div class="body">${esc(sel.body)}</div>
+      ${sel.att?.length ? `<div class="att">${sel.att.map(a=>`<span>${ic('file')}${esc(a)}</span>`).join('')}</div>` : ''}
+      ${sel.manual && !sel.quit ? `<div class="hint warn" style="margin-top:18px"><b>Hinweis:</b> ${sel.printed ? 'Gedruckt, Versand noch nicht quittiert.' : `Wartet auf manuellen Druck (${sel.sheets} Blätter).`}</div>` : ''}
+      ${sel.dir==='in' ? (sel.rated ? `<div class="hint ok" style="margin-top:18px"><b>Bewertung:</b> ${esc(sel.rated)}</div>` : `<div class="hint warn" style="margin-top:18px"><b>Hinweis:</b> Diese Nachricht wurde noch nicht bewertet.<div class="acts"><button class="btn btn-sm btn-p" data-act="rate">Rückläufer bewerten</button></div></div>`) : ''}`}
+    </div>`;
+
+  return crumbs({l:'Projekte', a:'nav', v:'projects'}, {l:p.pid, a:'openP', id:p.id}, {l:'Vorgangsübersicht'}) + `
+  ${nh ? `<div class="hint next-hint ${nh[0]}"><div class="t"><b>Hinweis:</b> ${esc(nh[1])}</div><div class="acts">${nh[2]}</div></div>` : ''}
+  <div class="row r3">
+    <section class="card"><div class="card-h"><h2>Vorgangsübersicht</h2><span class="r"><button class="more" data-act="menu" data-v="vorgangMore" data-id="${v.id}" aria-label="Weitere Aktionen">…</button></span></div>
+      <div class="facts c2">
+        <div class="f"><b>Kategorie</b><span>${c.nm}</span></div><div class="f"><b>Antragsgrund</b><span>${esc(v.grund)}</span></div>
+        <div class="f"><b>Vorgangsstatus</b>${vStat(v.status)}</div><div class="f"><b>SM-A Nummer</b><span class="num">${v.sm.join(', ')}</span></div>
+        <div class="f"><b>Bauabschnitt</b><span>${ba?`<span class="dotted" title="${esc(ba.ort)}, ${fmt(ba.start)} – ${fmt(ba.end)}">${esc(ba.name)}</span>`:'–'}</span></div>
+        <div class="f"><b>Vorgangsplandaten</b>${v.pages.length && p.plans.length ? `<button class="link" data-act="showOnPlan" data-id="${v.id}">Seite ${pageList(v.pages)} anzeigen ${ic('chev')}</button>` : '<span>Keine Planseiten zugeordnet</span>'}${p.plans.length && !FINAL.includes(v.status) ? `<br><button class="link" style="font-size:14px" data-act="pages" data-id="${v.id}">Zuweisung verwalten</button>` : ''}</div>
+        ${priv ? `<div class="f"><b>Vertragsart</b>${v.vertrag ? `<span>${esc(VERTRAG.find(x=>x.k===v.vertrag).nm)}</span>` : stat('warn','Nicht festgelegt')}</div>` : ''}
+        <div class="f full"><b>Vorgangsbeschreibung</b><span>${esc(v.desc)}</span></div>
+      </div></section>
+    <section class="card"><div class="card-h"><h2>Ansprechpartner</h2><span class="r">${FINAL.includes(v.status)?'':`<button class="more" data-act="menu" data-v="contactMore" data-id="${v.id}" aria-label="Kontakte verwalten">…</button>`}</span></div>
+      <div class="facts c2" style="grid-template-columns:minmax(0,1fr)">
+        <div class="f"><b>Hauptkontakt</b>${k0 ? `<span><span class="ul">${esc(k0.org)}</span> · ${esc(k0.dept)}</span>` : `<span class="muted">Kein Kontakt zugeordnet.</span> <button class="link" data-act="contacts">Kontakte hinzufügen ${ic('chev')}</button>`}</div>
+        <div class="f"><b>Nebenkontakt(e)</b><span>${priv ? 'Bei Briefkommunikation nicht möglich' : v.contacts.slice(1).map(id => esc(contact(id).org+' · '+contact(id).dept)).join('<br>') || '–'}</span></div>
+        <div class="f"><b>Hauptbearbeiter</b><button class="link" data-act="copy" data-v="${esc(p.mail)}" title="E-Mail-Adresse kopieren" style="text-align:left">${esc(p.mail)} ${ic('copy')}</button></div>
+        <div class="f"><b>Berater</b><span>Kein Berater zugeordnet.</span></div>
+      </div></section>
+    <section class="card"><div class="card-h"><h2>Erinnerungen</h2><span class="r"><button class="ibtn" data-act="vNotify" aria-label="Benachrichtigungen zum Vorgang">${ic('bell')}</button><button class="ibtn" data-act="reminder" aria-label="Erinnerung hinzufügen">${ic('plus')}</button></span></div>
+      <div class="tw"><table class="rem"><thead><tr>${th('Bezeichnung')}${th('Datum')}<th style="text-align:right">Aktion</th></tr></thead><tbody>${rems.map(r => `<tr><td class="${r.over?'over':''}">${r.l}</td><td class="num"><span class="${r.over?'over':''}">${fmt(r.d)}</span> ${r.over?'<em>(überfällig)</em>':r.soon?'<em>(bald fällig)</em>':''}</td><td class="act">${r.act?`<button class="ibtn" data-act="reminder" aria-label="Erinnerung bearbeiten">${ic('gear')}${r.over?'<span class="rd"></span>':''}</button>`:''}</td></tr>`).join('') || '<tr class="empty"><td colspan="3">Keine Termine.</td></tr>'}</tbody></table></div>
+    </section>
+  </div>
+  <section class="card">
+    <div class="toolbar"><div class="seg" role="tablist"><button role="tab" aria-selected="${S.vtab==='komm'}" class="${S.vtab==='komm'?'on':''}" data-act="vtab" data-v="komm">Kommunikation</button><button role="tab" aria-selected="${S.vtab==='log'}" class="${S.vtab==='log'?'on':''}" data-act="vtab" data-v="log">Vorgangslog</button><button role="tab" aria-selected="${S.vtab==='notes'}" class="${S.vtab==='notes'?'on':''}" data-act="vtab" data-v="notes">Notizen (${v.notes.length})</button></div>
+      ${S.vtab==='komm' ? `${FINAL.includes(v.status)?'':`<div class="split-btn"><button class="btn" data-act="ptypeNext" ${priv?'disabled':''}>${ch==='Brief'?'Neuer Brief':'Neue E-Mail'}</button><button class="btn" data-act="ptypeNext" aria-label="Kanal wechseln" ${priv?'disabled':''}>${ic('chevd')}</button></div>
+        <button class="btn btn-p" data-act="compose" ${canSend && !v.printPending?'':'disabled'}>${ch==='Brief'?'Brief versenden':'E-Mail senden'}</button>
+        <button class="btn" data-act="rate" ${unrated(v)?'':'disabled'}>Rückläufer bewerten</button>
+        ${v.printPending?`<button class="btn" data-act="print">Manueller Druck</button><button class="btn" data-act="quit">Manuellen Versand quittieren</button>`:''}`}`
+      : S.vtab==='notes' ? `${flSel('Notizersteller','noteBy',[['a','Alle Ersteller'],['me','Ich']],S.noteBy)}<div class="r"><button class="btn btn-p" data-act="noteNew">Notiz hinzufügen</button></div>`
+      : `<label class="chk"><input type="checkbox" data-act="onlyManual" ${S.onlyManual?'checked':''}> Nur manuelle Einträge anzeigen</label><div class="r"><button class="btn" data-act="note">Manuellen Eintrag hinzufügen</button></div>`}
+    </div>
+    ${S.vtab==='komm' ? `<div class="comm"><div class="list tw"><table><thead><tr>${th('Status')}${th('Kommunikation')}${th('Zeitstempel')}</tr></thead><tbody>${msgs.map(m => `<tr class="click ${sel&&m.id===sel.id?'sel':''}" data-act="selMsg" data-id="${m.id}"><td>${commIcon(m)}</td><td><div class="trunc" style="max-width:220px">${esc(m.subj)}</div></td><td class="num">${fmtT(m.at)}</td></tr>`).join('') || '<tr class="empty"><td colspan="3">Noch keine Kommunikation.</td></tr>'}</tbody></table></div>
+      <div class="pane">${commPane}</div></div>`
+    : S.vtab==='notes' ? `<div class="tw"><table><thead><tr>${th('Zeitstempel')}${th('Notizbeschreibung')}${th('erstellt von')}<th style="text-align:right">Aktion</th></tr></thead><tbody>${v.notes.filter(n => S.noteBy==='a' || n.by==='m.mustermann@telvia.example').map(n => `<tr><td class="num" style="white-space:nowrap;vertical-align:top">${fmtT(n.at)}</td><td style="white-space:pre-line">${esc(n.t)}</td><td style="vertical-align:top">${esc(n.by)}</td><td class="act" style="vertical-align:top">${n.by==='m.mustermann@telvia.example' ? `<button class="ibtn" data-act="noteEdit" data-id="${n.id}" aria-label="Notiz bearbeiten">${ic('edit')}</button><button class="ibtn" data-act="noteDel" data-id="${n.id}" aria-label="Notiz löschen">${ic('trash')}</button>` : ''}</td></tr>`).join('') || '<tr class="empty"><td colspan="4">Noch keine Notizen.</td></tr>'}</tbody></table></div>`
+    : `<div class="comm" style="grid-template-columns:minmax(0,1.1fr) minmax(0,1fr)"><div class="list tw"><table><thead><tr>${th('Ereignistyp')}${th('Status nach Ereignis')}${th('Zeitstempel')}</tr></thead><tbody>${logs.map((l,i) => `<tr class="click ${i===(S.selLog??0)?'sel':''}" data-act="selLog" data-v="${i}"><td><span class="st">${ic(logIc(l.t))}${esc(l.t)}</span></td><td>${vStat(l.st)}</td><td class="num">${fmtT(l.at)}</td></tr>`).join('') || '<tr class="empty"><td colspan="3">Keine Einträge.</td></tr>'}</tbody></table></div>
+      <div class="pane"><div class="pb">${selL ? `<h3>${esc(selL.t)} <span class="small muted" style="font-weight:400">${fmtT(selL.at)}</span></h3><div class="f" style="margin-top:16px"><b>Status nach Ereignis</b>${vStat(selL.st)}</div><div class="f" style="margin-top:16px"><b>Beschreibung</b><div class="body">${esc(selL.d)}</div></div>` : ''}</div></div></div>`}
+    ${pager()}
+  </section>`;
+}
+
+/* ---------- shared bits for the secondary pages ---------- */
+const eur = n => n == null || n === '' ? '–' : Number(n).toLocaleString('de-DE', {style:'currency', currency:'EUR'});
+const iso = d => { d = new Date(d); return new Date(d.getTime() - d.getTimezoneOffset()*6e4).toISOString().slice(0,10); };
+const qBox = (ph, k, cls='') => `<div class="search ${cls}"><input type="search" placeholder="${esc(ph)}" value="${esc(S.q[k]||'')}" data-act="q" data-k="${k}" aria-label="${esc(ph)}"><button class="clr" data-act="qClr" data-k="${k}" aria-label="Eingabe löschen">${ic('clear')}</button><button class="go" aria-label="Suchen">${ic('search')}</button></div>`;
+const hit = (k, ...f) => { const q = (S.q[k]||'').trim().toLowerCase(); return !q || f.join(' ').toLowerCase().includes(q); };
+const seg = (act, cur, opts) => `<div class="seg" role="tablist">${opts.map(([k,l]) => `<button role="tab" aria-selected="${cur===k}" class="${cur===k?'on':''}" data-act="${act}" data-v="${k}">${l}</button>`).join('')}</div>`;
+const taskTable = ts => `<div class="tw"><table><thead><tr>${th('SM-Auftrag')}${th('Projekt-ID')}${th('ONKZ-ASB')}${th('Aufgabe')}${th('Antragsgrund')}${th('Beschreibung')}${th('Termine')}<th></th></tr></thead>
+    <tbody>${ts.map(t => `<tr class="click" data-act="${t.v?'openV':'openP'}" data-id="${t.v||t.p}"><td class="num"><span class="ul">${t.sm[0]}</span>${t.sm.length>1?` <b>(+${t.sm.length-1})</b>`:''}</td><td class="num">${esc(t.pid)}</td><td class="num">${t.onkz}</td><td>${esc(t.a)}</td><td>${esc(t.grund)}</td><td><div class="trunc">${esc(t.desc)}</div></td><td class="num ${t.over?'rem':''}">${t.date?`<span class="${t.over?'over':''}">${fmt(t.date)}</span>`:'–'}</td><td class="act">${gear('task', t.v||t.p)}</td></tr>`).join('') || `<tr class="empty"><td colspan="8">Keine Aufgaben in dieser Ansicht.</td></tr>`}</tbody></table></div>`;
+const NEWS = [
+  {id:'n1', t:'Neue Funktionen mit Camino 2.0', d:'27.10.2026', x:'Plan auswerten verknüpft Vorgänge direkt mit Planseiten. Über das Symbol in der Vorgangsliste legen Sie einen Vorgang an, der automatisch mit der geöffneten Seite verknüpft ist. Die verknüpften Seiten werden beim Versand als Anlage beigefügt.'},
+  {id:'n2', t:'Geplante Camino Downtime', d:'26.10.2026', x:'Am Samstag, 7. November, ist Camino zwischen 6 und 8 Uhr wegen Wartungsarbeiten nicht erreichbar. Geplante Briefe werden danach automatisch an den Druckdienstleister übergeben.'},
+  {id:'n3', t:'Neues Hinweispapier Trenching', d:'25.10.2026', x:'Für die Verlegung in Mindertiefe gelten neue Vorgaben vieler Wegebaulastträger. Bitte fügen Sie dem Antrag die aktuelle Fassung des Hinweispapiers bei.'},
+  {id:'n4', t:'Rahmenverträge im Adressbuch', d:'14.10.2026', x:'Rahmenverträge mit Verbänden und Versorgern sind jetzt im Adressbuch hinterlegt. Bei Vorgängen der Kategorie „Private Grundstückseigentümer“ weist Camino auf passende Rahmenverträge hin.'},
+];
+const FAQ = [
+  ['Wann tritt die Zustimmungsfiktion ein?', 'Entscheidet der Wegebaulastträger nicht innerhalb von drei Monaten nach Eingang des vollständigen Antrags, gilt die Zustimmung nach § 127 Abs. 3 TKG als erteilt. Camino startet die Frist mit dem Versand und erinnert Sie vor Ablauf.'],
+  ['Wie lange warte ich auf Ver- und Entsorger?', 'Üblicherweise werden vier Wochen eingeräumt. Danach können Sie eine Erinnerung setzen und erneut anschreiben.'],
+  ['Was passiert mit Briefen über 65 Blätter?', 'Briefe bis 65 Blätter versendet der Druckdienstleister automatisch. Größere Briefe drucken Sie über „Manueller Druck“ selbst und quittieren den Versand anschließend, damit die Fristen starten.'],
+  ['Warum muss ich Rückläufer bewerten?', 'Erst die Bewertung bestimmt den weiteren Status des Vorgangs, zum Beispiel „Zustimmung erhalten“ oder „Überarbeitung erforderlich“. Solange ein Rückläufer unbewertet ist, sind keine Statusänderungen möglich.'],
+  ['Welche Daten darf ich in Notizen erfassen?', 'Nur arbeitsbezogene Inhalte. Vermeiden Sie die namentliche Nennung von Gesprächspartnern. Nicht-öffentliche Ansprechpartner werden automatisch über die Speicherung ihrer Daten informiert.'],
+  ['Was wird in der VVGE archiviert?', 'Zustimmungen und vertragsrelevante Dokumente. Begleitender Schriftverkehr und interne Notizen mit personenbezogenen Daten werden nicht archiviert.'],
+  ['Kann ich Camino mit Tastatur und Screenreader bedienen?', 'Ja. Alle Funktionen sind per Tab-Taste erreichbar, Dialoge schließen Sie mit Escape. Status werden immer mit Symbol und Text angezeigt, nie nur über Farbe. Unter „Profil“ können Sie Animationen ausschalten.'],
+];
+function notifs(){
+  const out = [];
+  for (const v of S.vorgaenge){ const p = P(v.pid); if (p.closed) continue;
+    const m = unrated(v); if (m) out.push({id:'n-'+m.id, k:'warn', t:'Neuer Rückläufer', d:`${v.desc} · ${m.from}`, at:m.at, act:'openV', aid:v.id});
+    if (v.reminder && new Date(v.reminder) <= now() && !FINAL.includes(v.status)) out.push({id:'r-'+v.id+'-'+iso(v.reminder), k:'err', t:'Erinnerung überfällig', d:v.desc, at:v.reminder, act:'openV', aid:v.id});
+    if (v.status==='deemed') out.push({id:'d-'+v.id, k:'ok', t:'Zustimmungsfiktion eingetreten', d:v.desc, at:addDays(v.sentAt, CATS[v.cat].fiktion), act:'openV', aid:v.id});
+    if (v.printPending) out.push({id:'p-'+v.printPending, k:'warn', t:'Brief wartet auf manuellen Druck', d:v.desc, at:v.comms.find(x=>x.id===v.printPending).at, act:'openV', aid:v.id});
+  }
+  for (const m of S.inbox) out.push({id:'i-'+m.id, k:'info', t:'Nachricht im allgemeinen Postkorb', d:m.subj, at:m.at, act:'nav', av:'inbox'});
+  for (const z of S.payments) if (!z.paid && new Date(z.due) <= addDays(now(),14)) out.push({id:'z-'+z.id, k:'warn', t:'Zahlung bald fällig', d:`${z.nm} · ${z.amount?eur(z.amount):'Betrag offen'}`, at:z.due, act:'nav', av:'payments'});
+  return out.sort((a,b) => new Date(b.at) - new Date(a.at));
+}
+const unreadN = () => notifs().filter(n => !S.readNotifs.includes(n.id)).length;
+
+/* ---------- Search ---------- */
+function vSearch(){
+  const q = (S.q.g||'').trim(), on = q.length >= 2;
+  const ps = on ? S.projects.filter(p => hit('g', p.pid, p.auftrag, p.desc, p.long, p.onkz)) : [];
+  const sms = on ? S.projects.flatMap(p => p.sm.map(s => ({s, p}))).filter(({s}) => hit('g', s.nr, s.desc, s.onkz)) : [];
+  const vs = on ? S.vorgaenge.filter(v => hit('g', v.desc, v.grund, CATS[v.cat].nm, v.sm.join(' '), P(v.pid).pid)) : [];
+  const ks = on ? BOOK.filter(k => hit('g', k.org, k.dept, k.email, k.onkz, ...k.persons.map(x=>x.name))) : [];
+  const total = ps.length + sms.length + vs.length + ks.length;
+  const grp = (t, rows, head) => rows.length ? `<section class="card" style="margin-bottom:20px"><div class="card-h"><h2>${t} (${rows.length})</h2></div><div class="tw"><table><thead><tr>${head.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody></table></div></section>` : '';
+  return crumbs({l:'Suche'}) + `<section class="card" style="margin-bottom:20px"><div class="card-h"><h2>Camino durchsuchen</h2></div>
+    ${qBox('Projekt-ID, SM-Auftrag, Vorgang oder Organisation', 'g', 'wide')}
+    <div class="chips"><span class="small muted">Beispiele:</span>${['520aa','000123456794','Dorfstraße','Stadtwerke'].map(x => `<button class="chip" data-act="qSet" data-k="g" data-v="${x}">${x}</button>`).join('')}</div>
+    <p class="small muted" style="margin:12px 0 0" role="status">${on ? `${total} Treffer für „${esc(q)}“` : 'Geben Sie mindestens 2 Zeichen ein.'}</p></section>
+    ${grp('Projekte', ps.map(p => `<tr class="click" data-act="openP" data-id="${p.id}"><td class="num">${esc(p.pid)}</td><td>${esc(p.desc)}</td><td>${projStatus(p)}</td></tr>`), ['Projekt-ID','Beschreibung','Status'])}
+    ${grp('SM-Aufträge', sms.map(({s,p}) => `<tr class="click" data-act="openPsm" data-id="${p.id}"><td class="num">${s.nr}</td><td class="num">${s.onkz}</td><td>${esc(s.desc)}</td><td class="num">${esc(p.pid)}</td></tr>`), ['SM-Auftrag','ONKZ-ASB','Beschreibung','Projekt-ID'])}
+    ${grp('Vorgänge', vs.map(v => `<tr class="click" data-act="openV" data-id="${v.id}"><td>${CATS[v.cat].nm}</td><td>${esc(v.desc)}</td><td class="num">${esc(P(v.pid).pid)}</td><td>${vStat(v.status)}</td></tr>`), ['Kategorie','Beschreibung','Projekt-ID','Status'])}
+    ${grp('Adressbuch', ks.map(k => `<tr class="click" data-act="orgInfo" data-id="${k.id}"><td>${esc(k.org)}</td><td>${esc(k.dept)}</td><td>${CATS[k.cat].nm}</td></tr>`), ['Organisation','Abteilung','Fachliche Zuständigkeit'])}
+    ${on && !total ? `<section class="card"><p style="margin:0">Keine Treffer für „${esc(q)}“. Prüfen Sie die Schreibweise oder suchen Sie nach einer Projekt-ID.</p></section>` : ''}`;
+}
+
+/* ---------- Postkorb ---------- */
+function vInbox(){
+  const list = S.inbox.filter(m => hit('in', m.from, m.subj, m.body));
+  const sel = list.find(m => m.id===S.selIn) || list[0];
+  return crumbs({l:'Postkorb'}) + `<section class="card"><div class="card-h"><h2>Allgemeiner Postkorb (${S.inbox.length})</h2></div>
+    <div class="hint" style="margin-bottom:18px"><b>Hinweis:</b> Hier landen eingehende Nachrichten, die Camino keinem Vorgang automatisch zuordnen konnte. Ordnen Sie sie einem Vorgang zu oder markieren Sie sie als erledigt.</div>
+    <div class="toolbar">${qBox('Postkorb durchsuchen','in')}</div>
+    <div class="comm"><div class="list tw"><table><thead><tr>${th('Absender')}${th('Betreff')}${th('Eingang')}</tr></thead><tbody>${list.map(m => `<tr class="click ${sel&&m.id===sel.id?'sel':''}" data-act="selIn" data-id="${m.id}"><td><div class="trunc" style="max-width:170px">${esc(m.from)}</div></td><td><div class="trunc" style="max-width:200px">${esc(m.subj)}</div></td><td class="num">${fmt(m.at)}</td></tr>`).join('') || '<tr class="empty"><td colspan="3">Der Postkorb ist leer.</td></tr>'}</tbody></table></div>
+    <div class="pane">${sel ? `<div class="pb"><h3>${esc(sel.subj)}</h3><dl class="meta"><dt>Von:</dt><dd>${esc(sel.from)}</dd><dt>Datum:</dt><dd class="num">${fmtT(sel.at)}</dd></dl><div class="body">${esc(sel.body)}</div>${sel.att?.length?`<div class="att">${sel.att.map(a=>`<span>${ic('file')}${esc(a)}</span>`).join('')}</div>`:''}
+      <div style="display:flex;gap:12px;margin-top:22px;flex-wrap:wrap"><button class="btn btn-p btn-sm" data-act="inAssign" data-id="${sel.id}">Vorgang zuordnen</button><button class="btn btn-sm" data-act="inDone" data-id="${sel.id}">Als erledigt markieren</button></div></div>` : `<div class="pb"><p class="muted" style="margin:0">Keine Nachricht im Postkorb.</p></div>`}</div></div></section>`;
+}
+
+/* ---------- Aufgaben ---------- */
+function vTasks(){
+  const all = tasks(), tab = S.ttab;
+  const ts = all.filter(t => (tab==='alle' || t.tab===tab) && hit('ta', t.a, t.desc, t.pid, t.grund, t.sm.join(' ')));
+  const cnt = k => all.filter(t => k==='alle' || t.tab===k).length;
+  return crumbs({l:'Aufgaben'}) + `<section class="card"><div class="card-h"><h2>Meine Aufgaben</h2></div>
+    <div class="toolbar">${seg('ttab', tab, [['alle',`Alle (${cnt('alle')})`],['erinnerungen',`Erinnerungen (${cnt('erinnerungen')})`],['vorgaenge',`Vorgänge (${cnt('vorgaenge')})`],['abschluesse',`Abschlüsse (${cnt('abschluesse')})`]])}${qBox('Aufgaben durchsuchen','ta')}</div>
+    ${taskTable(ts)}${pager()}</section>`;
+}
+
+/* ---------- Uploads ---------- */
+function vUploads(){
+  const rows = S.projects.flatMap(p => p.plans.map(pl => ({p, pl}))).filter(({p,pl}) => hit('up', pl.name, p.pid, p.desc));
+  return crumbs({l:'Uploads'}) + `<section class="card"><div class="card-h"><h2>Uploads</h2></div>
+    <p style="margin:0 0 16px">Alle Plandateien aus Ihren Projekten. Neue Pläne laden Sie in der Projektdetailansicht im Bereich „Pläne“ hoch.</p>
+    <div class="toolbar">${qBox('Uploads durchsuchen','up')}</div>
+    <div class="tw"><table><thead><tr>${th('Plandatei')}${th('Projekt-ID')}${th('Projekt')}${th('Seiten')}${th('Hochgeladen am')}${th('Status')}</tr></thead><tbody>${rows.map(({p,pl}) => { const used = new Set(vOf(p.id).flatMap(v=>v.pages)).size;
+      return `<tr class="click" data-act="openPlanOf" data-id="${p.id}"><td><span class="st">${ic('file')}${esc(pl.name)}</span></td><td class="num">${esc(p.pid)}</td><td>${esc(p.desc)}</td><td class="num">${pl.pages}</td><td class="num">${fmtT(pl.date)}</td><td>${used>=pl.pages?stat('ok','Ausgewertet'):stat('warn',`${used} von ${pl.pages} Seiten ausgewertet`)}</td></tr>`; }).join('') || '<tr class="empty"><td colspan="6">Noch keine Uploads.</td></tr>'}</tbody></table></div></section>`;
+}
+
+/* ---------- Zahlungen ---------- */
+function vPayments(){
+  const tab = S.ztab, open = S.payments.filter(z => !z.paid);
+  const list = S.payments.filter(z => (tab==='open') !== z.paid);
+  const sum = open.reduce((a,z) => a + (+z.amount||0), 0);
+  return crumbs({l:'Zahlungen'}) + `<section class="card"><div class="card-h"><h2>Zahlungen</h2></div>
+    <p style="margin:0 0 16px">Gebühren und Entschädigungen, die bei der Bewertung eines Rückläufers als Zahlungserfordernis markiert wurden.</p>
+    <div class="toolbar">${seg('ztab', tab, [['open',`Offen (${open.length})`],['paid',`Bezahlt (${S.payments.length-open.length})`]])}<div class="r"><span>Offener Gesamtbetrag: <b class="num">${eur(sum)}</b></span></div></div>
+    <div class="tw"><table><thead><tr>${th('Bezeichnung')}${th('Vorgang')}${th('Projekt-ID')}${th('Betrag')}${th(tab==='open'?'Fällig am':'Bezahlt am')}${th('Status')}<th></th></tr></thead><tbody>${list.map(z => { const v = V(z.vid), over = !z.paid && new Date(z.due) < now();
+      return `<tr class="click" data-act="openV" data-id="${v.id}"><td>${esc(z.nm)}</td><td><div class="trunc" style="max-width:220px">${esc(v.desc)}</div></td><td class="num">${esc(P(v.pid).pid)}</td><td class="num">${z.amount?eur(z.amount):'<span class="muted">noch offen</span>'}</td><td class="num rem"><span class="${over?'over':''}">${fmt(z.paid?z.paidAt:z.due)}</span>${over?' <em>(überfällig)</em>':''}</td><td>${z.paid?stat('ok','Bezahlt'):over?stat('err','Überfällig'):stat('warn','Offen')}</td><td class="act">${z.paid?'':`<button class="btn btn-sm" data-act="payMark" data-id="${z.id}">Als bezahlt markieren</button>`}</td></tr>`; }).join('') || `<tr class="empty"><td colspan="7">${tab==='open'?'Keine offenen Zahlungen.':'Noch keine bezahlten Zahlungen.'}</td></tr>`}</tbody></table></div></section>`;
+}
+
+/* ---------- Auswertungen ---------- */
+function vReports(){
+  const vs = S.vorgaenge;
+  const bars = rows => { const m = Math.max(1, ...rows.map(r => r[1])); return `<div class="bars">${rows.map(([l,n]) => `<div class="bar"><span class="bl">${esc(l)}</span><span class="bt" aria-hidden="true"><i style="width:${n/m*100}%"></i></span><b class="num">${n}</b></div>`).join('')}</div>`; };
+  const byStatus = [['Offen (Entwurf, Versand)', v => ['draft','ready','revise'].includes(v.status)],['Wartet auf Rückmeldung', v => v.status==='sent'],['Bewertung oder Klärung', v => ['reply','clarify'].includes(v.status)],['Zustimmung liegt vor', v => ['approved','deemed'].includes(v.status)],['Gesichert oder abgeschlossen', v => DONE.includes(v.status)]].map(([l,f]) => [l, vs.filter(f).length]);
+  const byCat = CAT_KEYS.map(k => [CATS[k].nm, vs.filter(v => v.cat===k).length]);
+  const resp = vs.flatMap(v => { const o = v.comms.find(m => m.dir==='out'), i = v.comms.find(m => m.dir==='in'); return o && i ? [daysBetween(o.at, i.at)] : []; });
+  const avg = resp.length ? Math.round(resp.reduce((a,b) => a+b, 0) / resp.length) : 0;
+  const k = (icn, l, v, s) => `<div class="kpi"><div class="k">${ic(icn)}${l}</div><div class="v num">${v}</div><div class="s">${s}</div></div>`;
+  return crumbs({l:'Auswertungen'}) + `<div class="kpis">
+      ${k('kp1','Vorgänge gesamt', vs.length, `in ${S.projects.length} Projekten`)}
+      ${k('kp4','Wege gesichert', `${vs.length ? Math.round(vs.filter(v => DONE.includes(v.status)).length / vs.length * 100) : 0} %`, `${vs.filter(v => DONE.includes(v.status)).length} von ${vs.length} Vorgängen`)}
+      ${k('kp3','Ø Rückantwortdauer', `${avg} Tage`, `aus ${resp.length} beantworteten Anfragen`)}
+      ${k('kp2','Zustimmungsfiktionen', vs.filter(v => v.status==='deemed' || v.log.some(l => l.t.includes('Zustimmungsfiktion eingetreten'))).length, 'nach § 127 Abs. 3 TKG')}
+      ${k('kp1','Offene Zahlungen', S.payments.filter(z => !z.paid).length, eur(S.payments.filter(z => !z.paid).reduce((a,z) => a + (+z.amount||0), 0)))}
+    </div>
+    <div class="row r2"><section class="card"><div class="card-h"><h2>Vorgänge nach Status</h2></div>${bars(byStatus)}</section><section class="card"><div class="card-h"><h2>Vorgänge nach Kategorie</h2></div>${bars(byCat)}</section></div>
+    <section class="card"><div class="card-h"><h2>Fortschritt je Projekt</h2></div><div class="tw"><table><thead><tr>${th('Projekt-ID')}${th('Beschreibung')}${th('Vorgänge')}${th('Gesichert')}${th('Fortschritt')}</tr></thead><tbody>${S.projects.map(p => { const pv = vOf(p.id), d = pv.filter(v => DONE.includes(v.status)).length, pc = pv.length ? Math.round(d / pv.length * 100) : 0;
+      return `<tr class="click" data-act="openP" data-id="${p.id}"><td class="num">${esc(p.pid)}</td><td>${esc(p.desc)}</td><td class="num">${pv.length}</td><td class="num">${d}</td><td><span class="bar mini"><span class="bt" aria-hidden="true"><i style="width:${pc}%"></i></span><b class="num">${pc} %</b></span></td></tr>`; }).join('')}</tbody></table></div></section>`;
+}
+
+/* ---------- News, notifications, help, profile ---------- */
+function vNews(){
+  return crumbs({l:'Camino News'}) + `<section class="card"><div class="card-h"><h2>Camino News</h2></div>${NEWS.map(n => `<details class="faq" ${S.newsOpen===n.id?'open':''}><summary><span>${esc(n.t)}<span class="small muted" style="font-weight:400;margin-left:10px">${n.d}</span></span></summary><p>${esc(n.x)}</p></details>`).join('')}</section>`;
+}
+function vNotifs(){
+  const ns = notifs();
+  return crumbs({l:'Benachrichtigungen'}) + `<section class="card"><div class="card-h"><h2>Benachrichtigungen</h2><span class="r"><button class="btn btn-sm" data-act="notifAll" ${ns.some(n => !S.readNotifs.includes(n.id))?'':'disabled'}>Alle als gelesen markieren</button><button class="btn btn-sm" data-act="nav" data-v="profile">Einstellungen</button></span></div>
+    <div class="nlist">${ns.map(n => `<button class="nitem ${S.readNotifs.includes(n.id)?'':'unread'}" data-act="notif" data-id="${n.id}">${sti(n.k)}<span class="t"><b>${esc(n.t)}</b><span class="small">${esc(n.d)}</span></span><span class="small muted num">${fmt(n.at)}</span></button>`).join('') || '<p class="muted" style="margin:0">Keine Benachrichtigungen.</p>'}</div></section>`;
+}
+function vHelp(){
+  return crumbs({l:'Hilfe'}) + `<div class="row r2" style="grid-template-columns:minmax(0,2fr) minmax(0,1fr)">
+    <section class="card"><div class="card-h"><h2>Häufige Fragen</h2></div>${FAQ.map(([q,a]) => `<details class="faq"><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join('')}</section>
+    <section class="card"><div class="card-h"><h2>Support</h2></div><p style="margin:0 0 16px">Fachliche Fragen zur Wegesicherung beantwortet das Camino-Kompetenzteam.</p>
+      <div class="facts" style="grid-template-columns:minmax(0,1fr)"><div class="f"><b>E-Mail</b><button class="link" data-act="copy" data-v="camino-support@telvia.example">camino-support@telvia.example ${ic('copy')}</button></div><div class="f"><b>Erreichbarkeit</b><span>Mo–Fr, 8–17 Uhr</span></div><div class="f"><b>Version</b><span>Camino 2.0</span></div></div></section></div>`;
+}
+function vProfile(){
+  const s = S.settings;
+  const tg = (k, l, d) => `<label class="chk" style="align-items:flex-start"><input type="checkbox" data-act="setTog" data-v="${k}" ${s[k]?'checked':''}><span><span style="font-weight:500">${l}</span><br><span class="small muted">${d}</span></span></label>`;
+  return crumbs({l:'Profil'}) + `<div class="row r2">
+    <section class="card"><div class="card-h"><h2>Profil</h2></div>
+      <div class="facts c2"><div class="f"><b>Name</b><span>Max Mustermann</span></div><div class="f"><b>Rolle</b><span>Hauptbearbeiter Wegesicherung</span></div><div class="f"><b>Zuständig</b><span>PTI Nord 11</span></div><div class="f"><b>E-Mail</b><span>m.mustermann@telvia.example</span></div></div>
+      <div style="margin-top:22px;display:grid;gap:16px">
+        <div class="fl"><label for="pf-v">Vertretung während Abwesenheit</label><select id="pf-v">${['Keine Vertretung','Julia Beispiel (PTI Nord 11)','Tom Muster (PTI Nord 12)'].map(o => `<option ${o===s.vertretung?'selected':''}>${o}</option>`).join('')}</select>${ic('chevd')}</div>
+        <div class="fl ta"><label for="pf-s">Signatur für Anschreiben</label><textarea id="pf-s" style="min-height:90px">${esc(s.sig)}</textarea></div>
+        <div><button class="btn btn-p" data-act="pfSave">Speichern</button></div></div></section>
+    <section class="card"><div class="card-h"><h2>Benachrichtigungen</h2></div><div style="display:grid;gap:16px">
+      ${tg('daily','Täglicher Report per E-Mail','Fällige Erinnerungen und neue Rückläufer als Zusammenfassung um 7 Uhr.')}
+      ${tg('inMail','Sofort bei neuem Rückläufer','E-Mail, sobald eine Antwort einem Ihrer Vorgänge zugeordnet wurde.')}
+      ${tg('fiktion','14 Tage vor Ablauf der Zustimmungsfiktion','Hinweis, damit Sie den Bau rechtzeitig planen können.')}</div>
+      <h3 style="font-size:18px;font-weight:600;margin:26px 0 12px">Darstellung</h3><div style="display:grid;gap:16px">
+      ${tg('reduce','Bewegungen reduzieren','Schaltet Animationen und Übergänge aus.')}</div>
+      <p class="small muted" style="margin:16px 0 0">Camino lässt sich bis 200 % vergrößern (Strg/Cmd +), ohne dass Inhalte abgeschnitten werden.</p></section></div>`;
+}
+
+/* ---------- Rahmenverträge ---------- */
+function vFrames(){
+  const list = S.frames.filter(r => hit('rv', r.name, r.ort, r.fach, r.org));
+  return crumbs({l:'Adressbuch', a:'nav', v:'book'}, {l:'Rahmenverträge'}) + `<section class="card"><div class="card-h"><h2>Rahmenverträge</h2><span class="r"><button class="btn btn-p" data-act="rvNew">Neuen Rahmenvertrag hinzufügen</button></span></div>
+    <p style="margin:0 0 16px">Rahmenverträge gelten für mehrere Vorgänge. Prüfen Sie vor einem Einzelvertrag, ob für die Fläche oder den Versorger bereits ein Rahmenvertrag besteht.</p>
+    <div class="toolbar">${qBox('Rahmenverträge durchsuchen','rv')}</div>
+    <div class="tw"><table><thead><tr>${th('Dokumentname')}${th('Örtliche Zuordnung')}${th('Fachliche Zuordnung')}${th('Zugeordnete Organisation')}${th('Gültig bis')}<th style="text-align:right">Aktion</th></tr></thead><tbody>${list.map(r => `<tr class="click" data-act="rvInfo" data-id="${r.id}"><td><span class="st">${ic('file')}${esc(r.name)}</span></td><td>${esc(r.ort)}</td><td>${esc(r.fach)}</td><td>${esc(r.org)}</td><td class="num">${fmt(r.valid)}</td><td class="act"><button class="ibtn" data-act="rvInfo" data-id="${r.id}" aria-label="Details zu ${esc(r.name)}">${ic('info')}</button></td></tr>`).join('') || '<tr class="empty"><td colspan="6">Keine Rahmenverträge gefunden.</td></tr>'}</tbody></table></div>${pager()}</section>`;
+}
+
+/* ---------- Address book ---------- */
+function vBook(){
+  const b = S.bk, onkz = [...new Set(BOOK.map(k => k.onkz))];
+  const list = BOOK.filter(k => (b.cat==='a' || k.cat===b.cat) && (b.onkz==='a' || k.onkz===b.onkz) && hit('book', k.org, k.dept, k.email, k.postal, ...k.persons.map(x => x.name)));
+  return crumbs({l:'Adressbuch'}) + `<section class="card"><div class="card-h"><h2>Adressbuch</h2><span class="r"><button class="btn" data-act="nav" data-v="frames">Rahmenverträge</button><button class="btn btn-p" data-act="orgNew">Organisation anlegen</button></span></div>
+    <div class="toolbar">${flSel('Fachliche Zuständigkeit','bkCat',[['a','Alle Kategorien'],...CAT_KEYS.map(k => [k,CATS[k].nm])],b.cat)}${flSel('Örtliche Zuständigkeit','bkOnkz',[['a','Alle ONKZ-ASB'],...onkz.map(o => [o,o])],b.onkz)}${qBox('Adressbuch durchsuchen','book')}</div>
+    <div class="tw"><table><thead><tr>${th('Organisation')}${th('Abteilung')}${th('Fachliche Zuständigkeit')}${th('ONKZ-ASB')}${th('Kommunikation')}${th('Ansprechpartner')}<th></th></tr></thead><tbody>
+    ${list.map(k => `<tr class="click" data-act="orgInfo" data-id="${k.id}"><td>${esc(k.org)}</td><td>${esc(k.dept)}</td><td>${CATS[k.cat].nm}</td><td class="num">${k.onkz}</td><td><span class="st">${ic(k.ch==='Brief'?'letter':'mail')}<span class="trunc" style="max-width:240px">${esc(k.ch==='Brief'?k.postal:k.email)}</span></span></td><td class="num">${k.persons.length}</td><td class="act"><button class="ibtn" data-act="orgInfo" data-id="${k.id}" aria-label="Mehr Informationen zu ${esc(k.org)}">${ic('info')}</button></td></tr>`).join('') || '<tr class="empty"><td colspan="7">Keine Kontakte gefunden.</td></tr>'}</tbody></table></div>
+    <div class="hint" style="margin-top:18px"><b>Hinweis:</b> Privatpersonen werden vorgangsbezogen gespeichert und über die Speicherung ihrer Daten informiert.</div>
+    ${pager()}</section>`;
+}
+
+/* ---------- context menus ---------- */
+function renderMenu(){
+  const m = S.menu, el = $('#menu');
+  if (!m){ el.innerHTML = ''; return; }
+  const items = {
+    project:[['openP','Projekt öffnen'],['openPlanOf','Plan auswerten', !P(m.id)?.plans.length],['projEdit','Projekt bearbeiten', P(m.id)?.closed]],
+    projectMore:[['syncWfmt','Neue SM-Aufträge aus WFMT prüfen'],['smAdd','SM-Auftrag manuell hinzufügen', P(m.id)?.closed],['tabBa','Bauabschnitte anzeigen'],['projEdit','Projekt bearbeiten', P(m.id)?.closed]],
+    task:[[m.id.startsWith('v')?'openV':'openP','Öffnen']],
+    cat:[['newVorgangCat','Neuen Vorgang anlegen'], ...(m.id==='ve'?[['bulkVE','Alle Ver- & Entsorger anschreiben']]:[])],
+    vorgang:[['openV','Vorgang öffnen'],['showOnPlan','Im Plan anzeigen', !V(m.id)?.pages.length],['pages','Planseitenzuweisung verwalten', !P(V(m.id)?.pid)?.plans.length || FINAL.includes(V(m.id)?.status)],['closeExOf','Außerordentlich schließen', FINAL.includes(V(m.id)?.status)]],
+    plan:[['openPlan','Plan auswerten'],['rearr','Plandatei neu arrangieren']],
+    vorgangMore:[['pages','Planseitenzuweisung verwalten', !P(V(m.id)?.pid)?.plans.length || FINAL.includes(V(m.id)?.status)],['archive','Vorgang archivieren', V(m.id)?.status!=='secured'],['closeEx','Außerordentliche Vorgangsschließung', FINAL.includes(V(m.id)?.status)],['vertrag','Vertragsart ändern', V(m.id)?.cat!=='priv']],
+    contactMore:[['contacts','Kontakte bearbeiten']],
+  }[m.v] || [];
+  el.innerHTML = `<div class="menu" role="menu" style="top:${m.y}px;left:${m.x}px">${items.map(([a,l,dis,t]) => `<button role="menuitem" data-act="${a}" data-id="${m.id}" ${t?`data-v="${esc(t)}"`:''} ${dis?'disabled':''}>${l}</button>`).join('')}</div>`;
+  const box = el.firstElementChild.getBoundingClientRect();
+  if (box.right > innerWidth - 8) el.firstElementChild.style.left = (m.x - (box.right - innerWidth) - 16) + 'px';
+}
+
+/* ---------- overlays & modals ---------- */
+function openLayer(l){ S.layer = l; S.menu = null; render(); setTimeout(() => { const f = document.querySelector('#layer input:not([type=checkbox]):not([type=radio]), #layer select, #layer textarea'); f && f.focus(); }, 30); }
+function closeLayer(){ S.layer = S.layer?.prev || null; render(); }
+function openSub(l){ keepF(); l.prev = S.layer; openLayer(l); }
+const overlay = (title, body, foot, left) => `<div class="ov" role="dialog" aria-modal="true" aria-label="${esc(title)}"><div class="ov-h"><h1>${esc(title)}</h1><button class="x" data-act="closeLayer" aria-label="Schließen">${ic('x')}</button></div><div class="ov-b"><div class="col">${body}</div></div><div class="ov-f ${left?'left':''}">${foot}</div></div>`;
+const modal = (title, body, foot, wide) => `<div class="mbg" data-act="bgClose"><div class="modal ${wide?'wide':''}" role="dialog" aria-modal="true" aria-label="${esc(title)}"><div class="mh"><h2>${esc(title)}</h2><button class="x" data-act="closeLayer" aria-label="Schließen">${ic('x')}</button></div><div class="mb">${body}</div><div class="mf">${foot}</div></div></div>`;
+const flIn = (label, id, val='', type='text', ph='') => `<div class="fl"><label for="${id}">${label}</label><input id="${id}" type="${type}" value="${esc(val)}" placeholder="${esc(ph)}"></div>`;
+const flSelId = (label, id, opts, sel) => `<div class="fl"><label for="${id}">${label}</label><select id="${id}">${opts.map(o => { const [v,l] = Array.isArray(o)?o:[o,o]; return `<option value="${esc(v)}" ${v===sel?'selected':''}>${esc(l)}</option>`; }).join('')}</select>${ic('chevd')}</div>`;
+function renderLayer(){
+  const l = S.layer, el = $('#layer');
+  if (!l){ el.innerHTML = ''; syncOv(); return; }
+  setTimeout(syncOv);
+  const LAYERS = {newProject:lNewProject, newVorgang:lNewVorgang, contacts:lContacts, compose:lCompose, rate:lRate, vertrag:lVertrag, archive:lArchive, closeEx:lCloseEx, bulkVE:lBulkVE, closeProject:lCloseProject, note:lNote, reminder:lReminder,
+    orgInfo:lOrgInfo, orgForm:lOrgForm, person:lPerson, frameInfo:lFrameInfo, frameNew:lFrameNew, projEdit:lProjEdit, projInfo:lProjInfo, ba:lBa, smAdd:lSmAdd, rearr:lRearr, pages:lPages, noteEdit:lNoteEdit, noteDel:lNoteDel, vNotify:lVNotify, remSet:lRemSet, print:lPrint, quit:lQuit, pay:lPay, inAssign:lInAssign};
+  const html = x => { const keep = S.layer; S.layer = x; const h = LAYERS[x.t](); S.layer = keep; return h; };
+  /* an overlay page stays visible under a modal opened from it */
+  el.innerHTML = (l.prev && ['newProject','newVorgang','compose'].includes(l.prev.t) ? html(l.prev) : '') + html(l);
+}
+function lNewProject(){
+  const l = S.layer, f = l.f, w = l.loaded ? WFMT[l.id] : null;
+  const list = w ? [...w.list, ...l.manual] : l.manual;
+  const onk = [...new Set(list.filter(s => l.sel.includes(s.nr)).map(s => s.onkz))];
+  const fv = (id, label, req, type='text', ph='') => `<div><div class="fl ${l.errs?.[id]?'err':''}"><label for="${id}">${label}${req?'*':''}</label><input id="${id}" type="${type}" value="${esc(f[id]||'')}" placeholder="${esc(ph)}"></div>${l.errs?.[id]?`<div class="ferr">${esc(l.errs[id])}</div>`:''}</div>`;
+  const body = `<div class="hint" style="margin-bottom:24px"><b>Hinweis:</b><br>Hier können Sie Ihr Projekt zur Wegesicherung anlegen. Nach Eingabe einer gültigen „Projekt-ID“ oder Auftragsnummer werden automatisch alle zum aktuellen Zeitpunkt aus WFMT verfügbaren SM-Aufträge ermittelt. Alle selektierten SM-Aufträge (s. Checkbox) werden nach „Projekt anlegen“ automatisch dem Projekt hinzugefügt. Es ist ebenso möglich, dem Projekt im Nachgang weitere SM-Aufträge manuell oder automatisch hinzuzufügen.</div>
+    <div class="sec" style="display:grid;gap:16px">
+      ${fv('np-id','Projekt-ID',true,'text','z. B. P25941F11MPKP520hb')}
+      ${fv('np-a','Auftragsnummer AG',false,'text','z. B. 02594_002FTTH_PK')}
+      <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap"><button class="btn btn-p btn-block" style="flex:1" data-act="npLoad">${l.loading?'<span class="spinner" style="border-color:rgba(255,255,255,.35);border-top-color:#fff"></span>SM-Aufträge werden aus WFMT geladen …':`${ic('search')}Mit SM-Auftrag nach Projekt-ID suchen`}</button></div>
+      <p class="small" style="margin:-6px 0 0">Keine Projekt-ID zur Hand? <button class="link" style="font-size:13px" data-act="npExample">Beispiel-ID einsetzen</button></p>
+      ${fv('np-d','Beschreibung',false)}
+      <div class="fl"><label for="np-t">Art des Projektes*</label><select id="np-t">${['FTTH PK Push (DU 0403)','FTTH Förderprojekt','FTTB Gewerbegebiet'].map(o => `<option ${o===f['np-t']?'selected':''}>${o}</option>`).join('')}</select>${ic('chevd')}</div>
+    </div>
+    <div class="sec"><h3>Initialen Bauabschnitt erstellen</h3><p class="d">Erstellen Sie für das Projekt bitte einen initialen Bauabschnitt. Weitere Bauabschnitte können Sie später in der Projektdetailansicht hinzufügen.</p>
+      <div class="fgrid"><div class="full">${fv('ba-n','Lage/Standort TK-Linie',true)}</div>${fv('ba-z','PLZ',false)}${fv('ba-o','Ort',true)}${fv('ba-s','Baubeginn',true,'date')}${fv('ba-e','Bauende',true,'date')}</div></div>
+    <div class="sec"><h3>SM-Aufträge auswählen und hinzufügen (${l.sel.length})</h3><p class="d">Manuell hinzugefügte SM-Aufträge müssen mit den Nummern „002“ beginnen.</p>
+      <div class="toolbar">${searchBox('SM-Auftrag durchsuchen')}<button class="link" data-act="toast" data-v="Für diese Projekt-ID sind noch keine SM-Aufträge in Camino hinterlegt.">Bereits hinterlegte SM-Aufträge anzeigen</button></div>
+      <div class="tw"><table><thead><tr><th>Auswahl</th>${th('SM-Auftrag')}${th('ONKZ-ASB')}${th('Beschreibung')}</tr></thead><tbody>${list.map(s => `<tr><td><input type="checkbox" data-act="npSm" data-v="${s.nr}" ${l.sel.includes(s.nr)?'checked':''} aria-label="${s.nr} auswählen" style="width:20px;height:20px;accent-color:#111"></td><td class="num">${s.nr}</td><td class="num">${s.onkz}</td><td>${esc(s.desc)}${s.manual?' <span class="muted small">(manuell)</span>':''}</td></tr>`).join('') || `<tr class="empty"><td colspan="4">${l.loaded ? 'Keine neue SM-Auftrag vorhanden.' : 'Suchen Sie nach der Projekt-ID, um die SM-Aufträge aus WFMT zu laden.'}</td></tr>`}</tbody></table></div>
+      ${l.errs?.sm ? `<div class="ferr">${esc(l.errs.sm)}</div>` : ''}
+      <div style="display:flex;gap:12px;margin-top:14px;flex-wrap:wrap;align-items:flex-start"><div style="flex:1;min-width:220px">${fv('np-m','SM-Auftrag manuell hinzufügen',false,'text','002…')}</div><button class="btn" style="height:44px" data-act="npManual">${ic('plus')}Hinzufügen</button></div>
+      ${onk.length>1 ? `<div class="hint warn" style="margin-top:14px"><b>Hinweis:</b> Sie haben SM-Aufträge aus ${onk.length} ONKZ-ASB ausgewählt. Ein Vorgang kann später nur SM-Aufträge derselben ONKZ-ASB bündeln.</div>` : ''}</div>`;
+  return overlay('Neues Projekt anlegen', body, `<button class="btn" data-act="closeLayer">Abbrechen</button><span class="l" style="margin-left:auto">* Pflichtfelder</span><button class="btn btn-p" data-act="npCreate">Projekt anlegen</button>`);
+}
+function lNewVorgang(){
+  const l = S.layer, p = P(S.pid), c = CATS[l.cat];
+  const onk = [...new Set(p.sm.filter(s => l.sm.includes(s.nr)).map(s => s.onkz))];
+  const pages = p.plans[0]?.pages || 0;
+  const body = `
+    <div class="sec"><h3>Vorgangseinstufung</h3><p class="d">Füllen Sie die initialen Eingabefelder aus.</p>
+      <div class="fgrid"><div class="fl"><label for="nv-c">Kategorie*</label><select id="nv-c" data-act="nvCat">${CAT_KEYS.map(k => `<option value="${k}" ${k===l.cat?'selected':''}>${CATS[k].nm}</option>`).join('')}</select>${ic('chevd')}</div>
+      ${flSelId('Antragsgrund*','nv-g',c.reasons, l.grund)}
+      <div class="full"><div class="fl ${l.err==='desc'?'err':''}"><label for="nv-d">Beschreibung*</label><input id="nv-d" value="${esc(l.desc)}" placeholder="z. B. Querung Haselbacher Weg"></div>${l.err==='desc'?'<div class="ferr">Bitte geben Sie eine Beschreibung ein.</div>':''}</div></div></div>
+    ${l.cat==='priv' ? `<div class="hint" style="margin-bottom:24px"><b>Hinweis:</b> Es könnte Rahmenverträge geben, die beachtet werden müssen. <button class="link" data-act="framesGo">Rahmenverträge anzeigen</button></div>` : ''}
+    <div class="sec"><h3>Bauabschnitt hinterlegen*</h3><p class="d">Weisen Sie dem Vorgang einen Bauabschnitt zu. Falls der gewünschte Bauabschnitt fehlt, können Sie einen <button class="link" data-act="baNew">neuen hinzufügen</button>.</p>
+      <div class="tw"><table><thead><tr><th>Auswahl</th>${th('Bauabschnitt')}${th('Baubeginn')}${th('Bauende')}</tr></thead><tbody>${p.ba.map((b,i) => `<tr><td><input type="radio" name="nv-ba" value="${b.id}" ${(l.ba ? b.id===l.ba : i===0)?'checked':''} style="width:20px;height:20px;accent-color:#111" aria-label="${esc(b.name)}"></td><td>${esc(b.name)}</td><td class="num">${fmt(b.start)}</td><td class="num">${fmt(b.end)}</td></tr>`).join('')}</tbody></table></div></div>
+    <div class="sec"><h3>SM-Auftrag hinzufügen (${l.sm.length})*</h3><p class="d">Bitte weisen Sie dem Vorgang mindestens einen SM-Auftrag zu. Alle ausgewählten SM-Aufträge müssen die gleiche ONKZ-ASB aufweisen.</p>
+      <div class="tw"><table><thead><tr><th>Auswahl</th>${th('SM-Auftrag')}${th('ONKZ-ASB')}${th('Beschreibung')}</tr></thead><tbody>${p.sm.map(s => { const dis = onk.length && !onk.includes(s.onkz); return `<tr><td><input type="checkbox" data-act="nvSm" data-v="${s.nr}" ${l.sm.includes(s.nr)?'checked':''} ${dis?'disabled':''} style="width:20px;height:20px;accent-color:#111" aria-label="${s.nr}"></td><td class="num">${s.nr}</td><td class="num">${s.onkz}</td><td>${esc(s.desc)}${dis?' <span class="muted small">(andere ONKZ-ASB)</span>':''}</td></tr>`; }).join('')}</tbody></table></div>
+      ${l.err==='sm'?'<div class="ferr">Bitte weisen Sie mindestens einen SM-Auftrag zu.</div>':''}</div>
+    ${pages ? `<div class="sec"><h3>Planseiten verknüpfen</h3><p class="d">Die Planseiten werden beim Versand automatisch als Anlage beigefügt.</p><div style="display:flex;gap:24px;flex-wrap:wrap">${Array.from({length:pages},(_,i)=>i+1).map(n => `<label class="chk"><input type="checkbox" data-act="nvPage" data-v="${n}" ${l.pages.includes(n)?'checked':''}> Seite ${n}</label>`).join('')}</div></div>` : ''}`;
+  return overlay('Neuen Vorgang erstellen', body, `<span class="l">* Pflichtfelder</span><div class="acts"><button class="btn" data-act="nvCreate" data-v="contacts">Speichern und weiter zu Kontakt hinzufügen</button><button class="btn btn-p" data-act="nvCreate">Speichern</button></div>`, true);
+}
+function lContacts(){
+  const l = S.layer, v = V(S.vid), p = P(v.pid);
+  const onkz = p.sm.find(s => s.nr===v.sm[0]).onkz;
+  const list = BOOK.filter(k => k.cat===v.cat && (l.all || k.onkz===onkz) && hit('ct', k.org, k.dept, k.email));
+  const body = `<p style="margin:0 0 16px">Bitte geben Sie die Kontakte an, mit denen Sie innerhalb des Vorgangs „${esc(v.grund)}“ zusammenarbeiten und kommunizieren. Der erste Kontakt, den Sie auswählen, wird in der Kommunikation als Hauptkontakt (An) verwendet. Sie können anschließend weitere Nebenkontakte (Cc) auswählen.</p>
+    <div class="toolbar"><div class="fl"><label>ONKZ-ASB</label><select data-act="ctAll"><option value="0" ${!l.all?'selected':''}>${onkz} (zuständig)</option><option value="1" ${l.all?'selected':''}>Alle ONKZ-ASB</option></select>${ic('chevd')}</div>${qBox('Kontakte durchsuchen','ct')}</div>
+    ${l.all ? `<div class="hint warn" style="margin-bottom:14px"><b>Hinweis:</b> Wenn Sie den ONKZ-ASB Filter ändern, werden Kontakte mit abweichender örtlicher Zuständigkeit angezeigt.</div>` : ''}
+    <div class="tw"><table><thead><tr><th>Auswahl</th>${th('Organisation')}${th('Abteilung')}${th('ONKZ-ASB')}<th>Rolle</th></tr></thead><tbody>${list.map(k => { const i = l.sel.indexOf(k.id); return `<tr><td><input type="checkbox" data-act="ctSel" data-v="${k.id}" ${i>=0?'checked':''} style="width:20px;height:20px;accent-color:#111" aria-label="${esc(k.org)}"></td><td>${esc(k.org)}</td><td>${esc(k.dept)}</td><td class="num">${k.onkz}${k.onkz!==onkz?' <span class="sti err" title="Örtliche Zuständigkeit entspricht nicht der ONKZ-ASB" style="display:inline-grid">!</span>':''}</td><td>${i<0?'':i===0?'<b>Hauptkontakt (An)</b>':'Nebenkontakt (Cc)'}</td></tr>`; }).join('') || '<tr class="empty"><td colspan="5">Keine passenden Kontakte.</td></tr>'}</tbody></table></div>
+    <p style="margin:14px 0 0">Der gewünschte Kontakt ist nicht dabei? <button class="link" data-act="orgNewSub">Jetzt im Adressbuch hinzufügen</button></p>`;
+  return modal('Kontakt an Vorgang auswählen', body, `<button class="btn" data-act="closeLayer">Abbrechen</button><button class="btn btn-p" data-act="ctSave" ${l.sel.length?'':'disabled'}>Speichern</button>`, true);
+}
+function composeText(v, p){
+  const ba = p.ba.find(b => b.id===v.ba);
+  const ask = {wbl:'Wir beantragen hiermit Ihre Zustimmung gemäß § 127 Abs. 1 TKG. Die vollständigen Antragsunterlagen liegen bei.', beh:'Wir bitten um Prüfung und Erteilung der erforderlichen Genehmigung.', kmb:'Wir bitten um Auskunft über mögliche Kampfmittelbelastungen im Trassenbereich.', ve:'Wir bitten um Auskunft über vorhandene Leitungen im markierten Bereich sowie um Ihre Stellungnahme.', priv:'Wir bitten Sie um Ihre Zustimmung zur Nutzung Ihres Grundstücks gemäß beiliegendem '+(v.vertrag?VERTRAG.find(x=>x.k===v.vertrag).nm:'Vertrag')+'.'}[v.cat];
+  return `Sehr geehrte Damen und Herren,\n\nim Rahmen des Glasfaserausbaus „${p.desc}“ plant die Telvia GmbH die Verlegung einer Telekommunikationslinie (${v.grund}).\n\nBauabschnitt: ${ba?ba.name+', '+fmt(ba.start)+' – '+fmt(ba.end):'–'}\nSM-Aufträge: ${v.sm.join(', ')}\n\n${ask}\n\nMit freundlichen Grüßen\nMax Mustermann\nTelvia GmbH · ${p.pti}`;
+}
+function lCompose(){
+  const l = S.layer, v = V(S.vid), p = P(v.pid), k = contact(v.contacts[0]);
+  const ch = v.cat==='priv' ? 'Brief' : l.ch;
+  const subj = l.subj ?? {wbl:`Antrag auf Zustimmung nach § 127 TKG – ${v.desc}`, beh:`Antrag auf Genehmigung – ${v.desc}`, kmb:`Anfrage Kampfmittelauskunft – ${v.desc}`, ve:`Leitungsauskunft – ${v.desc}`, priv:`Gestattung zur Grundstücksnutzung – ${v.desc}`}[v.cat];
+  const text = l.text ?? composeText(v, p);
+  const att = [...v.pages.map(n => `Trassenplan_S${n}.pdf`), 'Bauzeitenplan.pdf', ...(v.cat==='priv'?['Vertrag_Entwurf.pdf']:[]), ...(l.extra?['Bestandsunterlagen_gesamt.pdf']:[])];
+  const sheets = sheetsOf(att.length - (l.extra?1:0), l.extra), manual = ch==='Brief' && sheets > 65;
+  const to = v.contacts.map((id,i) => { const x = contact(id); return (i?'Cc: ':'') + x.org + (x.person ? ', ' + x.postal : ' · ' + x.dept); });
+  if (l.preview) return overlay(ch==='Brief'?'Briefvorschau':'E-Mail-Vorschau', `<div class="letter"><div class="lh"><span>Telvia GmbH · ${esc(p.pti)}</span><span>${fmt(now())}</span></div>${esc(k.org)}\n${esc(k.person?k.postal:k.dept)}\n\n<b>${esc(subj)}</b>\n\n${esc(text)}</div><div class="att">${att.map(a=>`<span>${ic('file')}${a}</span>`).join('')}</div>
+      ${ch==='Brief' ? (manual ? `<div class="hint warn" style="margin-top:20px;max-width:720px"><b>Hinweis:</b> Der Brief umfasst ${sheets} Blätter und überschreitet die Grenze von 65 Blättern. Er kann nicht automatisch versendet werden. Nach dem Bereitstellen drucken Sie ihn über „Manueller Druck“ und quittieren anschließend den Versand.</div>` : `<div class="hint" style="margin-top:20px;max-width:720px"><b>Hinweis:</b> Der Brief umfasst ${sheets} Blätter und wird automatisch über den Druckdienstleister versendet.</div>`) : ''}`,
+    `<div class="acts"><button class="btn" data-act="cpEdit">Bearbeiten</button><button class="btn btn-p" data-act="cpSend">${l.sending?'<span class="spinner" style="border-color:rgba(255,255,255,.35);border-top-color:#fff"></span>Wird verarbeitet …':manual?'Für manuellen Druck bereitstellen':ch==='Brief'?'Brief versenden':'E-Mail senden'}</button></div>`);
+  const body = `${v.cat==='priv' ? `<div class="hint" style="margin-bottom:20px"><b>Hinweis:</b> Bei Briefkommunikation können keine Nebenkontakte als „Empfänger“ ausgewählt werden. Kontakte sind immer vorgangsbezogen.</div>` : ''}
+    <div class="sec"><div class="fgrid"><div class="full fl" style="height:auto;min-height:44px;padding:18px 12px 8px"><label>An</label>${to.map(esc).join('<br>')}</div>
+      ${flSelId('Vorlage','cp-v',[`${CATS[v.cat].nm} – Erstanschreiben`,`${CATS[v.cat].nm} – Erinnerung`])}${v.cat==='priv'?'':flSelId('Kanal','cp-ch',[['E-Mail','E-Mail'],['Brief','Brief']], ch)}
+      <div class="full">${flIn('Betreff','cp-s',subj)}</div>
+      <div class="full fl ta"><label for="cp-b">Nachricht</label><textarea id="cp-b" rows="12">${esc(text)}</textarea></div></div></div>
+    <div class="sec"><h3>Anlagen (${att.length})</h3><p class="d">Automatisch aus den verknüpften Planseiten und dem Bauabschnitt erzeugt. Für die Briefkommunikation können nur PDF-Dateien hochgeladen werden.</p><div class="att" style="margin-top:0">${att.map(a=>`<span>${ic('file')}${a}</span>`).join('')}</div>
+      <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:14px"><button class="btn btn-sm" data-act="cpExtra">${l.extra ? 'Bestandsunterlagen entfernen' : `${ic('plus')}PDF-Anlage hinzufügen`}</button>${ch==='Brief' ? `<span>Zum Versand ausgewählte Blätter: <b class="num">${sheets}/65</b></span>` : ''}</div>
+      ${manual ? `<div class="hint warn" style="margin-top:14px"><b>Hinweis:</b> Mehr als 65 Blätter. Dieser Brief muss manuell gedruckt werden.</div>` : ''}</div>`;
+  return overlay(ch==='Brief'?'Brief versenden':'Neue E-Mail', body, `<div class="acts"><button class="btn" data-act="closeLayer">Abbrechen</button><button class="btn btn-p" data-act="cpPreview">${ch==='Brief'?'Briefvorschau generieren':'Vorschau anzeigen'}</button></div>`);
+}
+function lRate(){
+  const l = S.layer, v = V(S.vid), msg = unrated(v);
+  const opts = [['ok','Zustimmung erhalten','Der Weg kann gesichert werden.'],['clar','Klärung der Nebenbestimmungen erforderlich','Klärung mit Kontakt/Ansprechpartner (z. B. Behörde, Ver- und Entsorger).'],['rev','Überarbeitung erforderlich','Unterlagen unvollständig oder Empfänger nicht zuständig.'],['err','Irrläufer / Fehler','Die Nachricht kann diesem Vorgang nicht zugeordnet werden.']];
+  const sub = {rev:['Unterlagen unvollständig','Empfänger nicht zuständig','Falsche Kategorie wurde ausgewählt','Trasse muss angepasst werden'], err:['Rückläufer in allgemeinen Camino-Postkorb weiterleiten','Rückläufer nicht für Camino','Fehlermail einer ausgehenden Mail']}[l.opt];
+  const body = `<div class="pane" style="min-height:0;margin-bottom:20px"><div class="pb"><h3>${esc(msg.subj)}</h3><dl class="meta"><dt>Von:</dt><dd>${esc(msg.from)}</dd><dt>Datum:</dt><dd class="num">${fmtT(msg.at)}</dd></dl><div class="body">${esc(msg.body)}</div></div></div>
+    <h3 style="font-size:16px;font-weight:600;margin-bottom:10px">Bewertung spezifizieren*</h3>
+    <div class="opts">${opts.map(([k,n,d]) => `<label class="opt ${l.opt===k?'on':''}"><input type="radio" name="rt" data-act="rtOpt" data-v="${k}" ${l.opt===k?'checked':''}><span><b>${n}</b><span>${d}</span></span></label>`).join('')}</div>
+    ${sub ? `<div style="margin-top:16px">${flSelId(l.opt==='rev'?'Grund der Überarbeitung*':'Bewertung spezifizieren*','rt-sub',sub)}</div>` : ''}
+    ${l.opt && l.opt!=='err' ? `<label class="chk" style="margin-top:16px"><input type="checkbox" id="rt-pay"> Zahlungserfordernis (z. B. Gebühren oder Entschädigung)</label>` : ''}
+    <div class="fl ta ${l.err?'err':''}" style="margin-top:16px"><label for="rt-c">Kommentar${l.opt==='clar'?'*':' (optional)'}</label><textarea id="rt-c" rows="3" style="min-height:90px" placeholder="Bitte vermeiden Sie die namentliche Nennung der Gesprächspartner."></textarea></div>${l.err?`<div class="ferr">${esc(l.err)}</div>`:''}
+    ${l.opt==='rev' ? `<div class="hint warn" style="margin-top:14px"><b>Hinweis:</b> Durch die Bewertung „Überarbeitung erforderlich“ werden bereits vorhandene Fristen (Zustimmungsfiktion etc.) zurückgesetzt. Der Vorgang ist danach wieder vollumfänglich bearbeitbar.</div>` : ''}
+    <div class="hint" style="margin-top:14px"><b>Hinweis:</b> Nach dem „Bestätigen“ Ihrer Bewertung ist es nicht mehr möglich, diese Kommunikation erneut zu bewerten.</div>`;
+  return modal('Rückläufer bewerten', body, `<button class="btn" data-act="closeLayer">Abbrechen</button><button class="btn btn-p" data-act="rtSave" ${l.opt?'':'disabled'}>Bestätigen</button>`, true);
+}
+function lVertrag(){
+  const l = S.layer;
+  return modal('Vertragsart festlegen', `<p style="margin:0 0 16px">Bitte wählen Sie die Vertragsart, die für den Vorgang notwendig ist. Sie können den Vertragstyp zu einem späteren Zeitpunkt ggf. anpassen.</p>
+    <div class="opts">${VERTRAG.map(x => `<label class="opt ${l.v===x.k?'on':''}"><input type="radio" name="vt" data-act="vtSel" data-v="${x.k}" ${l.v===x.k?'checked':''}><span><b>${x.nm}</b><span>${x.d}</span></span></label>`).join('')}</div>
+    <div class="hint" style="margin-top:16px"><b>Rahmenverträge:</b> Für Flächen des Agrarverbands besteht ein Rahmenvertrag. Prüfen Sie vor dem Einzelvertrag, ob dieser anwendbar ist. <button class="link" data-act="framesGo">Rahmenverträge anzeigen</button></div>`,
+    `<button class="btn" data-act="closeLayer">Abbrechen</button><button class="btn btn-p" data-act="vtSave" ${l.v?'':'disabled'}>Speichern</button>`);
+}
+function lArchive(){
+  const l = S.layer, v = V(S.vid);
+  const files = [...v.comms.flatMap(c => (c.att||[]).map(a => ({n:a, ok:true}))), {n:'Gesprächsnotizen_intern.txt', ok:false}];
+  const body = `<p style="margin:0 0 16px">Wählen Sie Objekte aus, die Sie in nachgelagerten Archivsystemen archivieren möchten. Optional können Sie die Ziel-SM-Aufträge im jeweiligen Archivierungssystem ändern.</p>
+    <div class="tw"><table><thead><tr><th>Auswahl</th>${th('Camino Dateiname')}${th('Archiv')}${th('Ziel-SM-Aufträge')}</tr></thead><tbody>${files.map(f => `<tr><td><input type="checkbox" ${f.ok?'checked':'disabled'} style="width:20px;height:20px;accent-color:#111" aria-label="${esc(f.n)}"></td><td>${esc(f.n)}</td><td>${f.ok?'VVGE':'<span class="muted">nicht archivierbar</span>'}</td><td class="num">${f.ok?v.sm.join(', '):'–'}</td></tr>`).join('')}</tbody></table></div>
+    <div class="hint" style="margin-top:16px"><b>Hinweis:</b> Nicht in der VVGE gespeichert werden dürfen begleitender Schriftverkehr und interne Notizen mit personenbezogenen Daten von natürlichen Personen, die nicht vertrags- und zustimmungsrelevant sind.</div>
+    ${l.loading ? `<div class="hint" style="margin-top:10px;display:flex;gap:10px;align-items:center"><span class="spinner"></span>ZIP-Datei wird erstellt und an die VVGE übertragen …</div>` : ''}`;
+  return modal('Übersicht Vorgangsarchivierung', body, `<button class="btn" data-act="closeLayer">Abbrechen</button><button class="btn btn-p" data-act="arSave">Archivieren</button>`, true);
+}
+function lCloseEx(){
+  return modal('Außerordentliche Vorgangsschließung', `<p style="margin:0 0 16px">Bitte wählen Sie einen der nachfolgenden Gründe zur Vorgangsschließung aus.</p>
+    ${flSelId('Grund der Vorgangsschließung*','ce-r',['Bauvorhaben wurde zurückgezogen','Trasse wurde geändert','Vorgang doppelt angelegt','Zustimmung nicht mehr erforderlich'])}
+    <div class="fl ta" style="margin-top:16px"><label for="ce-c">Kommentar (optional)</label><textarea id="ce-c" style="min-height:90px"></textarea></div>
+    <div class="hint warn" style="margin-top:14px"><b>Hinweis:</b> Durch den neuen Status „Abgeschlossen“ stehen Ihnen nicht mehr alle Funktionen zur Verfügung.</div>`,
+    `<button class="btn" data-act="closeLayer">Abbrechen</button><button class="btn btn-p" data-act="ceSave">Vorgang schließen</button>`);
+}
+function lBulkVE(){
+  const l = S.layer, p = P(S.pid);
+  const ve = BOOK.filter(k => k.cat==='ve' && k.onkz===p.sm[0].onkz);
+  const exist = vOf(p.id).filter(v => v.cat==='ve').flatMap(v => v.contacts);
+  return modal('Ver- & Entsorger anschreiben', `<p style="margin:0 0 16px">Camino erzeugt auf Basis der Vorlage für jeden ausgewählten Ver- und Entsorger einen Vorgang „Leitungsauskunft“ und versendet das Anschreiben im gleichen Schritt.</p>
+    <div class="tw"><table><thead><tr><th>Auswahl</th>${th('Organisation')}${th('Abteilung')}<th>Status</th></tr></thead><tbody>${ve.map(k => { const has = exist.includes(k.id); return `<tr><td><input type="checkbox" data-act="bvSel" data-v="${k.id}" ${l.sel.includes(k.id)?'checked':''} ${has?'disabled':''} style="width:20px;height:20px;accent-color:#111" aria-label="${esc(k.org)}"></td><td>${esc(k.org)}</td><td>${esc(k.dept)}</td><td>${has?stat('ok','Vorgang vorhanden'):'–'}</td></tr>`; }).join('')}</tbody></table></div>
+    ${l.loading ? `<div class="hint" style="margin-top:14px;display:flex;gap:10px;align-items:center"><span class="spinner"></span>Vorgänge werden erstellt und Anschreiben versendet …</div>` : ''}`,
+    `<button class="btn" data-act="closeLayer">Abbrechen</button><button class="btn btn-p" data-act="bvSave" ${l.sel.length?'':'disabled'}>Vorgänge erstellen und versenden (${l.sel.length})</button>`, true);
+}
+function lCloseProject(){
+  const p = P(S.pid), vs = vOf(p.id), open = vs.filter(v => !FINAL.includes(v.status));
+  if (!vs.length || open.length) return modal('Wesi kann nicht abgeschlossen werden', `<div class="hint err"><b>Hinweis:</b> ${open.length ? `${open.length} Vorgänge sind noch nicht archiviert oder geschlossen. Bitte schließen Sie diese zuerst ab.` : 'Das Projekt enthält noch keine Vorgänge.'}</div>
+    ${open.length ? `<div class="tw" style="margin-top:16px"><table><tbody>${open.map(v => `<tr class="click" data-act="openV" data-id="${v.id}"><td>${CATS[v.cat].nm}</td><td>${esc(v.desc)}</td><td>${vStat(v.status)}</td></tr>`).join('')}</tbody></table></div>` : ''}`, `<button class="btn btn-p" data-act="closeLayer">Verstanden</button>`, true);
+  return modal('Wesi abschließen', `<div class="hint ok"><b>Hinweis:</b> Alle ${vs.length} Vorgänge sind abgeschlossen. Nur der Hauptbearbeiter der Telvia kann das Projekt abschließen, auch wenn ein externer Auftragnehmer beteiligt ist.</div>`,
+    `<button class="btn" data-act="closeLayer">Abbrechen</button><button class="btn btn-p" data-act="cpjSave">Wesi abschließen</button>`);
+}
+function lNote(){
+  return modal('Manuellen Eintrag hinzufügen', `<div class="fgrid">${flSelId('Eintragsart','nt-k',['Gesprächsmitschrift','Manuelle Notiz'])}${flSelId('Gesprächsart','nt-a',['Telefonat','Vor-Ort-Termin','Videocall'])}</div>
+    <div class="hint" style="margin:16px 0"><b>Hinweis:</b> Bitte vermeiden Sie die namentliche Nennung der Gesprächspartner und erfassen Sie ausschließlich arbeitsbezogene Inhalte.</div>
+    <div class="fl ta"><label for="nt-t">Geben Sie wieder, welche fachlichen Absprachen getroffen wurden*</label><textarea id="nt-t" style="min-height:120px"></textarea></div>`,
+    `<button class="btn" data-act="closeLayer">Abbrechen</button><button class="btn btn-p" data-act="ntSave">Speichern</button>`);
+}
+function lReminder(){
+  return modal('Erinnerung setzen', `<p style="margin:0 0 16px">Bitte geben Sie das Datum für die neue Fälligkeit der Erinnerung an.</p>${flIn('Erinnerung zum','rm-d',addDays(now(),14).toISOString().slice(0,10),'date')}
+    <label class="chk" style="margin-top:16px"><input type="checkbox" checked> Per E-Mail benachrichtigen (erscheint im täglichen Report)</label>`,
+    `<button class="btn" data-act="closeLayer">Abbrechen</button><button class="btn btn-p" data-act="rmSave">Speichern</button>`);
+}
+
+/* ---------- generic form helpers ---------- */
+const F = (id, d='') => S.layer?.f?.[id] ?? d;
+function keepF(){ const l = S.layer; if (!l) return; l.f = l.f || {}; document.querySelectorAll('#layer input[id], #layer select[id], #layer textarea[id]').forEach(el => { l.f[el.id] = el.type==='checkbox' ? el.checked : el.value; }); }
+const need = (l, rules) => { l.errs = {}; for (const [id, ok, msg] of rules) if (!ok) l.errs[id] = msg; return !Object.keys(l.errs).length; };
+const fx = (id, label, o={}) => {
+  const e = S.layer?.errs?.[id], v = F(id, o.v ?? ''), aria = e ? `aria-invalid="true" aria-describedby="${id}-e"` : '';
+  const inner = o.opts ? `<select id="${id}" ${o.act?`data-act="${o.act}"`:''} ${aria}>${o.opts.map(x => { const [k,t] = Array.isArray(x) ? x : [x,x]; return `<option value="${esc(k)}" ${k===v?'selected':''}>${esc(t)}</option>`; }).join('')}</select>${ic('chevd')}`
+    : o.ta ? `<textarea id="${id}" style="min-height:${o.ta}px" placeholder="${esc(o.ph||'')}" ${aria}>${esc(v)}</textarea>`
+    : `<input id="${id}" type="${o.type||'text'}" value="${esc(v)}" placeholder="${esc(o.ph||'')}" ${o.req?'aria-required="true"':''} ${aria}>`;
+  return `<div class="${o.cls||''}"><div class="fl ${o.ta?'ta':''} ${e?'err':''}"><label for="${id}">${label}${o.req?'*':''}</label>${inner}</div>${e?`<div class="ferr" id="${id}-e">${esc(e)}</div>`:''}</div>`;
+};
+const reqFoot = (save, label='Speichern') => `<span class="small" style="margin-right:auto">* Pflichtfelder</span><button class="btn" data-act="closeLayer">Abbrechen</button><button class="btn btn-p" data-act="${save}">${label}</button>`;
+const pageList = ps => { const s = [...ps].sort((a,b) => a-b), out = []; for (let i = 0; i < s.length; i++){ let j = i; while (j+1 < s.length && s[j+1] === s[j]+1) j++; out.push(j > i ? `${s[i]}-${s[j]}` : `${s[i]}`); i = j; } return out.join(', '); };
+const sheetsOf = (attN, extra) => 2 + attN * 2 + (extra ? 62 : 0);
+
+/* address book */
+function lOrgInfo(){
+  const k = contact(S.layer.id), rv = S.frames.filter(r => r.org===k.org);
+  const body = `<div class="facts c2"><div class="f"><b>Organisation</b><span>${esc(k.org)}</span></div><div class="f"><b>Abteilung</b><span>${esc(k.dept)||'–'}</span></div>
+      <div class="f"><b>Organisationstyp</b><span>${CATS[k.cat].nm}</span></div><div class="f"><b>Örtliche Zuständigkeit</b><span class="num">ONKZ-ASB ${k.onkz}</span></div>
+      <div class="f"><b>Kommunikationskanal</b><span>${k.ch}</span></div><div class="f"><b>${k.ch==='Brief'?'Postanschrift':'E-Mail'}</b>${k.ch==='Brief'?`<span>${esc(k.postal)}</span>`:`<button class="link" data-act="copy" data-v="${esc(k.email)}" style="text-align:left">${esc(k.email)} ${ic('copy')}</button>`}</div>
+      <div class="f full"><b>Link zur Organisation</b><span>${esc(k.link)||'–'}</span></div></div>
+    <h3 style="font-size:18px;font-weight:600;margin:24px 0 10px">Ansprechpartner (${k.persons.length})</h3>
+    <div class="tw"><table><thead><tr><th>Name</th><th>Funktion</th><th>Telefon</th><th>Datenschutz</th></tr></thead><tbody>${k.persons.map(x => `<tr><td>${esc((x.anrede==='Keine Angabe'?'':x.anrede+' ')+x.name)}</td><td>${esc(x.fn||'–')}</td><td class="num">${esc(x.tel||'–')}</td><td>${x.pub?'Öffentliche Quelle':stat('info','Informiert am '+fmt(x.at))}</td></tr>`).join('') || '<tr class="empty"><td colspan="4">Noch keine Ansprechpartner hinterlegt.</td></tr>'}</tbody></table></div>
+    ${rv.length ? `<div class="hint" style="margin-top:18px"><b>Rahmenvertrag:</b> ${rv.map(r => esc(r.name)).join(', ')}</div>` : ''}`;
+  return modal('Mehr Informationen', body, `<button class="btn" data-act="orgEdit" data-id="${k.id}">Organisation editieren</button><button class="btn btn-p" data-act="psNew" data-id="${k.id}">Ansprechpartner hinzufügen</button>`, true);
+}
+function lOrgForm(){
+  const l = S.layer, ch = F('of-ch', 'E-Mail');
+  const body = `<p style="margin:0 0 16px">${l.id ? 'Passen Sie die Angaben zur Organisation an.' : 'Legen Sie eine neue Organisation an. Ansprechpartner können Sie anschließend hinzufügen.'}</p>
+    <div class="fgrid">${fx('of-n','Organisationsname',{req:1,cls:'full'})}${fx('of-d','Abteilung')}${fx('of-t','Organisationstyp',{req:1,opts:CAT_KEYS.map(k => [k,CATS[k].nm])})}
+    ${fx('of-ch','Kommunikationskanal',{req:1,opts:['E-Mail','Brief'],act:'ofCh'})}${fx('of-o','ONKZ-ASB',{req:1,ph:'z. B. 2594-1'})}
+    ${ch==='Brief' ? fx('of-p','Postanschrift',{req:1,cls:'full',ph:'Straße Nr., PLZ Ort'}) : fx('of-e','E-Mail',{req:1,cls:'full',type:'email',ph:'funktion@organisation.de'})}
+    ${fx('of-l','Link zur Organisation',{cls:'full',ph:'www.organisation.de'})}</div>
+    <div class="hint" style="margin-top:16px"><b>Hinweis:</b> Bitte geben Sie bei Behörden die zentrale Funktionsadresse an, nicht die persönliche Adresse einer Sachbearbeitung.</div>`;
+  return modal(l.id ? 'Organisation editieren' : 'Organisation anlegen', body, reqFoot('ofSave'), true);
+}
+function lPerson(){
+  const l = S.layer, k = contact(l.id), pub = F('ps-pub', ''), e = l.errs?.['ps-pub'];
+  const body = `<div class="hint" style="margin-bottom:18px"><b>Hinweis:</b> Die Erfassung von personenbezogenen Daten in Camino unterliegt datenschutzrechtlichen Bestimmungen. Bitte beantworten Sie die nachfolgende Frage wahrheitsgemäß. Nicht-öffentliche Ansprechpartner werden automatisch über die Speicherung ihrer Daten informiert.</div>
+    <p style="margin:0"><b>Ausgewählte Organisation:</b> ${esc(k.org)}${k.dept ? ' · ' + esc(k.dept) : ''}</p>
+    <fieldset style="border:0;padding:0;margin:18px 0 0" ${e?'aria-describedby="ps-pub-e"':''}><legend style="font-weight:600;padding:0">Stammen die personenbezogenen Daten des Ansprechpartners aus öffentlichen Quellen (z. B. von öffentlichen Websites)?*</legend>
+      <div class="radios">${[['ja','Ja'],['nein','Nein']].map(([v,t]) => `<label class="chk"><input type="radio" name="ps-pub" data-act="psPub" data-v="${v}" ${pub===v?'checked':''}> ${t}</label>`).join('')}</div>
+      ${e ? `<div class="ferr" id="ps-pub-e">${esc(e)}</div>` : ''}</fieldset>
+    ${pub==='nein' ? `<div class="hint warn" style="margin-top:14px"><b>Hinweis:</b> Der Ansprechpartner erhält nach dem Speichern automatisch eine Information über die Speicherung seiner Daten (Art. 14 DSGVO).</div>` : ''}
+    <div class="fgrid" style="margin-top:20px">${fx('ps-a','Anrede',{opts:['Frau','Herr','Divers','Keine Angabe']})}${fx('ps-n','Name, Vorname',{req:1,ph:'z. B. Beispiel, Anna'})}${fx('ps-f','Funktion',{ph:'z. B. Sachbearbeitung Tiefbau'})}${fx('ps-t','Telefon',{type:'tel'})}</div>`;
+  return modal('Neuen Ansprechpartner hinzufügen', body, reqFoot('psSave'), true);
+}
+function lFrameInfo(){
+  const r = S.frames.find(x => x.id===S.layer.id), k = BOOK.find(x => x.org===r.org);
+  return modal('Rahmenvertrag', `<div class="facts c2"><div class="f full"><b>Dokument</b><span class="st">${ic('file')}${esc(r.name)}</span></div><div class="f"><b>Örtliche Zuordnung</b><span>${esc(r.ort)}</span></div><div class="f"><b>Fachliche Zuordnung</b><span>${esc(r.fach)}</span></div><div class="f"><b>Zugeordnete Organisation</b>${k ? `<button class="link" data-act="orgInfo" data-id="${k.id}" style="text-align:left">${esc(r.org)}</button>` : `<span>${esc(r.org)}</span>`}</div><div class="f"><b>Gültig bis</b><span class="num">${fmt(r.valid)}</span></div></div>
+    <div class="hint" style="margin-top:18px"><b>Hinweis:</b> ${esc(r.note || 'Bei Vorgängen in diesem Gebiet ist der Rahmenvertrag vorrangig. Ein Einzelvertrag ist nur nötig, wenn die Fläche nicht erfasst ist.')}</div>`,
+    `<button class="btn btn-p" data-act="closeLayer">Schließen</button>`);
+}
+function lFrameNew(){
+  const l = S.layer, file = F('rv-file');
+  return modal('Neuen Rahmenvertrag hinzufügen', `${file ? `<div class="att" style="margin:0 0 16px"><span>${ic('file')}${esc(file)}</span><button class="link" data-act="rvFile" data-v="">Entfernen</button></div>` : `<button class="drop" style="max-width:none;margin-bottom:6px" data-act="rvFile" data-v="Rahmenvertrag_Gemeinde_Oberwies.pdf">${ic('cloud')}<b>Dokument hierhin ziehen</b>oder<span class="lk">Durchsuchen ↑</span>PDF, bis 50 MB</button>${l.errs?.['rv-file'] ? `<div class="ferr" style="margin-bottom:12px">${esc(l.errs['rv-file'])}</div>` : '<div style="height:12px"></div>'}`}
+    <div class="fgrid">${fx('rv-o','Örtliche Zuordnung',{req:1,ph:'z. B. Oberwies; Haselbach'})}${fx('rv-f','Fachliche Zuordnung',{req:1,opts:CAT_KEYS.map(k => CATS[k].nm)})}${fx('rv-g','Zugeordnete Organisation',{req:1,opts:[...new Set(BOOK.map(k => k.org))]})}${fx('rv-v','Gültig bis',{req:1,type:'date'})}</div>`,
+    reqFoot('rvSave'), true);
+}
+
+/* project */
+function lProjEdit(){
+  return modal('Projekt bearbeiten', `<div class="fgrid">${fx('pe-d','Kurzbeschreibung',{req:1,cls:'full'})}${fx('pe-t','Art des Projektes',{opts:['FTTH PK Push (DU 0403)','FTTH Förderprojekt','FTTB Gewerbegebiet']})}${fx('pe-z','Zuständig',{opts:['PTI Nord 11','PTI Nord 12','PTI Süd 21']})}
+    ${fx('pe-o','Hauptbearbeiter',{cls:'full',opts:[['Max Mustermann','Max Mustermann · m.mustermann@telvia.example'],['Julia Beispiel','Julia Beispiel · j.beispiel@telvia.example']]})}${fx('pe-l','Projektbeschreibung',{ta:110,cls:'full'})}</div>
+    <div class="hint" style="margin-top:16px"><b>Hinweis:</b> Projekt-ID und Auftragsnummer stammen aus WFMT und können nicht geändert werden. Wechselt der Hauptbearbeiter, erscheint das Projekt nicht mehr unter „Meine Projekte“.</div>`, reqFoot('peSave'), true);
+}
+function lProjInfo(){
+  const p = P(S.layer.id);
+  return modal('Projektinformationen', `<div class="facts c2"><div class="f"><b>Projekt-ID</b><span class="num">${esc(p.pid)}</span></div><div class="f"><b>Auftragsnummer AG</b><span>${esc(p.auftrag)}</span></div><div class="f"><b>Art des Projektes</b><span>${esc(p.type)}</span></div><div class="f"><b>Zuständig</b><span>${esc(p.pti)} · ${esc(p.owner)}</span></div><div class="f full"><b>Projektbeschreibung</b><span>${esc(p.long)}</span></div></div>
+    <h3 style="font-size:16px;font-weight:600;margin:22px 0 8px">SM-Aufträge (${p.sm.length})</h3><div class="tw"><table><tbody>${p.sm.map(s => `<tr><td class="num">${s.nr}</td><td class="num">${s.onkz}</td><td>${esc(s.desc)}</td></tr>`).join('')}</tbody></table></div>
+    <h3 style="font-size:16px;font-weight:600;margin:22px 0 8px">Bauabschnitte (${p.ba.length})</h3><div class="tw"><table><tbody>${p.ba.map(b => `<tr><td>${esc(b.name)}</td><td>${esc(b.ort)}</td><td class="num">${fmt(b.start)} – ${fmt(b.end)}</td></tr>`).join('') || '<tr class="empty"><td>Kein Bauabschnitt hinterlegt.</td></tr>'}</tbody></table></div>`,
+    `${p.closed ? '' : `<button class="btn" data-act="projEdit" data-id="${p.id}">Projekt bearbeiten</button>`}<button class="btn btn-p" data-act="closeLayer">Schließen</button>`, true);
+}
+function lBa(){
+  const l = S.layer;
+  return modal(l.bid ? 'Bauabschnitt bearbeiten' : 'Bauabschnitt hinzufügen', `<p style="margin:0 0 16px">Ein Bauabschnitt beschreibt Lage und Bauzeit eines Teils der TK-Linie. Vorgänge werden einem Bauabschnitt zugeordnet.</p>
+    <div class="fgrid">${fx('ba2-n','Lage/Standort TK-Linie',{req:1,cls:'full'})}${fx('ba2-z','PLZ')}${fx('ba2-o','Ort',{req:1})}${fx('ba2-s','Baubeginn',{req:1,type:'date'})}${fx('ba2-e','Bauende',{req:1,type:'date'})}</div>`, reqFoot('baSave'));
+}
+function lSmAdd(){
+  const p = P(S.pid);
+  return modal('SM-Auftrag hinzufügen', `<p style="margin:0 0 16px">Fügen Sie einen SM-Auftrag hinzu, der noch nicht aus WFMT übernommen wurde. Manuell hinzugefügte SM-Aufträge müssen mit „002“ beginnen.</p>
+    <div class="fgrid">${fx('sm-n','SM-Auftrag',{req:1,ph:'002…'})}${fx('sm-o','ONKZ-ASB',{req:1,opts:[...new Set([p.onkz, ...p.sm.map(s => s.onkz)])]})}${fx('sm-d','Beschreibung',{cls:'full'})}</div>
+    <div class="hint" style="margin-top:16px"><b>Hinweis:</b> Ein Vorgang kann nur SM-Aufträge derselben ONKZ-ASB bündeln.</div>`, reqFoot('smSave','Hinzufügen'));
+}
+
+/* plan */
+function lRearr(){
+  const l = S.layer, p = P(S.pid), cur = ord(p.plans[0]);
+  return modal('Plandatei neu arrangieren', `<p style="margin:0 0 16px">Ändern Sie die Reihenfolge der Seiten. Verknüpfte Vorgänge wandern mit ihrer Seite mit.</p>
+    <ol class="rearr">${l.order.map((d,i) => { const n = vOf(p.id).filter(v => v.pages.includes(cur.indexOf(d)+1)).length;
+      return `<li class="rr"><span class="thumb">${planSvg(p, d, -1)}</span><span style="flex:1;min-width:0"><b>Seite ${i+1}</b><br><span class="small muted">Ursprünglich Seite ${d} · ${n} ${n===1?'Vorgang':'Vorgänge'}</span></span><button class="ibtn" data-act="rrMove" data-v="${i}" data-d="-1" ${i===0?'disabled':''} aria-label="Seite ${i+1} nach oben">${ic('up')}</button><button class="ibtn" data-act="rrMove" data-v="${i}" data-d="1" ${i===l.order.length-1?'disabled':''} aria-label="Seite ${i+1} nach unten">${ic('down')}</button></li>`; }).join('')}</ol>`,
+    `<button class="btn" data-act="closeLayer">Abbrechen</button><button class="btn btn-p" data-act="rrSave">Speichern</button>`, true);
+}
+function lPages(){
+  const v = V(S.vid), n = P(v.pid).plans[0]?.pages || 0;
+  return modal('Planseitenzuweisung verwalten', `<p style="margin:0 0 16px">Legen Sie fest, welche Planseiten mit dem Vorgang „${esc(v.desc)}“ verknüpft werden. Die Plandatei hat ${n} Seiten.</p>
+    ${fx('pg-i','Verknüpfte Seiten',{ph:'z. B. 1, 2-3'})}
+    <div class="hint" style="margin-top:16px"><b>Hinweis:</b> Einzelne Seiten werden mit „,“ getrennt (1, 3). Aufeinanderfolgende Seiten können mit „-“ angegeben werden (1-3). Beispiel: „1, 2-3“ verknüpft die Seiten 1, 2 und 3.</div>`,
+    `<button class="btn" data-act="pgClear" style="margin-right:auto" ${v.pages.length?'':'disabled'}>Alle Seiten vom Vorgang lösen</button><button class="btn" data-act="closeLayer">Abbrechen</button><button class="btn btn-p" data-act="pgSave">Speichern</button>`);
+}
+
+/* vorgang */
+function lNoteEdit(){
+  const l = S.layer;
+  return modal(l.nid ? 'Notiz bearbeiten' : 'Notiz hinzufügen', `${fx('no-t','Notizbeschreibung',{req:1,ta:140})}
+    <div class="hint" style="margin-top:16px"><b>Hinweis:</b> Notizen sind nur für Ihr Team sichtbar und werden nicht archiviert. Bitte vermeiden Sie die namentliche Nennung von Gesprächspartnern.</div>`, reqFoot('noSave'));
+}
+function lNoteDel(){
+  return modal('Notiz löschen', `<p style="margin:0">Möchten Sie diese Notiz wirklich löschen? Das kann nicht rückgängig gemacht werden.</p>`,
+    `<button class="btn" data-act="closeLayer">Abbrechen</button><button class="btn btn-p" data-act="noDelOk">Löschen</button>`);
+}
+function lVNotify(){
+  const n = V(S.vid).notify;
+  const tg = (id, l) => `<label class="chk"><input type="checkbox" id="${id}" ${n[id]?'checked':''}> ${l}</label>`;
+  return modal('Benachrichtigungen zum Vorgang', `<p style="margin:0 0 16px">Wählen Sie, wann Sie zu diesem Vorgang per E-Mail benachrichtigt werden.</p>
+    <div style="display:grid;gap:14px">${tg('in','Bei neuem Rückläufer')}${tg('rem','Wenn eine Erinnerung fällig wird')}${tg('fik','14 Tage vor Ablauf der Zustimmungsfiktion')}</div>`,
+    `<button class="btn" data-act="closeLayer">Abbrechen</button><button class="btn btn-p" data-act="vnSave">Speichern</button>`);
+}
+function lRemSet(){
+  const s = S.settings;
+  return modal('Erinnerungseinstellung', `<p style="margin:0 0 16px">Der tägliche Report fasst fällige Erinnerungen, neue Rückläufer und ablaufende Fristen zusammen.</p>
+    <label class="chk"><input type="checkbox" id="rs-d" ${s.daily?'checked':''}> Täglichen Report per E-Mail erhalten</label>
+    <div class="fgrid" style="margin-top:16px">${fx('rs-t','Uhrzeit',{opts:['6:00 Uhr','7:00 Uhr','8:00 Uhr'], v:s.time})}${fx('rs-r','Umfang',{opts:['Nur meine Projekte','Mein Ressort'], v:s.scope})}</div>`,
+    `<button class="btn" data-act="closeLayer">Abbrechen</button><button class="btn btn-p" data-act="rsSave">Speichern</button>`);
+}
+function lPrint(){
+  const l = S.layer, v = V(S.vid), m = v.comms.find(x => x.id===v.printPending);
+  const docs = [['Anschreiben.pdf', 2], ...m.att.map(a => [a, a.startsWith('Bestand') ? 62 : 2])];
+  return modal('Manueller Druck', `<p style="margin:0 0 16px">Der Brief an „${esc(m.to)}“ umfasst ${m.sheets} Blätter. Laden Sie die Dokumente herunter, drucken Sie sie und geben Sie den Brief zur Post.</p>
+    <div class="tw"><table><thead><tr><th>Dokument</th><th style="text-align:right">Blätter</th></tr></thead><tbody>${docs.map(([a,n]) => `<tr><td><span class="st">${ic('file')}${esc(a)}</span></td><td class="num" style="text-align:right">${n}</td></tr>`).join('')}</tbody></table></div>
+    <div style="margin:16px 0 0"><button class="btn" data-act="prZip">${l.zip ? ic('check') + 'ZIP-Datei heruntergeladen' : 'Alle Dokumente herunterladen (ZIP)'}</button>${l.errs?.zip ? `<div class="ferr">${esc(l.errs.zip)}</div>` : ''}</div>
+    <h3 style="font-size:16px;font-weight:600;margin:24px 0 4px">Erinnerung zum Quittieren des Briefversands erstellen</h3><p class="small" style="margin:0 0 12px">Camino erinnert Sie an diesem Tag daran, den Versand zu quittieren.</p>
+    ${fx('pr-d','Erinnerungsdatum',{req:1,type:'date'})}`, reqFoot('prSave','Speichern'));
+}
+function lQuit(){
+  const v = V(S.vid), m = v.comms.find(x => x.id===v.printPending);
+  if (!m.printed) return modal('Manuellen Versand quittieren nicht möglich', `<div class="hint err"><b>Hinweis:</b> Der Brief wurde noch nicht gedruckt. Laden Sie die Briefdokumente über „Manueller Druck“ herunter, bevor Sie den Versand quittieren.</div>`,
+    `<button class="btn" data-act="closeLayer">Abbrechen</button><button class="btn btn-p" data-act="print">Zum manuellen Druck</button>`);
+  return modal('Manuellen Versand quittieren', `<p style="margin:0 0 16px">Bitte bestätigen Sie, dass der Brief an „${esc(m.to)}“ zur Post gegeben wurde.</p>${fx('qt-d','Versanddatum',{req:1,type:'date'})}
+    <div class="hint" style="margin-top:16px"><b>Hinweis:</b> Nach der Quittierung erhält der Brief den Status „Ausgehender Brief versendet“.${CATS[v.cat].fiktion ? ' Die Frist der Zustimmungsfiktion startet mit dem Versanddatum.' : ''}</div>`, reqFoot('qtSave','Versand quittieren'));
+}
+function lPay(){
+  const z = S.payments.find(x => x.id===S.layer.id), v = V(z.vid);
+  return modal('Zahlung erfassen', `<p style="margin:0 0 16px">${esc(z.nm)} · Vorgang „${esc(v.desc)}“</p>
+    <div class="fgrid">${fx('pa-a','Betrag in Euro',{req:1,type:'number',ph:'0,00'})}${fx('pa-d','Bezahlt am',{req:1,type:'date'})}${fx('pa-r','Buchungsreferenz',{cls:'full',ph:'z. B. SAP-Belegnummer'})}</div>`, reqFoot('paSave'));
+}
+function lInAssign(){
+  const l = S.layer, m = S.inbox.find(x => x.id===l.id);
+  const vs = S.vorgaenge.filter(v => !FINAL.includes(v.status) && !P(v.pid).closed && hit('ia', v.desc, v.grund, P(v.pid).pid, contact(v.contacts[0])?.org || ''));
+  return modal('Vorgang zuordnen', `<p style="margin:0 0 16px">Wählen Sie den Vorgang, zu dem die Nachricht „${esc(m.subj)}“ gehört. Sie erscheint danach im Vorgang als Rückläufer zur Bewertung.</p>
+    <div class="toolbar">${qBox('Vorgänge durchsuchen','ia')}</div>
+    <div class="tw"><table><thead><tr><th>Auswahl</th><th>Projekt-ID</th><th>Vorgang</th><th>Kontakt</th><th>Status</th></tr></thead><tbody>${vs.map(v => `<tr><td><input type="radio" name="ia" data-act="iaPick" data-v="${v.id}" ${l.v===v.id?'checked':''} style="width:20px;height:20px;accent-color:#111" aria-label="${esc(v.desc)}"></td><td class="num">${esc(P(v.pid).pid)}</td><td>${esc(v.desc)}</td><td>${esc(contact(v.contacts[0])?.org || '–')}</td><td>${vStat(v.status)}</td></tr>`).join('') || '<tr class="empty"><td colspan="5">Keine offenen Vorgänge gefunden.</td></tr>'}</tbody></table></div>`,
+    `<button class="btn" data-act="closeLayer">Abbrechen</button><button class="btn btn-p" data-act="iaSave" ${l.v?'':'disabled'}>Zuordnen</button>`, true);
+}
+
+/* ---------- prototype controls ---------- */
+function renderProto(){
+  const v = S.view==='vorgang' ? V(S.vid) : null;
+  const waiting = v && ['sent','revise'].includes(v.status) && v.sentAt;
+  const c = v && CATS[v.cat];
+  $('#proto').innerHTML = `<button data-act="protoTog" aria-expanded="${S.proto}">${ic('play')}Prototyp</button>${S.proto ? `<div class="pp"><p><b>Simulation</b> · heute ist der ${fmt(now())}. Rückmeldungen und Fristen lassen sich hier auslösen.</p><div class="acts">
+    <button data-act="simReply" ${waiting?'':'disabled'}>Antwort des Kontakts trifft ein</button>
+    <button data-act="simTime" data-v="28">4 Wochen vorspulen</button>
+    <button data-act="simTime" data-v="${waiting && c.fiktion ? c.fiktion - daysBetween(v.sentAt, now()) + 1 : 0}" ${waiting && c.fiktion ? '' : 'disabled'}>Frist der Zustimmungsfiktion ablaufen lassen</button>
+    <button data-act="reset">Prototyp zurücksetzen</button></div></div>` : ''}`;
+}
+
+/* ---------- toast ---------- */
+function toast(t, info){ const el = document.createElement('div'); el.className = 'toast' + (info?' info':''); el.innerHTML = ic(info?'info':'check') + `<span>${esc(t)}</span>`; $('#toasts').appendChild(el); setTimeout(() => el.remove(), 3200); }
+
+/* ---------- actions ---------- */
+const val = id => document.getElementById(id)?.value;
+const go = (o) => { Object.assign(S, {menu:null, layer:null}, o); render(); scrollTo(0,0); };
+const toggle = (arr, x) => { const i = arr.indexOf(x); i >= 0 ? arr.splice(i,1) : arr.push(x); };
+const A = {
+  noop(){}, noopClr(){},
+  nav(e, d){ go({view:d.v, highlight:null}); },
+  sideTog(){ S.sideOpen = !S.sideOpen; renderSide(); },
+  reset(){ seed(); render(); toast('Prototyp zurückgesetzt'); },
+  toast(e, d){ S.menu = null; renderMenu(); toast(d.v, true); },
+  protoTog(){ S.proto = !S.proto; renderProto(); },
+  openP(e, d){ go({view:'project', pid:d.id, ptab:'vorgaenge', highlight:null}); },
+  openV(e, d){ const v = V(d.id); go({view:'vorgang', vid:v.id, pid:v.pid, vtab:'komm', selMsg:null, selLog:null, paneTab:'emp'}); },
+  openPlan(){ go({view:'plan', planPage:1}); },
+  openPlanOf(e, d){ go({view:'plan', pid:d.id, planPage:1}); },
+  showOnPlan(e, d){ const v = V(d.id); go({view:'plan', pid:v.pid, planPage:v.pages[0], highlight:v.id}); },
+  expand(e, d){ S.expanded[d.id] = !S.expanded[d.id]; render(); },
+  catToggle(e, d){ const vs = vOf(S.pid); S.catOpen[d.v] = !(S.catOpen[d.v] ?? vs.some(v=>v.cat===d.v)); render(); },
+  catAll(){ const vs = vOf(S.pid); const all = CAT_KEYS.every(k => S.catOpen[k] ?? vs.some(v=>v.cat===k)); CAT_KEYS.forEach(k => S.catOpen[k] = !all); render(); },
+  dtab(e, d){ S.dtab = d.v; render(); },
+  ptab(e, d){ S.ptab = d.v; render(); },
+  tabBa(){ S.menu = null; S.ptab = 'ba'; render(); },
+  vtab(e, d){ S.vtab = d.v; S.selLog = null; render(); },
+  paneTab(e, d){ S.paneTab = d.v; render(); },
+  selMsg(e, d){ S.selMsg = d.id; S.paneTab = 'emp'; render(); },
+  selLog(e, d){ S.selLog = +d.v; render(); },
+  onlyManual(e){ S.onlyManual = e.target.checked; S.selLog = null; render(); },
+  ptypeNext(){ S.ptype = S.ptype==='Brief' ? 'E-Mail' : 'Brief'; render(); },
+  page(e, d){ S.planPage = +d.v; render(); },
+  planWide(){ S.planWide = !S.planWide; render(); },
+  menu(e, d, t){ const r = t.getBoundingClientRect(); S.menu = {v:d.v, id:d.id, x:r.right + scrollX - 240, y:r.bottom + scrollY + 6}; renderMenu(); },
+  syncWfmt(){ S.menu = null; renderMenu(); toast('Keine neuen SM-Aufträge für dieses Projekt in WFMT vorhanden', true); },
+  closeLayer(){ closeLayer(); },
+  bgClose(e){ if (e.target.classList.contains('mbg')) closeLayer(); },
+
+  /* project */
+  newProject(){ openLayer({t:'newProject', id:'', sel:[], manual:[], loaded:false, f:{'ba-n':'Haselbacher Weg 1–40','ba-z':'12345','ba-o':'Lindenfeld','ba-s':'2027-02-01','ba-e':'2027-06-30'}}); },
+  npKeep(){ const l = S.layer; for (const id of ['np-id','np-a','np-d','np-t','np-m','ba-n','ba-z','ba-o','ba-s','ba-e']){ const x = val(id); if (x !== undefined) l.f[id] = x; } },
+  npExample(){ A.npKeep(); S.layer.f['np-id'] = 'P25941F11MPKP520hb'; S.layer.errs = null; renderLayer(); },
+  npLoad(){
+    A.npKeep(); const l = S.layer, id = (l.f['np-id']||'').trim(), an = (l.f['np-a']||'').trim();
+    const key = WFMT[id] ? id : Object.keys(WFMT).find(k => WFMT[k].auftrag === an);
+    l.errs = {};
+    if (S.projects.some(p => p.pid === id)) l.errs['np-id'] = 'Für diese Projekt-ID existiert bereits ein Projekt.';
+    else if (!key) l.errs['np-id'] = id || an ? 'Es konnten keine SM-Aufträge aus WFMT geladen werden. Bitte prüfen Sie die Projekt-ID oder Auftragsnummer.' : 'Bitte geben Sie eine Projekt-ID oder Auftragsnummer ein.';
+    if (l.errs['np-id']){ l.loaded = false; return renderLayer(); }
+    l.loading = true; renderLayer();
+    setTimeout(() => { const w = WFMT[key]; l.loading = false; l.loaded = true; l.id = key; l.f['np-id'] = key; l.f['np-a'] = l.f['np-a'] || w.auftrag; l.f['np-d'] = l.f['np-d'] || w.desc; l.sel = w.list.filter(s => s.onkz==='2594-1').map(s => s.nr); renderLayer(); toast(`${w.list.length} SM-Aufträge aus WFMT geladen`); }, 800);
+  },
+  npSm(e, d){ A.npKeep(); toggle(S.layer.sel, d.v); renderLayer(); },
+  npManual(){
+    A.npKeep(); const l = S.layer, nr = (l.f['np-m']||'').trim(); l.errs = l.errs || {};
+    if (!/^002\d{9}$/.test(nr)){ l.errs['np-m'] = 'Manuell hinzugefügte SM-Aufträge müssen mit „002“ beginnen und 12 Ziffern haben.'; return renderLayer(); }
+    delete l.errs['np-m']; l.manual.push({nr, onkz:'2594-1', desc:'Manuell hinzugefügt', manual:true}); l.sel.push(nr); l.f['np-m'] = ''; renderLayer();
+  },
+  npCreate(){
+    A.npKeep(); const l = S.layer, f = l.f; l.errs = {};
+    if (!l.loaded) l.errs['np-id'] = 'Bitte suchen Sie zuerst nach der Projekt-ID, um die SM-Aufträge zu laden.';
+    for (const [id,m] of [['ba-n','Bitte geben Sie die Lage der TK-Linie an.'],['ba-o','Bitte geben Sie den Ort an.'],['ba-s','Bitte geben Sie den Baubeginn an.'],['ba-e','Bitte geben Sie das Bauende an.']]) if (!(f[id]||'').trim()) l.errs[id] = m;
+    if (f['ba-s'] && f['ba-e'] && f['ba-e'] < f['ba-s']) l.errs['ba-e'] = 'Das Bauende muss nach dem Baubeginn liegen.';
+    if (l.loaded && !l.sel.length) l.errs.sm = 'Bitte wählen Sie mindestens einen SM-Auftrag aus.';
+    if (Object.keys(l.errs).length) return renderLayer();
+    const w = WFMT[l.id], list = [...w.list, ...l.manual];
+    const p = {id:'p'+(S.seq++), pid:l.id, auftrag:f['np-a'], onkz:'2594-1', type:f['np-t'], pti:'PTI Nord 11', owner:'Max Mustermann', mail:'m.mustermann@telvia.example', desc:'Ausbau Haselbach', long:f['np-d'], closed:false,
+      sm:list.filter(s => l.sel.includes(s.nr)).map(({nr,onkz,desc}) => ({nr,onkz,desc})),
+      ba:[{id:'b'+(S.seq++), name:f['ba-n'], ort:[f['ba-z'], f['ba-o']].filter(Boolean).join(' '), start:f['ba-s'], end:f['ba-e']}], plans:[]};
+    S.projects.unshift(p); go({view:'project', pid:p.id, ptab:'vorgaenge'}); toast('Projekt wurde erfolgreich angelegt');
+  },
+  uploadPlan(){ const p = P(S.pid); if (p.plans.length) return toast('Im Prototyp ist eine Plandatei pro Projekt vorgesehen.', true); p.plans.push({id:'pl'+(S.seq++), name:'trassenplan-haselbach.pdf', pages:3, date:now()}); render(); toast('Plandatei hochgeladen · 3 Seiten erkannt'); },
+  closeProject(){ openLayer({t:'closeProject'}); },
+  cpjSave(){ P(S.pid).closed = true; closeLayer(); toast('Wesi wurde abgeschlossen'); },
+
+  /* vorgang creation */
+  newVorgang(e, d){ const p = P(S.pid); openLayer({t:'newVorgang', cat:d.cat || 'wbl', sm:[p.sm[0].nr], pages: d.page ? [+d.page] : [], desc:''}); },
+  newVorgangCat(e, d){ A.newVorgang(e, {cat:d.id}); },
+  nvKeep(){ const l = S.layer; l.desc = val('nv-d'); l.grund = val('nv-g'); l.ba = document.querySelector('input[name="nv-ba"]:checked')?.value || l.ba; },
+  nvCat(e){ A.nvKeep(); S.layer.cat = e.target.value; S.layer.grund = null; renderLayer(); },
+  nvSm(e, d){ A.nvKeep(); toggle(S.layer.sm, d.v); renderLayer(); },
+  nvPage(e, d){ A.nvKeep(); toggle(S.layer.pages, +d.v); S.layer.pages.sort(); renderLayer(); },
+  nvCreate(e, d){
+    const l = S.layer, desc = val('nv-d').trim();
+    if (!desc || !l.sm.length){ A.nvKeep(); l.err = !desc ? 'desc' : 'sm'; return renderLayer(); }
+    const v = {id:'v'+(S.seq++), pid:S.pid, cat:l.cat, grund:val('nv-g'), desc, sm:[...l.sm], ba:document.querySelector('input[name="nv-ba"]:checked').value, pages:[...l.pages], status:'draft', contacts:[], comms:[], log:[], vertrag:null, sentAt:null, reminder:null};
+    log(v, 'Vorgang angelegt', v.pages.length ? `Verknüpft mit Planseite ${v.pages.join(', ')}.` : 'Ohne Planzuweisung angelegt.');
+    S.vorgaenge.push(v);
+    if (d.v === 'contacts'){ go({view:'vorgang', vid:v.id, vtab:'komm', selMsg:null}); toast('Vorgang wurde erstellt'); return A.contacts(); }
+    S.highlight = v.id; S.catOpen[v.cat] = true; closeLayer(); toast('Vorgang wurde erstellt');
+  },
+  bulkVE(){ openLayer({t:'bulkVE', sel:[]}); },
+  bvSel(e, d){ toggle(S.layer.sel, d.v); renderLayer(); },
+  bvSave(){
+    const l = S.layer; l.loading = true; renderLayer();
+    setTimeout(() => {
+      const p = P(S.pid);
+      for (const id of l.sel){ const k = contact(id);
+        const v = {id:'v'+(S.seq++), pid:p.id, cat:'ve', grund:'Leitungsauskunft', desc:`Leitungsauskunft ${k.org}`, sm:[p.sm[0].nr], ba:p.ba[0].id, pages:p.plans.length?[1]:[], status:'draft', contacts:[id], comms:[], log:[], vertrag:null, sentAt:now(), reminder:null};
+        log(v, 'Vorgang angelegt', 'Aus Vorlage „Ver- & Entsorger“ erzeugt.');
+        v.status = 'sent'; v.comms.push({id:'m'+(S.seq++), dir:'out', ch:'E-Mail', at:now(), to:k.email, subj:`Leitungsauskunft – ${p.desc}`, body:'Bitte um Auskunft über vorhandene Leitungen im markierten Trassenbereich.', att:['Trassenplan_S1.pdf']});
+        log(v, 'Ausgehende E-Mail', 'Anschreiben automatisch versendet.'); S.vorgaenge.push(v); }
+      S.catOpen.ve = true; closeLayer(); toast(`Alle ${l.sel.length} Vorgänge wurden erfolgreich erstellt und versendet`);
+    }, 1000);
+  },
+
+  /* contacts / contract */
+  contacts(){ S.menu = null; openLayer({t:'contacts', sel:[...V(S.vid).contacts], all:false}); },
+  ctAll(e){ S.layer.all = e.target.value==='1'; renderLayer(); },
+  ctSel(e, d){ toggle(S.layer.sel, d.v); renderLayer(); },
+  ctSave(){ const v = V(S.vid), added = S.layer.sel.filter(x => !v.contacts.includes(x)); v.contacts = [...S.layer.sel]; if (v.status==='draft' && (v.cat!=='priv' || v.vertrag)) v.status = 'ready'; log(v, 'Kontakt hinzugefügt', added.map(id => contact(id).org).join(', ') || 'Kontakte aktualisiert.'); closeLayer(); toast('Kontakte wurden gespeichert'); },
+  vertrag(){ S.menu = null; openLayer({t:'vertrag', v:V(S.vid).vertrag}); },
+  vtSel(e, d){ S.layer.v = d.v; renderLayer(); },
+  vtSave(){ const v = V(S.vid); v.vertrag = S.layer.v; if (v.status==='draft' && v.contacts.length) v.status = 'ready'; log(v, 'Vertragsdetails', 'Vertragsart festgelegt: ' + VERTRAG.find(x=>x.k===v.vertrag).nm); closeLayer(); toast('Vertragsart wurde gespeichert'); },
+
+  /* communication */
+  compose(){ const v = V(S.vid); if (!v.contacts.length) return A.contacts(); openLayer({t:'compose', ch:v.cat==='priv'?'Brief':S.ptype, preview:false}); },
+  cpKeep(){ const l = S.layer; l.text = val('cp-b'); l.subj = val('cp-s'); if (val('cp-ch')) l.ch = val('cp-ch'); },
+  cpPreview(){ A.cpKeep(); S.layer.preview = true; renderLayer(); },
+  cpEdit(){ S.layer.preview = false; renderLayer(); },
+  cpSend(){
+    const l = S.layer; l.sending = true; renderLayer();
+    setTimeout(() => {
+      const v = V(S.vid), k = contact(v.contacts[0]), ch = v.cat==='priv' ? 'Brief' : l.ch;
+      const att = [...v.pages.map(n => `Trassenplan_S${n}.pdf`), 'Bauzeitenplan.pdf', ...(v.cat==='priv'?['Vertrag_Entwurf.pdf']:[]), ...(l.extra?['Bestandsunterlagen_gesamt.pdf']:[])];
+      const sheets = sheetsOf(att.length - (l.extra?1:0), l.extra);
+      const m = {id:'m'+(S.seq++), dir:'out', ch, at:now(), to: k.person ? `${k.org}, ${k.postal}` : (ch==='Brief' ? `${k.org} · ${k.dept}` : k.email), subj:l.subj, body:l.text, att};
+      if (ch==='Brief' && sheets > 65){
+        Object.assign(m, {manual:true, printed:false, sheets}); v.comms.push(m); v.printPending = m.id; S.selMsg = m.id;
+        log(v, 'Brief bereitgestellt', `Brief mit ${sheets} Blättern zum manuellen Druck bereitgestellt.`);
+        closeLayer(); toast('Der Brief wurde zum manuellen Druck bereitgestellt'); return;
+      }
+      v.comms.push(m); v.status = 'sent'; v.sentAt = now(); S.selMsg = m.id;
+      log(v, ch==='Brief' ? 'Ausgehender Brief' : 'Ausgehende E-Mail', CATS[v.cat].fiktion ? 'Antrag versendet. Frist der Zustimmungsfiktion gestartet (3 Monate).' : 'Anschreiben versendet.');
+      closeLayer(); toast(ch==='Brief' ? 'Der Brief wurde erfolgreich versendet' : 'Die E-Mail wurde erfolgreich versendet');
+    }, 900);
+  },
+  reminder(){ openLayer({t:'reminder'}); },
+  rmSave(){ const v = V(S.vid); v.reminder = new Date(val('rm-d')); log(v, 'Erinnerung gesetzt', `Fällig am ${fmt(v.reminder)}.`, true); closeLayer(); toast('Erinnerung wurde gespeichert'); },
+  note(){ openLayer({t:'note'}); },
+  ntSave(){ const t = val('nt-t').trim(); if (!t) return document.getElementById('nt-t').closest('.fl').classList.add('err'); const v = V(S.vid); log(v, 'Manueller Eintrag', `${val('nt-k')} (${val('nt-a')}): ${t}`, true); closeLayer(); toast('Eintrag wurde gespeichert'); },
+
+  /* rating & lifecycle */
+  rate(){ openLayer({t:'rate', opt:null}); },
+  rtOpt(e, d){ S.layer.opt = d.v; S.layer.err = null; renderLayer(); },
+  rtSave(){
+    const l = S.layer, v = V(S.vid), c = val('rt-c').trim(), sub = val('rt-sub');
+    if (l.opt==='clar' && !c){ l.err = 'Ein Kommentar zur Bewertung ist zwingend erforderlich.'; return renderLayer(); }
+    const msg = unrated(v);
+    const label = {ok:'Zustimmung erhalten', clar:'Klärung der Nebenbestimmungen erforderlich', rev:'Überarbeitung erforderlich' + (sub?` – ${sub}`:''), err:'Irrläufer / Fehler' + (sub?` – ${sub}`:'')}[l.opt];
+    msg.rated = label;
+    if (document.getElementById('rt-pay')?.checked) S.payments.push({id:'z'+(S.seq++), vid:v.id, nm:v.cat==='priv' ? 'Entschädigung Grundstücksnutzung' : 'Gebühr laut Rückläufer', amount:null, due:addDays(now(), 30), paid:false});
+    if (l.opt==='err' && sub?.startsWith('Rückläufer in allgemeinen')) S.inbox.unshift({id:'i'+(S.seq++), at:msg.at, from:msg.from, subj:msg.subj, body:msg.body, att:msg.att || []});
+    v.status = {ok:'approved', clar:'clarify', rev:'revise', err:'sent'}[l.opt];
+    if (l.opt==='rev') v.sentAt = null;
+    log(v, 'Rückläufer bewertet', label + (c ? `. Kommentar: ${c}` : '.'));
+    closeLayer(); toast('Bewertung wurde gespeichert');
+  },
+  clarified(){ const v = V(S.vid); v.status = 'approved'; log(v, 'Status aktualisiert', 'Nebenbestimmungen geklärt, Zustimmung liegt vor.'); render(); toast('Klärung wurde abgeschlossen'); },
+  secure(){ const v = V(S.vid); v.status = 'secured'; log(v, 'Status aktualisiert', 'Weg als gesichert markiert.'); render(); toast('Weg wurde als gesichert markiert'); },
+  archive(){ S.menu = null; openLayer({t:'archive'}); },
+  arSave(){ S.layer.loading = true; renderLayer(); setTimeout(() => { const v = V(S.vid); v.status = 'archived'; log(v, 'Vorgang archiviert', `Dateien in der VVGE abgelegt (Ziel: ${v.sm.join(', ')}).`); closeLayer(); toast('Vorgang wurde erfolgreich archiviert'); }, 900); },
+  closeEx(){ S.menu = null; openLayer({t:'closeEx'}); },
+  closeExOf(e, d){ S.vid = d.id; A.closeEx(); },
+  ceSave(){ const v = V(S.vid); v.status = 'closed'; log(v, 'Vorgang geschlossen', 'Außerordentlich geschlossen: ' + val('ce-r')); closeLayer(); toast('Vorgang wurde geschlossen'); },
+
+  /* simulation */
+  simReply(){
+    const v = V(S.vid), k = contact(v.contacts[0]);
+    const body = {wbl:'Gegen die Verlegung bestehen keine grundsätzlichen Bedenken. Die Zustimmung wird unter folgenden Nebenbestimmungen erteilt:\n1. Wiederherstellung der Oberfläche in Asphaltbauweise.\n2. Anzeige des Baubeginns 14 Tage vorher.', beh:'Die Genehmigung kann erteilt werden. Bitte reichen Sie noch das Bohrprofil in Endfassung nach.', kmb:'Für den angefragten Bereich liegen keine Hinweise auf Kampfmittel vor.', ve:'Im angefragten Bereich befinden sich Leitungen unseres Netzes. Bestandspläne anbei. Bitte Schutzabstände beachten.', priv:'Ich bin mit der Nutzung meines Grundstücks einverstanden. Der unterschriebene Vertrag liegt bei.'}[v.cat];
+    const m = {id:'m'+(S.seq++), dir:'in', ch: k.person?'Brief':'E-Mail', at:now(), from: k.person ? k.org : k.email, subj:'AW: ' + (v.comms.filter(c=>c.dir==='out').slice(-1)[0]?.subj || 'Ihr Antrag'), body, att: k.person ? ['Vertrag_unterschrieben.pdf'] : ['Stellungnahme.pdf']};
+    v.comms.push(m); v.status = 'reply'; S.selMsg = m.id; S.vtab = 'komm';
+    log(v, k.person ? 'Eingehender Brief' : 'Eingehende E-Mail', 'Automatisch dem Vorgang zugeordnet.'); render(); toast('Neue Rückmeldung ist eingegangen', true);
+  },
+  simTime(e, d){
+    S.dayOffset += +d.v;
+    for (const v of S.vorgaenge){ const c = CATS[v.cat]; if (v.status==='sent' && c.fiktion && daysBetween(v.sentAt, now()) >= c.fiktion){ v.status = 'deemed'; log(v, 'Zustimmungsfiktion eingetreten', 'Frist nach § 127 Abs. 3 TKG ohne Entscheidung abgelaufen. Die Zustimmung gilt als erteilt.'); } }
+    render(); toast(`Zeit vorgespult: heute ist der ${fmt(now())}`, true);
+  },
+
+  /* search, lists & secondary pages */
+  qClr(e, d){ S.q[d.k] = ''; d.k && e.target.closest('#layer') ? (keepF(), renderLayer()) : render(); },
+  qSet(e, d){ S.q[d.k] = d.v; render(); },
+  openPsm(e, d){ go({view:'project', pid:d.id, ptab:'sm', highlight:null}); },
+  copy(e, d){ S.menu = null; renderMenu(); try { navigator.clipboard?.writeText(d.v); } catch(_){} toast(`„${d.v}“ wurde in die Zwischenablage kopiert`); },
+  ttab(e, d){ S.ttab = d.v; render(); },
+  ztab(e, d){ S.ztab = d.v; render(); },
+  newsOpen(e, d){ go({view:'news', newsOpen:d.v}); },
+  selIn(e, d){ S.selIn = d.id; render(); },
+  inDone(e, d){ S.inbox = S.inbox.filter(m => m.id!==d.id); S.selIn = null; render(); toast('Nachricht wurde als erledigt markiert'); },
+  inAssign(e, d){ openLayer({t:'inAssign', id:d.id, v:null}); },
+  iaPick(e, d){ S.layer.v = d.v; renderLayer(); },
+  iaSave(){
+    const l = S.layer, m = S.inbox.find(x => x.id===l.id), v = V(l.v);
+    const c = {id:'m'+(S.seq++), dir:'in', ch:'E-Mail', at:m.at, from:m.from, subj:m.subj, body:m.body, att:m.att};
+    v.comms.push(c); v.status = 'reply'; log(v, 'Eingehende E-Mail', 'Manuell aus dem allgemeinen Postkorb zugeordnet.');
+    S.inbox = S.inbox.filter(x => x.id!==m.id); S.selIn = null;
+    go({view:'vorgang', vid:v.id, pid:v.pid, vtab:'komm', selMsg:c.id, paneTab:'emp'}); toast('Nachricht wurde dem Vorgang zugeordnet');
+  },
+  notif(e, d){ const n = notifs().find(x => x.id===d.id); if (!S.readNotifs.includes(n.id)) S.readNotifs.push(n.id); A[n.act](e, {id:n.aid, v:n.av}); },
+  notifAll(){ S.readNotifs.push(...notifs().map(n => n.id)); render(); toast('Alle Benachrichtigungen als gelesen markiert'); },
+  setTog(e, d){ S.settings[d.v] = e.target.checked; render(); toast('Einstellung wurde gespeichert'); },
+  pfSave(){ S.settings.vertretung = val('pf-v'); S.settings.sig = val('pf-s'); toast('Profil wurde gespeichert'); },
+  payMark(e, d){ const z = S.payments.find(x => x.id===d.id); openLayer({t:'pay', id:z.id, f:{'pa-a':z.amount ?? '', 'pa-d':iso(now()), 'pa-r':''}}); },
+  paSave(){
+    keepF(); const l = S.layer, f = l.f, z = S.payments.find(x => x.id===l.id);
+    if (!need(l, [['pa-a', +f['pa-a'] > 0, 'Bitte geben Sie den gezahlten Betrag an.'], ['pa-d', f['pa-d'] && f['pa-d'] <= iso(now()), 'Das Zahlungsdatum darf nicht in der Zukunft liegen.']])) return renderLayer();
+    Object.assign(z, {paid:true, amount:+f['pa-a'], paidAt:new Date(f['pa-d']), ref:f['pa-r']});
+    log(V(z.vid), 'Zahlung erfasst', `${z.nm}: ${eur(z.amount)} am ${fmt(z.paidAt)} bezahlt${z.ref ? ` (Ref. ${z.ref})` : ''}.`, true);
+    closeLayer(); toast('Zahlung wurde erfasst');
+  },
+
+  /* address book */
+  bkCat(e){ S.bk.cat = e.target.value; render(); },
+  bkOnkz(e){ S.bk.onkz = e.target.value; render(); },
+  orgInfo(e, d){ openLayer({t:'orgInfo', id:d.id}); },
+  orgNew(){ openLayer({t:'orgForm', f:{'of-t':'wbl', 'of-ch':'E-Mail', 'of-o':'2594-1'}}); },
+  orgNewSub(){ const v = V(S.vid), p = P(v.pid); openSub({t:'orgForm', f:{'of-t':v.cat, 'of-ch':v.cat==='priv'?'Brief':'E-Mail', 'of-o':p.sm.find(s => s.nr===v.sm[0]).onkz}}); },
+  orgEdit(e, d){ const k = contact(d.id); openSub({t:'orgForm', id:k.id, f:{'of-n':k.org, 'of-d':k.dept, 'of-t':k.cat, 'of-ch':k.ch, 'of-o':k.onkz, 'of-e':k.email, 'of-p':k.postal, 'of-l':k.link}}); },
+  ofCh(){ keepF(); renderLayer(); },
+  ofSave(){
+    keepF(); const l = S.layer, f = l.f, ch = f['of-ch'];
+    if (!need(l, [['of-n', (f['of-n']||'').trim(), 'Bitte geben Sie den Organisationsnamen an.'], ['of-o', /^\d{3,5}-\d$/.test((f['of-o']||'').trim()), 'Bitte geben Sie eine gültige ONKZ-ASB an, z. B. 2594-1.'],
+      ch==='Brief' ? ['of-p', (f['of-p']||'').trim(), 'Bitte geben Sie die Postanschrift an.'] : ['of-e', /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test((f['of-e']||'').trim()), 'Bitte geben Sie eine gültige E-Mail-Adresse an.']])) return renderLayer();
+    const data = {org:f['of-n'].trim(), dept:(f['of-d']||'').trim(), cat:f['of-t'], ch, onkz:f['of-o'].trim(), email:ch==='E-Mail' ? f['of-e'].trim() : '', postal:ch==='Brief' ? f['of-p'].trim() : '', link:(f['of-l']||'').trim()};
+    let k; if (l.id){ k = contact(l.id); Object.assign(k, data); } else { k = {id:'c'+(S.seq++), persons:[], ...data}; BOOK.push(k); }
+    const prev = l.prev, v = S.vid && V(S.vid);
+    if (prev?.t==='contacts' && k.cat===v.cat){ prev.sel.push(k.id); prev.all = prev.all || k.onkz !== P(v.pid).sm.find(s => s.nr===v.sm[0]).onkz; }
+    closeLayer(); toast(l.id ? 'Organisation wurde gespeichert' : 'Organisation wurde angelegt');
+    if (!prev && !l.id) openLayer({t:'orgInfo', id:k.id});
+  },
+  psNew(e, d){ openSub({t:'person', id:d.id, f:{'ps-a':'Frau'}}); },
+  psPub(e, d){ keepF(); S.layer.f['ps-pub'] = d.v; S.layer.errs && delete S.layer.errs['ps-pub']; renderLayer(); },
+  psSave(){
+    keepF(); const l = S.layer, f = l.f;
+    if (!need(l, [['ps-pub', f['ps-pub'], 'Bitte beantworten Sie die Frage zur Datenherkunft.'], ['ps-n', (f['ps-n']||'').trim(), 'Bitte geben Sie den Namen an.']])) return renderLayer();
+    contact(l.id).persons.push({anrede:f['ps-a'], name:f['ps-n'].trim(), fn:(f['ps-f']||'').trim(), tel:(f['ps-t']||'').trim(), pub:f['ps-pub']==='ja', at:now()});
+    closeLayer(); toast(f['ps-pub']==='ja' ? 'Ansprechpartner wurde hinzugefügt' : 'Ansprechpartner wurde hinzugefügt · Datenschutzinformation wird versendet');
+  },
+  rvInfo(e, d){ openLayer({t:'frameInfo', id:d.id}); },
+  rvNew(){ openLayer({t:'frameNew', f:{'rv-v':iso(addDays(now(), 3*365))}}); },
+  rvFile(e, d){ keepF(); S.layer.f['rv-file'] = d.v; S.layer.errs && delete S.layer.errs['rv-file']; renderLayer(); },
+  rvSave(){
+    keepF(); const l = S.layer, f = l.f;
+    if (!need(l, [['rv-file', f['rv-file'], 'Bitte laden Sie das Vertragsdokument hoch.'], ['rv-o', (f['rv-o']||'').trim(), 'Bitte geben Sie die örtliche Zuordnung an.'], ['rv-v', f['rv-v'] && f['rv-v'] > iso(now()), 'Das Ablaufdatum muss in der Zukunft liegen.']])) return renderLayer();
+    S.frames.unshift({id:'r'+(S.seq++), name:f['rv-file'], ort:f['rv-o'].trim(), fach:f['rv-f'], org:f['rv-g'], valid:new Date(f['rv-v'])});
+    closeLayer(); toast('Rahmenvertrag wurde hinzugefügt');
+  },
+  framesGo(){ S.layer = null; go({view:'frames'}); },
+
+  /* project extras */
+  projEdit(e, d){ S.menu = null; const p = P(d.id || S.pid); openLayer({t:'projEdit', id:p.id, f:{'pe-d':p.desc, 'pe-t':p.type, 'pe-z':p.pti, 'pe-o':p.owner, 'pe-l':p.long}}); },
+  peSave(){
+    keepF(); const l = S.layer, f = l.f, p = P(l.id);
+    if (!need(l, [['pe-d', (f['pe-d']||'').trim(), 'Bitte geben Sie eine Kurzbeschreibung an.']])) return renderLayer();
+    Object.assign(p, {desc:f['pe-d'].trim(), type:f['pe-t'], pti:f['pe-z'], owner:f['pe-o'], mail:f['pe-o']==='Max Mustermann' ? 'm.mustermann@telvia.example' : 'j.beispiel@telvia.example', long:f['pe-l']});
+    closeLayer(); toast('Projekt wurde gespeichert');
+  },
+  projInfo(e, d){ openLayer({t:'projInfo', id:d.id || S.pid}); },
+  baNew(){ const f = {'ba2-s':iso(addDays(now(), 30)), 'ba2-e':iso(addDays(now(), 150))}; if (S.layer?.t==='newVorgang'){ A.nvKeep(); openSub({t:'ba', f}); } else openLayer({t:'ba', f}); },
+  baEdit(e, d){ const b = P(S.pid).ba.find(x => x.id===d.id), z = (b.ort.match(/^\d{5}/)||[''])[0]; openLayer({t:'ba', bid:b.id, f:{'ba2-n':b.name, 'ba2-z':z, 'ba2-o':b.ort.replace(z,'').trim(), 'ba2-s':b.start, 'ba2-e':b.end}}); },
+  baSave(){
+    keepF(); const l = S.layer, f = l.f, p = P(S.pid);
+    if (!need(l, [['ba2-n', (f['ba2-n']||'').trim(), 'Bitte geben Sie die Lage der TK-Linie an.'], ['ba2-o', (f['ba2-o']||'').trim(), 'Bitte geben Sie den Ort an.'], ['ba2-s', f['ba2-s'], 'Bitte geben Sie den Baubeginn an.'], ['ba2-e', f['ba2-e'] && f['ba2-e'] >= f['ba2-s'], 'Das Bauende muss nach dem Baubeginn liegen.']])) return renderLayer();
+    const data = {name:f['ba2-n'].trim(), ort:[f['ba2-z'], f['ba2-o']].filter(x => x && x.trim()).join(' '), start:f['ba2-s'], end:f['ba2-e']};
+    let b; if (l.bid){ b = p.ba.find(x => x.id===l.bid); Object.assign(b, data); } else { b = {id:'b'+(S.seq++), ...data}; p.ba.push(b); }
+    if (l.prev?.t==='newVorgang') l.prev.ba = b.id;
+    closeLayer(); toast(l.bid ? 'Bauabschnitt wurde gespeichert' : 'Bauabschnitt wurde hinzugefügt');
+  },
+  smAdd(){ S.menu = null; openLayer({t:'smAdd', f:{}}); },
+  smSave(){
+    keepF(); const l = S.layer, f = l.f, p = P(S.pid), nr = (f['sm-n']||'').trim();
+    if (!need(l, [['sm-n', /^002\d{9}$/.test(nr) && !p.sm.some(s => s.nr===nr), p.sm.some(s => s.nr===nr) ? 'Dieser SM-Auftrag ist dem Projekt bereits zugeordnet.' : 'Der SM-Auftrag muss mit „002“ beginnen und 12 Ziffern haben.']])) return renderLayer();
+    p.sm.push({nr, onkz:f['sm-o'], desc:(f['sm-d']||'').trim() || 'Manuell hinzugefügt'}); closeLayer(); toast('SM-Auftrag wurde hinzugefügt');
+  },
+
+  /* plan extras */
+  zoom(e, d){ S.zoom = Math.min(200, Math.max(100, S.zoom + +d.v)); render(); },
+  rearr(e, d){ S.menu = null; const p = P(d.id && P(d.id) ? d.id : S.pid); S.pid = p.id; openLayer({t:'rearr', order:[...ord(p.plans[0])]}); },
+  rrMove(e, d){ const o = S.layer.order, i = +d.v, j = i + +d.d; [o[i], o[j]] = [o[j], o[i]]; renderLayer(); setTimeout(() => document.querySelector(`#layer [data-act="rrMove"][data-v="${j}"][data-d="${d.d}"]:not(:disabled), #layer [data-act="rrMove"][data-v="${j}"]`)?.focus()); },
+  rrSave(){
+    const p = P(S.pid), pl = p.plans[0], old = ord(pl), nw = S.layer.order;
+    for (const v of vOf(p.id)) v.pages = v.pages.map(pos => nw.indexOf(old[pos-1]) + 1).sort((a,b) => a-b);
+    pl.order = [...nw]; pl.date = now(); closeLayer(); toast('Plandatei wurde neu arrangiert');
+  },
+  pages(e, d){ S.menu = null; if (d.id && V(d.id)) S.vid = d.id; const v = V(S.vid); if (!P(v.pid).plans.length) return toast('Laden Sie zuerst eine Plandatei im Projekt hoch.', true); openLayer({t:'pages', f:{'pg-i':pageList(v.pages)}}); },
+  pgSave(){
+    keepF(); const l = S.layer, v = V(S.vid), n = P(v.pid).plans[0].pages, raw = (l.f['pg-i']||'').trim(), out = new Set(); let bad = '';
+    for (const part of raw ? raw.split(',') : []){ const t = part.trim(), m = t.match(/^(\d+)(?:\s*-\s*(\d+))?$/);
+      if (!m){ bad = `„${t}“ ist keine gültige Seitenangabe.`; break; }
+      const a = +m[1], b = m[2] ? +m[2] : a; if (a < 1 || b > n || a > b){ bad = `Die Plandatei hat nur die Seiten 1 bis ${n}.`; break; }
+      for (let i = a; i <= b; i++) out.add(i); }
+    if (!need(l, [['pg-i', !bad && out.size, bad || 'Bitte geben Sie mindestens eine Seite an oder lösen Sie alle Seiten vom Vorgang.']])) return renderLayer();
+    v.pages = [...out].sort((a,b) => a-b); log(v, 'Planseiten zugewiesen', `Verknüpfte Seiten: ${pageList(v.pages)}.`); closeLayer(); toast('Planseitenzuweisung wurde gespeichert');
+  },
+  pgClear(){ const v = V(S.vid); v.pages = []; log(v, 'Planseiten zugewiesen', 'Alle Seiten vom Vorgang gelöst.'); closeLayer(); toast('Alle Seiten wurden vom Vorgang gelöst'); },
+
+  /* vorgang extras */
+  noteBy(e){ S.noteBy = e.target.value; render(); },
+  noteNew(){ openLayer({t:'noteEdit', f:{}}); },
+  noteEdit(e, d){ const n = V(S.vid).notes.find(x => x.id===d.id); openLayer({t:'noteEdit', nid:n.id, f:{'no-t':n.t}}); },
+  noSave(){
+    keepF(); const l = S.layer, v = V(S.vid), t = (l.f['no-t']||'').trim();
+    if (!need(l, [['no-t', t, 'Bitte geben Sie eine Notiz ein.']])) return renderLayer();
+    if (l.nid) Object.assign(v.notes.find(x => x.id===l.nid), {t, at:now()}); else v.notes.unshift({id:'n'+(S.seq++), at:now(), by:'m.mustermann@telvia.example', t});
+    closeLayer(); toast(l.nid ? 'Notiz wurde gespeichert' : 'Notiz wurde hinzugefügt');
+  },
+  noteDel(e, d){ openLayer({t:'noteDel', nid:d.id}); },
+  noDelOk(){ const v = V(S.vid); v.notes = v.notes.filter(x => x.id!==S.layer.nid); closeLayer(); toast('Notiz wurde gelöscht'); },
+  vNotify(){ openLayer({t:'vNotify'}); },
+  vnSave(){ const n = V(S.vid).notify; for (const k of ['in','rem','fik']) n[k] = document.getElementById(k).checked; closeLayer(); toast('Benachrichtigungen wurden gespeichert'); },
+  remSet(){ openLayer({t:'remSet', f:{}}); },
+  rsSave(){ Object.assign(S.settings, {daily:document.getElementById('rs-d').checked, time:val('rs-t'), scope:val('rs-r')}); closeLayer(); toast('Erinnerungseinstellung wurde gespeichert'); },
+  cpExtra(){ A.cpKeep(); S.layer.extra = !S.layer.extra; renderLayer(); },
+  print(){ openLayer({t:'print', f:{'pr-d':iso(addDays(now(), 2))}}); },
+  prZip(){ keepF(); S.layer.zip = true; S.layer.errs && delete S.layer.errs.zip; renderLayer(); },
+  prSave(){
+    keepF(); const l = S.layer, v = V(S.vid), m = v.comms.find(x => x.id===v.printPending);
+    if (!need(l, [['zip', l.zip, 'Bitte laden Sie die Dokumente zuerst herunter.'], ['pr-d', l.f['pr-d'] && l.f['pr-d'] >= iso(now()), 'Das Erinnerungsdatum darf nicht in der Vergangenheit liegen.']])) return renderLayer();
+    m.printed = true; v.reminder = new Date(l.f['pr-d']); log(v, 'Manueller Druck', `Briefdokumente heruntergeladen. Erinnerung zum Quittieren am ${fmt(v.reminder)}.`, true);
+    closeLayer(); toast('Erinnerung zum Quittieren wurde erstellt');
+  },
+  quit(){ openLayer({t:'quit', f:{'qt-d':iso(now())}}); },
+  qtSave(){
+    keepF(); const l = S.layer, v = V(S.vid), m = v.comms.find(x => x.id===v.printPending), d = l.f['qt-d'];
+    if (!need(l, [['qt-d', d && d <= iso(now()) && d >= iso(m.at), 'Das Versanddatum muss zwischen Bereitstellung und heute liegen.']])) return renderLayer();
+    m.quit = true; m.at = new Date(d); v.printPending = null; v.status = 'sent'; v.sentAt = new Date(d); v.reminder = null;
+    log(v, 'Ausgehender Brief', `Manueller Versand am ${fmt(d)} quittiert.${CATS[v.cat].fiktion ? ' Frist der Zustimmungsfiktion gestartet (3 Monate).' : ''}`);
+    closeLayer(); toast('Der Versand wurde quittiert');
+  },
+
+  /* filters */
+  fMine(e){ S.filter.mine = e.target.value==='1'; render(); },
+  fOpen(e){ S.filter.open = e.target.value==='1'; render(); },
+  fQClr(){ S.filter.q = ''; render(); },
+};
+const CHANGE_ACTS = ['fMine','fOpen','ctAll','nvCat','onlyManual','bkCat','bkOnkz','ofCh','noteBy','setTog'];
+const INPUT_CLICK_ACTS = ['npSm','nvSm','nvPage','ctSel','vtSel','bvSel','rtOpt','psPub','iaPick'];
+document.addEventListener('click', e => {
+  if (S.menu && !e.target.closest('.menu') && !e.target.closest('[data-act="menu"]')){ S.menu = null; renderMenu(); }
+  const t = e.target.closest('[data-act]'); if (!t) return;
+  const act = t.dataset.act;
+  if (CHANGE_ACTS.includes(act) || act==='fQ' || act==='q') return;
+  if ((t.tagName==='INPUT' || t.tagName==='SELECT') && !INPUT_CLICK_ACTS.includes(act)) return;
+  if (['expand','menu','newVorgang'].includes(act) || t.closest('td.act')) e.stopPropagation();
+  A[act] && A[act](e, t.dataset, t);
+}, true);
+document.addEventListener('change', e => { const t = e.target.closest('[data-act]'); if (t && CHANGE_ACTS.includes(t.dataset.act)) A[t.dataset.act](e, t.dataset, t); });
+document.addEventListener('input', e => {
+  if (e.target.dataset.act === 'q'){
+    const k = e.target.dataset.k, inLayer = !!e.target.closest('#layer'), pos = e.target.selectionStart;
+    S.q[k] = e.target.value; if (inLayer){ keepF(); renderLayer(); } else render();
+    const el = document.querySelector(`[data-act="q"][data-k="${k}"]`); if (el){ el.focus(); try { el.setSelectionRange(pos, pos); } catch(_){} }
+    return;
+  }
+  if (e.target.dataset.act === 'fQ'){ S.filter.q = e.target.value; const pos = e.target.selectionStart; render(); const el = document.querySelector('[data-act="fQ"]'); el.focus(); el.setSelectionRange(pos, pos); }
+});
+/* deep links for case-study screenshots, e.g. #shot=vorgang */
+const SHOT = new URLSearchParams(location.hash.slice(1)).get('shot');
+if (SHOT) document.body.classList.add('shot');
+if (SHOT === 'vorgang') Object.assign(S, {view:'vorgang', vid:'v101', pid:'p1'});
+if (SHOT === 'plan') Object.assign(S, {view:'plan', pid:'p1', planPage:2, catOpen:{wbl:true, beh:true, kmb:true, ve:true, priv:true}});
+if (SHOT === 'project') Object.assign(S, {view:'project', pid:'p1'});
+document.addEventListener('keydown', e => { if (e.key === 'Escape'){ if (S.menu){ S.menu = null; renderMenu(); } else if (S.layer) closeLayer(); } });
+render();
+</script>
+</body>
+</html>
