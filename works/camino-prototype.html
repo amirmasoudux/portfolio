@@ -1481,7 +1481,7 @@ const A = {
     l.loading = true; renderLayer();
     setTimeout(() => { const w = WFMT[key]; l.loading = false; l.loaded = true; l.id = key; l.f['np-id'] = key; l.f['np-a'] = l.f['np-a'] || w.auftrag; l.f['np-d'] = l.f['np-d'] || w.desc; l.sel = w.list.filter(s => s.onkz==='2594-1').map(s => s.nr); renderLayer(); toast(`${w.list.length} SM-Aufträge aus WFMT geladen`); }, 800);
   },
-  npSm(e, d){ A.npKeep(); toggle(S.layer.sel, d.v); renderLayer(); },
+  npSm(e, d){ A.npKeep(); toggle(S.layer.sel, d.v);log:[], notes:[], notify:{in:true, rem:true, fik:true}, vertrag:null renderLayer(); },
   npManual(){
     A.npKeep(); const l = S.layer, nr = (l.f['np-m']||'').trim(); l.errs = l.errs || {};
     if (!/^002\d{9}$/.test(nr)){ l.errs['np-m'] = 'Manuell hinzugefügte SM-Aufträge müssen mit „002“ beginnen und 12 Ziffern haben.'; return renderLayer(); }
