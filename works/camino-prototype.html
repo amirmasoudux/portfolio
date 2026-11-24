@@ -1481,7 +1481,7 @@ const A = {
     l.loading = true; renderLayer();
     setTimeout(() => { const w = WFMT[key]; l.loading = false; l.loaded = true; l.id = key; l.f['np-id'] = key; l.f['np-a'] = l.f['np-a'] || w.auftrag; l.f['np-d'] = l.f['np-d'] || w.desc; l.sel = w.list.filter(s => s.onkz==='2594-1').map(s => s.nr); renderLayer(); toast(`${w.list.length} SM-Aufträge aus WFMT geladen`); }, 800);
   },
-  npSm(e, d){ A.npKeep(); toggle(S.layer.sel, d.v);log:[], notes:[], notify:{in:true, rem:true, fik:true}, vertrag:null renderLayer(); },
+  npSm(e, d){ A.npKeep(); toggle(S.layer.sel, d.v); renderLayer(); },
   npManual(){
     A.npKeep(); const l = S.layer, nr = (l.f['np-m']||'').trim(); l.errs = l.errs || {};
     if (!/^002\d{9}$/.test(nr)){ l.errs['np-m'] = 'Manuell hinzugefügte SM-Aufträge müssen mit „002“ beginnen und 12 Ziffern haben.'; return renderLayer(); }
@@ -1514,7 +1514,7 @@ const A = {
   nvCreate(e, d){
     const l = S.layer, desc = val('nv-d').trim();
     if (!desc || !l.sm.length){ A.nvKeep(); l.err = !desc ? 'desc' : 'sm'; return renderLayer(); }
-    const v = {id:'v'+(S.seq++), pid:S.pid, cat:l.cat, grund:val('nv-g'), desc, sm:[...l.sm], ba:document.querySelector('input[name="nv-ba"]:checked').value, pages:[...l.pages], status:'draft', contacts:[], comms:[], log:[], vertrag:null, sentAt:null, reminder:null};
+    const v = {id:'v'+(S.seq++), pid:S.pid, cat:l.cat, grund:val('nv-g'), desc, sm:[...l.sm], ba:document.querySelector('input[name="nv-ba"]:checked').value, pages:[...l.pages], status:'draft', contacts:[], comms:[], log:[], notes:[], notify:{in:true, rem:true, fik:true}, vertrag:null, sentAt:null, reminder:null};
     log(v, 'Vorgang angelegt', v.pages.length ? `Verknüpft mit Planseite ${v.pages.join(', ')}.` : 'Ohne Planzuweisung angelegt.');
     S.vorgaenge.push(v);
     if (d.v === 'contacts'){ go({view:'vorgang', vid:v.id, vtab:'komm', selMsg:null}); toast('Vorgang wurde erstellt'); return A.contacts(); }
@@ -1527,7 +1527,7 @@ const A = {
     setTimeout(() => {
       const p = P(S.pid);
       for (const id of l.sel){ const k = contact(id);
-        const v = {id:'v'+(S.seq++), pid:p.id, cat:'ve', grund:'Leitungsauskunft', desc:`Leitungsauskunft ${k.org}`, sm:[p.sm[0].nr], ba:p.ba[0].id, pages:p.plans.length?[1]:[], status:'draft', contacts:[id], comms:[], log:[], vertrag:null, sentAt:now(), reminder:null};
+        const v = {id:'v'+(S.seq++), pid:p.id, cat:'ve', grund:'Leitungsauskunft', desc:`Leitungsauskunft ${k.org}`, sm:[p.sm[0].nr], ba:p.ba[0].id, pages:p.plans.length?[1]:[], status:'draft', contacts:[id], comms:[], log:[], notes:[], notify:{in:true, rem:true, fik:true}, vertrag:null, sentAt:now(), reminder:null};
         log(v, 'Vorgang angelegt', 'Aus Vorlage „Ver- & Entsorger“ erzeugt.');
         v.status = 'sent'; v.comms.push({id:'m'+(S.seq++), dir:'out', ch:'E-Mail', at:now(), to:k.email, subj:`Leitungsauskunft – ${p.desc}`, body:'Bitte um Auskunft über vorhandene Leitungen im markierten Trassenbereich.', att:['Trassenplan_S1.pdf']});
         log(v, 'Ausgehende E-Mail', 'Anschreiben automatisch versendet.'); S.vorgaenge.push(v); }
