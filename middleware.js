@@ -7,6 +7,8 @@ export const config = {
     '/works/camino',
     '/works/camino.html',
     '/works/camino-prototype',
+    '/de/works/camino',
+    '/de/works/camino.html',
     '/works/camino-prototype.html',
     '/works/assets/camino/:path*',
   ],

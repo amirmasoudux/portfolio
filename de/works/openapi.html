@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Das Abstrakte greifbar machen — Amirmasoud Ebadi</title>
+  <meta name="description" content="Wie ich Finnotech geholfen habe, Open-Banking-APIs in eine Geschichte zu verwandeln, die Entscheider sehen, anfassen und kaufen konnten." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+/* ── TOKENS ── */
+:root {
+  color-scheme: dark;
+  --bg:#0A0A0A; --surface:#111111; --surface-2:#181818;
+  --ink:#F0EEE9; --ink-2:rgba(240,238,233,.75); --ink-3:rgba(240,238,233,.55);
+  --accent:#C8FF57; --border:rgba(255,255,255,.07); --border-2:rgba(255,255,255,.12);
+  --display:"Space Grotesk",Inter,system-ui,sans-serif;
+  --body:Inter,-apple-system,system-ui,sans-serif;
+  --r:12px; --r-xl:24px;
+  --fy:#F6BB16;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{margin:0;font-family:var(--body);font-size:16px;line-height:1.65;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{max-width:100%;height:auto;display:block}
+a{color:inherit;text-decoration:none}
+button{font-family:var(--body)}
+:focus-visible{outline:2px solid rgba(255,255,255,.5);outline-offset:3px;border-radius:4px}
+
+/* ── LAYOUT ── */
+.wrap{max-width:1280px;margin:0 auto;padding-inline:max(24px,env(safe-area-inset-left,24px))}
+.narrow{max-width:760px}
+
+/* ── NAV ── */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(10,10,10,.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+.nav__left{display:flex;align-items:center}
+.nav__back{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--ink-2);transition:color .2s}
+.nav__back:hover{color:var(--ink)}
+.nav__back i[data-lucide]{width:16px;height:16px}
+.nav__sep{width:1px;height:20px;background:var(--border-2);margin:0 16px}
+.nav__logo img{height:26px;width:auto}
+.nav__cv{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink-2);border:1px solid var(--border-2);border-radius:99px;padding:6px 14px;transition:color .2s,border-color .2s}
+.nav__cv:hover{color:var(--ink);border-color:rgba(255,255,255,.25)}
+.nav__cv i[data-lucide]{width:12px;height:12px}
+
+/* ── SECTIONS ── */
+.sec{padding-block:96px;border-bottom:1px solid var(--border)}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:2.5px;color:var(--ink-3);margin-bottom:20px}
+.eyebrow::before{content:"";width:24px;height:1px;background:var(--ink-3)}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance}
+h2{font-size:clamp(30px,4vw,46px);font-weight:700;letter-spacing:-1.5px;line-height:1.08;margin-bottom:20px}
+h3{font-size:20px;font-weight:600;letter-spacing:-.3px;line-height:1.3}
+.lede{font-size:18px;color:var(--ink-2);max-width:62ch;margin:0}
+p{margin:0}
+.muted{color:var(--ink-3)}
+.mt{margin-top:48px}
+
+/* ── HERO ── */
+.hero{padding-block:72px 64px}
+.hero .num{font-size:12px;letter-spacing:2.5px;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 28px}
+.chip{display:inline-flex;align-items:center;padding:5px 14px;border-radius:99px;font-size:13px;font-weight:600;border:1px solid var(--border-2);color:var(--ink-2)}
+.chip--accent{background:rgba(246,187,22,.1);border-color:rgba(246,187,22,.3);color:var(--fy)}
+.hero h1{font-size:clamp(48px,5.4vw,84px);font-weight:700;line-height:.95;letter-spacing:-3px;margin-bottom:24px}
+.hero .lede{font-size:19px}
+.hl{color:var(--fy)}
+.hero__grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:56px;align-items:center}
+
+/* ── HERO DECK ── */
+/* ── HERO FAN DECK ── */
+.deck{position:relative;height:clamp(300px,34vw,480px);perspective:1400px;display:flex;align-items:flex-end;justify-content:center;overflow:visible}
+.deck__in{position:absolute;inset:0;transform-style:preserve-3d;display:flex;align-items:flex-end;justify-content:center}
+/* fan cards */
+.pc{
+  position:absolute;bottom:0;
+  width:clamp(130px,13vw,190px);
+  aspect-ratio:.707;
+  border-radius:14px;
+  box-shadow:0 20px 56px rgba(0,0,0,.7);
+  overflow:hidden;
+  transform-origin:50% 100%;
+  display:flex;flex-direction:column;
+}
+/* playing card face: colored band + white body */
+.pc__band{flex:0 0 52%;display:flex;align-items:center;justify-content:center;padding:8%}
+.pc--bank .pc__band{background:#655F82}
+.pc--pay  .pc__band{background:#C8A010}
+.pc__band svg{width:78%;height:auto;filter:drop-shadow(0 4px 12px rgba(0,0,0,.3))}
+.pc__body{flex:1;background:#fff;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;padding:7% 8% 8%;container-type:inline-size}
+.pc__body h5{font-family:var(--display);font-size:clamp(8px,1.8cqw,14px);line-height:1.2;font-weight:700;color:#1d1d1f;margin:0;letter-spacing:-.2px}
+.pc__body .wm{font-family:var(--display);font-size:clamp(7px,1.4cqw,11px);font-weight:700;color:#4a4a54;letter-spacing:.04em}
+
+@keyframes dealIn{
+  from{opacity:0;transform:var(--fan-to) translateY(80px) scale(.9)}
+  to  {opacity:1;transform:var(--fan-to)}
+}
+/* keep old .face for overlay use */
+.face{position:absolute;inset:0;background:#fff;color:#1d1d1f;display:grid;grid-template-columns:38% 1fr;font-family:var(--body)}
+.face__side{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:8%;text-align:center}
+.face--bank .face__side{background:#ECEBF4}
+.face--pay .face__side{background:#FFF4D1}
+.face__side svg{width:62%;height:auto}
+.face__side .no{font-family:var(--display);font-weight:700;font-size:clamp(11px,1.1vw,14px);letter-spacing:1px;color:#55555c}
+.face__body{padding:9% 9% 8%;display:flex;flex-direction:column;justify-content:center;gap:8px;min-width:0}
+.face__body .fam{font-size:clamp(9px,.8vw,11px);letter-spacing:1.5px;text-transform:uppercase;color:#77777e;font-weight:600}
+.face__body h4{font-family:var(--display);font-size:clamp(15px,1.6vw,22px);line-height:1.15;margin:0;letter-spacing:-.3px}
+.face__body p{font-size:clamp(10px,.95vw,13px);line-height:1.45;color:#45454b;margin:0}
+.face__body .eu{font-size:clamp(9px,.8vw,11px);font-weight:600;color:#3d3d42;background:#F1F1F3;border-radius:99px;padding:3px 8px;align-self:flex-start}
+.face__body .logo{margin-top:auto;font-family:var(--display);font-weight:700;font-size:clamp(10px,.9vw,12px);color:#55555c}
+
+/* ── STATS ── */
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--border);border-block:1px solid var(--border)}
+.stat{background:var(--surface);padding:32px;display:grid;grid-template-columns:auto 1fr;column-gap:18px;align-items:start}
+.stat .si{grid-row:span 2;width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--border-2);color:var(--ink)}
+.stat .si svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.stat b{display:block;font-family:var(--display);font-size:40px;font-weight:700;letter-spacing:-1.5px;color:var(--ink);line-height:1;margin-bottom:10px;white-space:nowrap}
+.stat span{font-size:15px;color:var(--ink-2);line-height:1.5}
+
+/* ── SPLIT ── */
+.split{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:64px;align-items:start}
+.split--prob{align-items:start}
+.quote{border-left:2px solid var(--fy);padding:4px 0 4px 20px;font-size:17px;color:var(--ink);font-style:italic;margin:28px 0}
+.quote small{display:block;font-style:normal;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--ink-3);margin-bottom:6px}
+
+/* ── RISK FLOW (problem) ── */
+.risks--flow{margin-top:38px;gap:0;display:grid}
+.risks--flow .risk{display:grid;grid-template-columns:44px 1fr;gap:16px;padding:22px 22px 22px 18px;border-radius:0;border-bottom-width:0;background:var(--surface);border:1px solid var(--border)}
+.risks--flow .risk:first-child{border-radius:var(--r) var(--r) 0 0}
+.risks--flow .risk:last-child{border-radius:0 0 var(--r) var(--r);border-bottom-width:1px}
+.risks--flow .risk h3{font-size:19px;letter-spacing:-.3px;margin-bottom:6px}
+.risks--flow .ri{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--border-2);color:var(--ink)}
+.risks--flow .ri svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.risk--goal{box-shadow:inset 3px 0 0 var(--fy)}
+.risk--goal h3{color:var(--fy)}
+.risk p{font-size:15px;color:var(--ink-2)}
+
+/* ── CARDS / GRID ── */
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:26px}
+.card h3{margin-bottom:8px}
+.card p{font-size:15px;color:var(--ink-2)}
+.card .k{font-family:var(--display);font-size:13px;color:var(--ink-3);letter-spacing:1px;margin-bottom:14px;display:block;font-weight:600}
+.card .q{margin-top:14px;font-style:italic;color:var(--ink)}
+
+/* ── STRATEGY SHIFT ── */
+.shift{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:16px;align-items:stretch}
+.shift>div{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px 26px;display:grid;gap:6px}
+.shift span{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.shift b{font-family:var(--display);font-size:22px;font-weight:600;letter-spacing:-.4px}
+.shift small{font-size:14px;color:var(--ink-2)}
+.shift__from b{color:var(--ink-2);text-decoration:line-through;text-decoration-color:rgba(255,255,255,.3)}
+.shift__arrow{display:grid;place-items:center;font-size:28px;color:var(--ink-3);background:none!important;border:0!important;padding:0!important}
+.blocks{margin:0}
+.blocks img{background:#fff;border-radius:16px;padding:28px 40px;width:100%}
+figcaption{font-size:14px;color:var(--ink-3);margin-top:14px;max-width:70ch}
+figcaption b{color:var(--ink);font-weight:600}
+
+/* ── SERVICE CARD VIEWER ── */
+.dtabs{display:grid;grid-template-columns:minmax(0,.75fr) minmax(0,1.25fr);gap:32px;align-items:start}
+.dtabs__side{display:flex;flex-direction:column;justify-content:space-between;gap:14px;min-width:0}
+@media (min-width:1001px){.dtabs{grid-template-columns:minmax(0,1fr) auto;align-items:stretch}}
+.dtabs__list{display:grid;gap:8px}
+.dtabs__list button{font:inherit;text-align:left;color:var(--ink);background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 20px;cursor:pointer;display:grid;gap:4px;transition:border-color .2s,background .2s}
+.dtabs__list button:hover{border-color:var(--border-2)}
+.dtabs__list button[aria-selected="true"]{border-color:rgba(255,255,255,.28);background:var(--surface-2)}
+.dtabs__list .k{font-family:var(--display);font-size:12px;letter-spacing:.3px;text-transform:none;color:var(--ink-3);font-weight:600}
+.dtabs__list b{font-family:var(--display);font-size:19px;font-weight:600;letter-spacing:-.3px}
+.dtabs__ctrl{display:flex;align-items:center;justify-content:space-between;padding:0 4px}
+.cnt{font-family:var(--display);font-size:14px;letter-spacing:2px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.arrows{display:flex;gap:8px}
+.arr{font:inherit;width:40px;height:40px;border-radius:50%;border:1px solid var(--border-2);background:transparent;color:var(--ink);cursor:pointer;font-size:16px;transition:background .2s,border-color .2s}
+.arr:hover{background:var(--surface-2);border-color:var(--ink-3)}
+.viewer{min-width:0;display:flex;flex-direction:column;gap:14px}
+.sc{container-type:inline-size;perspective:2000px;cursor:pointer;border-radius:10px}
+.sc__in{display:grid;transition:transform .7s cubic-bezier(.2,.7,.2,1);transform-style:preserve-3d}
+.sc.is-back .sc__in{transform:rotateY(180deg)}
+.sc__face{grid-area:1/1;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:10px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+.sc__back{transform:rotateY(180deg)}
+.viewer__bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.viewer .eu{font-size:13px;color:var(--ink-3)}
+
+/* ── CARD OVERLAY ── */
+.c-ov{position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:clamp(16px,4vw,48px);pointer-events:none;opacity:0;transition:opacity .25s}
+.c-ov.is-open{pointer-events:auto;opacity:1}
+.c-ov__bg{position:absolute;inset:0;background:rgba(6,6,6,.88);backdrop-filter:blur(20px);cursor:pointer}
+.c-box{position:relative;z-index:1;width:min(700px,100%);display:flex;flex-direction:column;gap:14px;transform:translateY(20px);transition:transform .35s cubic-bezier(.22,1,.36,1)}
+.c-ov.is-open .c-box{transform:translateY(0)}
+.c-card{container-type:inline-size;perspective:2000px;cursor:pointer}
+@keyframes flip-peek{0%{transform:rotateY(0)}55%{transform:rotateY(42deg)}100%{transform:rotateY(0)}}
+.c-card__in{display:grid;transition:transform .7s cubic-bezier(.2,.7,.2,1);transform-style:preserve-3d}
+.c-card.is-back .c-card__in{transform:rotateY(180deg)}
+.c-card__in.peeking{animation:flip-peek 1s cubic-bezier(.4,0,.2,1) forwards}
+.c-face{grid-area:1/1;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:14px;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,.8)}
+.c-rear{transform:rotateY(180deg)}
+.c-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.sides{display:inline-flex;background:var(--surface);border:1px solid var(--border);border-radius:99px;padding:4px}
+.sides button{font:inherit;font-size:14px;color:var(--ink-2);background:none;border:0;border-radius:99px;padding:8px 14px;cursor:pointer;transition:background .15s,color .15s}
+.sides button:hover{color:var(--ink)}
+.sides button[aria-pressed="true"]{background:var(--ink);color:#0A0A0A;font-weight:600}
+.c-eu{font-size:13px;color:var(--ink-3)}
+.c-close{font:inherit;width:40px;height:40px;border-radius:50%;border:1px solid var(--border-2);background:rgba(255,255,255,.06);color:var(--ink-2);cursor:pointer;font-size:20px;display:grid;place-items:center;transition:background .2s,color .2s;flex-shrink:0}
+.c-close:hover{background:rgba(255,255,255,.16);color:var(--ink)}
+
+/* card front */
+.cf{aspect-ratio:1.414;background:#A6A7AB;display:flex;align-items:center;justify-content:center;gap:1.8cqw;padding:6cqw;font-family:var(--body);height:100%}
+.cf__title{background:#fff;color:#2b2b30;width:27cqw;height:36cqw;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.6cqw;padding:2cqw;text-align:center}
+.cf__title svg{width:12cqw;height:auto}
+.cf__title h4{font-family:var(--display);font-size:2.5cqw;line-height:1.15;font-weight:700;margin:0;letter-spacing:-.02em}
+.cf__ic{width:3.6cqw;color:#3a3a3f;display:block}.cf__ic svg{width:100%;display:block}
+.cf__desc{width:50cqw;height:36cqw;padding:3cqw 3.4cqw;display:flex;flex-direction:column;justify-content:center;gap:1.3cqw}
+.cf--bank .cf__desc{background:#655F82;color:#fff}
+.cf--pay .cf__desc{background:#F6BB16;color:#1d1d1f}
+.cf__desc p{margin:0;font-size:1.55cqw;line-height:1.55}
+
+/* card back */
+.cbk{aspect-ratio:1.414;background:#fff;position:relative;overflow:hidden;color:#3a3a3f;font-family:var(--body);height:100%}
+.cbk__ring{position:absolute;width:86cqw;aspect-ratio:1;border-radius:50%;background:#E6E6E8;right:-40cqw;top:-46cqw}
+.cbk__blob{position:absolute;width:66cqw;aspect-ratio:1;border-radius:50%;right:-36cqw;top:-36cqw}
+.cbk__head{position:absolute;left:6cqw;top:5.5cqw;width:52cqw;display:flex;gap:2.2cqw;align-items:flex-start}
+.cbk__brick{width:9cqw;flex:none}.cbk__brick svg{width:100%;display:block}
+.cbk__head p{margin:0;font-size:1.55cqw;line-height:1.55}
+.cbk__logo{position:absolute;left:6cqw;bottom:4cqw;font-family:var(--display);font-weight:700;font-size:2.2cqw;color:#5d5d63;letter-spacing:-.02em}
+.cb__flow{position:absolute;left:6cqw;right:6cqw;top:24cqw;display:flex;align-items:center;justify-content:space-between}
+.cb__arr{flex:1;height:1px;background:#F08A84;position:relative;margin:0 .6cqw}
+.cb__arr::after{content:"";position:absolute;right:30%;top:-.9cqw;border-left:1.6cqw solid #F08A84;border-top:.9cqw solid transparent;border-bottom:.9cqw solid transparent}
+
+/* wireframe phone */
+.wp{width:17cqw;flex:none;aspect-ratio:9/18.6;background:#F4F4F5;border:1px solid #DEDEE1;border-radius:2.2cqw;display:flex;flex-direction:column;align-items:center;padding:1.6cqw 1cqw 1cqw;box-shadow:0 2cqw 3cqw rgba(0,0,0,.12);font-size:1cqw;position:relative;z-index:1}
+.wp__spk{width:2.4em;height:.3em;border-radius:1em;background:#D2D2D6;margin-bottom:1.2em}
+.wp__home{width:2.6em;height:2.6em;border-radius:50%;border:1px solid #CFCFD3;margin-top:1em;flex:none}
+.wp__scr{flex:1;width:100%;background:linear-gradient(#E2E2E5,#F2F2F3 60%,#E7E7EA);display:flex;flex-direction:column;align-items:stretch;justify-content:center;gap:1em;padding:1.4em 1.2em;color:#2b2b30;text-align:center;min-height:0}
+.wp__scr--web{justify-content:flex-start;padding-top:.8em}
+.wlogo{display:flex;flex-direction:column;align-items:center;gap:.3em;background:#fff;border:2px solid currentColor;border-radius:.8em;padding:.8em .6em .5em;margin:0 auto;width:72%}
+.wlogo svg{width:58%;height:auto}.wlogo b{font-family:var(--display);font-size:1.2em;line-height:1}
+.wbank{display:flex;flex-direction:column;align-items:center;gap:.2em;color:#8a8a90}.wbank svg{width:3.6em}.wbank b{font-size:1em;letter-spacing:.05em}
+.wcard{background:#fff;padding:1em .9em;display:flex;flex-direction:column;gap:.7em;text-align:left}
+.wh{font-size:1.05em;line-height:1.3;text-align:center}
+.wf{display:block;background:#E9E9EC;font-size:.85em;padding:.45em .6em;color:#777}
+.wbtn{display:block;background:#1DB394;color:#fff;font-weight:700;font-size:.95em;text-align:center;padding:.6em;border-radius:.3em}
+.wbtn--g{background:#7A7A80}
+.wduo{display:grid;grid-template-columns:1fr 1fr;gap:.5em}
+.wradio{background:#7A7A80;color:#fff;font-size:.9em;padding:.6em;text-align:left;border-right:1.4em solid #fff;position:relative}
+.wmsg{background:#7A7A80;color:#fff;font-size:1.05em;line-height:1.3;padding:.9em .6em}
+.wmsg--q{font-size:.95em}
+.wok{width:2.8em;height:2.8em;border-radius:50%;background:#1DB394;color:#fff;display:grid;place-items:center;font-size:1.5em;font-weight:700;margin:0 auto}
+.wurl{background:#fff;border-radius:1em;font-size:.75em;color:#8a8a90;padding:.3em .7em;text-align:left;white-space:nowrap;overflow:hidden}
+.wsm{font-size:.85em;color:#5d5d63;line-height:1.35}
+.wli{font-size:.85em;color:#3a3a3f}
+.wrow{display:flex;justify-content:space-between;gap:.5em;font-size:.9em;background:#fff;padding:.5em .6em;border-bottom:1px solid #eee}
+.wcard .wrow{padding:.3em 0;background:none}
+
+/* payout split */
+.wsplit{position:absolute;left:6cqw;right:6cqw;top:21cqw;display:flex;align-items:center;gap:1.5cqw;font-size:1cqw;color:#2b2b30}
+.ws__col{display:flex;flex-direction:column;gap:.8em;align-items:center;text-align:center;flex:1}
+.ws__avs{display:grid;grid-template-columns:repeat(2,4.4em);gap:.8em}
+.av{width:4.4em;height:4.4em;border-radius:50%;background:#D9D9DC;position:relative;overflow:hidden}
+.av::before{content:"";position:absolute;width:42%;height:42%;border-radius:50%;background:#9C9CA2;left:29%;top:18%}
+.av::after{content:"";position:absolute;width:80%;height:50%;border-radius:50% 50% 0 0;background:#9C9CA2;left:10%;bottom:-12%}
+.av--1{background:#E6E0D6}.av--2{background:#DCE3E8}
+.ws__arr{flex:0 0 5cqw;height:1px;background:#F08A84;position:relative}
+.ws__arr::after{content:"";position:absolute;right:-.2cqw;top:-.9cqw;border-left:1.6cqw solid #F08A84;border-top:.9cqw solid transparent;border-bottom:.9cqw solid transparent}
+.ws__acct{flex:1.3;background:#F1F1F3;border:1px solid #DEDEE1;padding:1.6em 1.2em;display:flex;flex-direction:column;gap:.8em;align-items:center;text-align:center}
+.ws__acct .wlogo{width:50%}
+.ws__acct b{font-size:1.3em}
+.ws__out{align-items:stretch}
+.ws__row{display:flex;align-items:center;gap:.7em;background:#F1F1F3;padding:.5em .8em;font-size:1.05em}
+.wok--s{width:1.8em;height:1.8em;font-size:1em;margin:0}
+.ws__fee{color:#fff;font-weight:700;justify-content:center}
+.ws__labels{position:absolute;left:6cqw;right:6cqw;top:48cqw;display:grid;grid-template-columns:1fr 1.3fr 1fr;gap:6.5cqw;font-size:1.15cqw;color:#77777e;text-align:center;border-top:1px solid #D2D2D6;padding-top:1cqw}
+@container (max-width:560px){
+  .cf,.cbk{aspect-ratio:auto}
+  .cf{flex-direction:column;padding:6cqw;gap:3cqw}
+  .cf__title,.cf__desc{width:100%;height:auto;margin:0}
+  .cf__title{flex-direction:row;justify-content:flex-start;padding:4cqw;gap:4cqw;text-align:left}
+  .cf__title svg{width:18cqw}.cf__title h4{font-size:6cqw;flex:1}.cf__ic{flex:0 0 7cqw;width:7cqw}
+  .cf__desc{padding:6cqw;gap:3cqw}.cf__desc p{font-size:3.9cqw}
+  .cbk{padding:7cqw 6cqw 12cqw}
+  .cbk__ring{width:120cqw;right:-70cqw;top:-80cqw}.cbk__blob{width:90cqw;right:-62cqw;top:-62cqw}
+  .cbk__head,.cb__flow,.wsplit,.ws__labels{position:relative;left:auto;right:auto;top:auto;width:auto}
+  .cbk__head{gap:4cqw}.cbk__brick{width:15cqw}.cbk__head p{font-size:3.9cqw}
+  .cb__flow{display:grid;grid-template-columns:1fr 1fr;gap:5cqw;margin-top:6cqw;justify-items:center}
+  .cb__arr{display:none}
+  .wp{width:38cqw;font-size:2.25cqw;border-radius:5cqw}
+  .wsplit{flex-direction:column;font-size:2.4cqw;margin-top:6cqw;gap:3cqw}
+  .ws__col,.ws__acct{width:100%}
+  .ws__avs{grid-template-columns:repeat(6,4.4em)}
+  .ws__arr{flex:0 0 7cqw;width:1px;height:7cqw}.ws__arr::after{right:auto;top:auto;left:-1.6cqw;bottom:-.4cqw;border-left:1.6cqw solid transparent;border-right:1.6cqw solid transparent;border-top:2.6cqw solid #F08A84;border-bottom:0}
+  .ws__labels{display:none}
+  .cbk{padding-bottom:7cqw}
+  .cbk__logo{position:static;display:block;margin-top:7cqw;font-size:5cqw}
+}
+
+/* ── EVENT PHOTOS ── */
+.event{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.event figure{margin:0}
+.event img{width:100%;aspect-ratio:5/2;object-fit:cover;border-radius:12px;image-rendering:-webkit-optimize-contrast}
+
+/* ── IMPACT / OUTCOMES ── */
+.outs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:48px}
+.out{border-top:2px solid var(--border-2);padding-top:20px}
+.out h3{margin-bottom:8px}
+.out p{color:var(--ink-2);font-size:15px}
+.out .k{font-family:var(--display);font-size:12px;letter-spacing:1px;color:var(--ink-3);font-weight:600;margin-bottom:10px;display:block}
+
+/* ── DASHBOARD ── */
+.dash{display:grid;gap:28px}
+.dash .laptop{max-width:900px;margin:0 auto;width:100%}
+.laptop__screen{background:#0B0B0C;border:1.5px solid #2E2E30;border-bottom:0;border-radius:18px 18px 0 0;padding:2.4% 2.4% 2.8%;box-shadow:0 40px 90px rgba(0,0,0,.65)}
+.laptop__screen img{width:100%;height:auto;border-radius:4px}
+.laptop__base{position:relative;height:16px;width:114%;margin-left:-7%;background:linear-gradient(#4A4A4D,#2A2A2C 55%,#18181A);border-radius:2px 2px 16px 16px}
+.laptop__base::after{content:"";position:absolute;left:50%;top:0;transform:translateX(-50%);width:15%;height:6px;background:#1A1A1C;border-radius:0 0 8px 8px}
+.dsw{justify-self:center}
+.dash__row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.dash__row figure{margin:0}
+.dash__row figcaption{text-align:center;margin-top:10px}
+.dash__row img{aspect-ratio:16/10;object-fit:cover;object-position:top left;width:100%;display:block}
+.frame{border-radius:var(--r);overflow:hidden;background:#1C1C1E;border:1px solid rgba(255,255,255,.1);box-shadow:0 24px 60px rgba(0,0,0,.5)}
+.frame__bar{height:34px;display:flex;align-items:center;gap:7px;padding:0 14px;border-bottom:1px solid rgba(255,255,255,.06)}
+.frame__bar i{width:10px;height:10px;border-radius:50%;background:#3A3A3C}
+.h3sub{font-family:var(--display);font-size:24px;font-weight:600;letter-spacing:-.3px;margin:56px 0 10px}
+.note{margin-top:16px;font-size:14px;color:var(--ink-3);max-width:70ch}
+
+/* ── NEXT + FOOTER ── */
+.next{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;text-decoration:none;padding-block:72px}
+.next small{font-size:12px;letter-spacing:2.5px;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.next h3{font-size:clamp(28px,4vw,44px);letter-spacing:-1.2px;margin-top:10px}
+.next .arr-circle{width:64px;height:64px;border-radius:50%;background:var(--accent);color:#0A0A0A;display:grid;place-items:center;font-size:26px}
+.foot{border-top:1px solid var(--border);padding-block:32px;font-size:13px;color:var(--ink-3);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+
+/* ── RESPONSIVE ── */
+@media (max-width:1100px){
+  .hero__grid{grid-template-columns:1fr;gap:48px}
+  .deck{height:280px}
+  .pc{width:clamp(110px,28vw,160px)}
+  .stat{padding:24px}.stat b{font-size:34px}
+}
+@media (max-width:1000px){
+  .split,.split--prob{grid-template-columns:1fr;gap:28px}
+  .stats,.outs{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid3{grid-template-columns:1fr}
+  .dtabs{grid-template-columns:1fr}
+  .event{grid-template-columns:1fr}
+  .risks--flow{margin-top:8px}
+  .fan-stage{height:320px}
+  .fc:nth-child(1){transform:rotate(-22deg) translateX(-130px)}
+  .fc:nth-child(2){transform:rotate(-7deg) translateX(-44px)}
+  .fc:nth-child(3){transform:rotate(7deg) translateX(44px)}
+  .fc:nth-child(4){transform:rotate(22deg) translateX(130px)}
+  .fc:nth-child(1):hover,.fc:nth-child(1):focus-visible{transform:rotate(-22deg) translateX(-130px) translateY(-38px) scale(1.07)}
+  .fc:nth-child(2):hover,.fc:nth-child(2):focus-visible{transform:rotate(-7deg) translateX(-44px) translateY(-38px) scale(1.07)}
+  .fc:nth-child(3):hover,.fc:nth-child(3):focus-visible{transform:rotate(7deg) translateX(44px) translateY(-38px) scale(1.07)}
+  .fc:nth-child(4):hover,.fc:nth-child(4):focus-visible{transform:rotate(22deg) translateX(130px) translateY(-38px) scale(1.07)}
+}
+@media (max-width:640px){
+  .sec{padding-block:64px}
+  .hero h1{letter-spacing:-2px}
+  .stats,.grid2,.outs{grid-template-columns:1fr}
+  .shift{grid-template-columns:1fr}.shift__arrow{transform:rotate(90deg)}
+  .dash__row{grid-template-columns:1fr}
+  .blocks img{padding:14px}
+  .dtabs__list{grid-auto-flow:column;grid-auto-columns:78%;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px}
+  .dtabs__list button{scroll-snap-align:start}
+  .sides .lg{display:none}.sides button{padding:8px 18px}
+  .fan-stage{height:260px}
+  .fc:nth-child(1){transform:rotate(-18deg) translateX(-100px)}
+  .fc:nth-child(2){transform:rotate(-6deg) translateX(-34px)}
+  .fc:nth-child(3){transform:rotate(6deg) translateX(34px)}
+  .fc:nth-child(4){transform:rotate(18deg) translateX(100px)}
+  .fc:nth-child(1):hover,.fc:nth-child(1):focus-visible{transform:rotate(-18deg) translateX(-100px) translateY(-30px) scale(1.06)}
+  .fc:nth-child(2):hover,.fc:nth-child(2):focus-visible{transform:rotate(-6deg) translateX(-34px) translateY(-30px) scale(1.06)}
+  .fc:nth-child(3):hover,.fc:nth-child(3):focus-visible{transform:rotate(6deg) translateX(34px) translateY(-30px) scale(1.06)}
+  .fc:nth-child(4):hover,.fc:nth-child(4):focus-visible{transform:rotate(18deg) translateX(100px) translateY(-30px) scale(1.06)}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* Key numbers: same block as the customer club case study */
+.stats{gap:1px;background:var(--border);border:1px solid var(--border);border-radius:20px;overflow:hidden}
+.stat{display:flex;flex-direction:column;align-items:flex-start;padding:28px;background:var(--surface)}
+.stat .si{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--border-2);color:var(--ink);margin-bottom:22px;flex:none}
+.stat .si svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.stat b{font-size:34px;line-height:1;letter-spacing:-1.5px;color:var(--ink);white-space:nowrap;margin-bottom:8px}
+@media (max-width:1100px){.stat b{font-size:28px}}
+  </style>
+  <script>
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+  </script>
+  <script defer src="/_vercel/insights/script.js"></script>
+<link rel="alternate" hreflang="en" href="https://amirmasoude.com/works/openapi.html" />
+  <link rel="alternate" hreflang="de" href="https://amirmasoude.com/de/works/openapi.html" />
+  <link rel="alternate" hreflang="x-default" href="https://amirmasoude.com/works/openapi.html" />
+  <style>.lang-switch{display:inline-flex;align-items:center;justify-content:center;height:32px;min-width:40px;padding:0 12px;border-radius:999px;border:1px solid rgba(255,255,255,.14);color:rgba(240,238,233,.72);font-size:13px;font-weight:600;letter-spacing:.5px;text-decoration:none;transition:color .2s,border-color .2s}.lang-switch:hover{color:#F0EEE9;border-color:rgba(255,255,255,.3)}.nav__end{display:flex;align-items:center;gap:8px}.nav__back,.nav__cv{white-space:nowrap}</style>
+<style>.hero h1{font-size:clamp(44px,6.2vw,88px);hyphens:auto;-webkit-hyphens:auto;overflow-wrap:break-word}</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <div class="wrap">
+    <div class="nav__left">
+      <a href="../index.html#work" class="nav__back">
+        <i data-lucide="arrow-left"></i>
+        Alle Projekte
+      </a>
+      <div class="nav__sep"></div>
+      <a href="../index.html" class="nav__logo">
+        <img src="/ae-logo-white.svg" alt="Amirmasoud Ebadi" />
+      </a>
+    </div>
+    <span class="nav__end"><a href="/works/openapi.html" class="lang-switch" hreflang="en" lang="en" aria-label="English version">EN</a><a href="https://drive.google.com/file/d/1v95PNrUq3GGAAFtNv8rxzctYXkbnbcL2/view?usp=drive_link" target="_blank" rel="noopener" class="nav__cv">Lebenslauf <i data-lucide="external-link"></i></a></span>
+  </div>
+</nav>
+
+<main>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap hero__grid">
+    <div class="hero__txt">
+      <div class="num">02 · Fintech · B2B-Plattform</div>
+      <div class="chips">
+        <span class="chip chip--accent">UX-Stratege und Konzeptentwickler</span>
+        <span class="chip">Finnotech</span>
+        <span class="chip">6 Monate</span>
+        <span class="chip">Vertriebstools</span>
+      </div>
+      <h1>Das Abstrakte greifbar machen</h1>
+      <p class="lede">Finnotech verkaufte Open-Banking-APIs an Banken und Unternehmen. Das Produkt war stark, aber Entscheider konnten nicht erkennen, was es ihnen bringt. Ich habe geholfen, technische Features in Geschäftsergebnisse zu übersetzen, die man sehen, anfassen und nutzen kann.</p>
+    </div>
+    <div class="deck" id="hero-deck" role="img" aria-label="Vier API-Servicekarten, aufgefächert">
+      <div class="deck__in" id="deck-in"></div>
+    </div>
+  </div>
+</section>
+
+<!-- AT A GLANCE -->
+<section aria-label="Projekt auf einen Blick"><div class="wrap">
+  <div class="stats">
+    <div class="stat">
+      <span class="si" aria-hidden="true"><svg viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>
+      <b>70%</b><span>mehr Conversions bei Enterprise-Kunden</span>
+    </div>
+    <div class="stat">
+      <span class="si" aria-hidden="true"><svg viewBox="0 0 24 24"><line x1="3" x2="21" y1="22" y2="22"/><line x1="6" x2="6" y1="18" y2="11"/><line x1="10" x2="10" y1="18" y2="11"/><line x1="14" x2="14" y1="18" y2="11"/><line x1="18" x2="18" y1="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg></span>
+      <b>4 Banken</b><span>meldeten sich, um die APIs zu integrieren</span>
+    </div>
+    <div class="stat">
+      <span class="si" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg></span>
+      <b>2 Projekte</b><span>zusätzliche Projekte für uns</span>
+    </div>
+    <div class="stat">
+      <span class="si" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg></span>
+      <b>6 Monate</b><span>Projektdauer</span>
+    </div>
+  </div>
+</div></section>
+
+<!-- PROBLEM -->
+<section class="sec">
+  <div class="wrap split split--prob">
+    <div>
+      <div class="eyebrow">Das Problem</div>
+      <h2>Ein starkes Produkt, das sich Käufer nicht vorstellen konnten</h2>
+      <p class="lede">Die Open-Banking-APIs von Finnotech waren wettbewerbsfähig, trotzdem blieb die B2B-Conversion niedrig. Das Produkt war nicht das Problem. Die Vertriebsunterlagen beschrieben technische Features – nicht-technische Führungskräfte konnten den Return on Investment nicht erkennen und entschieden sich nicht.</p>
+      <p class="note">Zur Einordnung: Finnotech ist ein Fintech im Nahen Osten, das Bank-APIs für Dritte anbot – ähnlich dem, was PSD2 in Europa für Banken und Fintechs ermöglicht hat.</p>
+    </div>
+    <div class="risks risks--flow" aria-label="Das Problem kurz">
+      <div class="risk">
+        <span class="ri" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></svg></span>
+        <div><h3>Die Hürde</h3><p>Der Vertrieb verkaufte technische Features, keine Geschäftsergebnisse.</p></div>
+      </div>
+      <div class="risk">
+        <span class="ri" aria-hidden="true"><svg viewBox="0 0 24 24"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg></span>
+        <div><h3>Die Folge</h3><p>Käufer sahen den ROI nicht, also kamen Deals nicht voran.</p></div>
+      </div>
+      <div class="risk risk--goal">
+        <span class="ri" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>
+        <div><h3>Das Ziel</h3><p>Vertriebsstory und -unterlagen so neu gestalten, dass der Nutzen sofort klar ist.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESEARCH -->
+<section class="sec">
+  <div class="wrap">
+    <div class="eyebrow">Research</div>
+    <h2>Die Vertrauenslücke finden</h2>
+    <p class="lede">Niedrige Verkäufe waren nur das Symptom. Um das eigentliche Hindernis zu finden, haben wir das ganze Team persönlich interviewt – auch den Vertrieb und den Produktmanager.</p>
+    <div class="grid2 mt">
+      <div class="card">
+        <span class="k">PRIORITÄT 1 · ENTERPRISE</span>
+        <h3>Die risikoscheue Führungskraft</h3>
+        <p>Braucht den strategischen Nutzen ohne Fachjargon. Wenn etwas unklar ist, bleibt sie still und springt ab, statt uninformiert zu wirken.</p>
+        <p class="q">„Was bedeutet das für unser Geschäft?“</p>
+      </div>
+      <div class="card">
+        <span class="k">PRIORITÄT 2 · KMU</span>
+        <h3>Der Gründer mit knappen Ressourcen</h3>
+        <p>Sieht hohe Risiken bei Sicherheit, Zeit und Kosten. Braucht schnelle, konkrete Belege, dass die Integration sicher und machbar ist.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STRATEGY -->
+<section class="sec">
+  <div class="wrap">
+    <div class="eyebrow">Strategie</div>
+    <h2>Von Features zu Ergebnissen</h2>
+    <div class="shift mt">
+      <div class="shift__from"><span>Von</span><b>Technische Features verkaufen</b><small>Endpoints, Dokumentation, Integrationsanleitungen</small></div>
+      <div class="shift__arrow" aria-hidden="true">→</div>
+      <div class="shift__to"><span>Zu</span><b>Geschäftsergebnisse verkaufen</b><small>Was das eigene Produkt des Kunden als Nächstes kann</small></div>
+    </div>
+    <div class="grid2" style="margin-top:16px">
+      <div class="card"><span class="k">HOW MIGHT WE · 1</span><h3>…den Nutzen so sichtbar machen, dass eine Führungskraft ihn ohne technische Hilfe versteht?</h3></div>
+      <div class="card"><span class="k">HOW MIGHT WE · 2</span><h3>…das Gefühl von Risiko nehmen, damit sich ein Gründer sicher entscheiden kann?</h3></div>
+    </div>
+    <figure class="blocks mt">
+      <img src="/works/assets/openapi/blocks.webp" width="1400" height="621"
+        alt="Illustration: links eine Bank, in der Mitte die API-Bausteine von Finnotech, rechts ein Unternehmen, verbunden durch Pfeile" />
+      <figcaption><b>Ein Service, ein Baustein.</b> Wir haben jede API als nummerierten Baustein zwischen Bank und Unternehmen dargestellt. So sahen Kunden, wie wenige Bausteine zusammen ein neues Feature für ihr eigenes Produkt ergeben.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- PROTOTYPES -->
+<section class="sec">
+  <div class="wrap">
+    <div class="eyebrow">Prototypen</div>
+    <h2>Doppelseitige Servicekarten</h2>
+    <p class="lede">Ein Set gedruckter Karten, eine pro Service. Die Vorderseite erklärt den Service. Die Rückseite zeigt ein White-Label-Mock-up des Kundenprodukts nach der Integration – so sah ein CEO genau, was seine Kund:innen erleben würden.</p>
+    <div class="dtabs mt">
+      <div class="dtabs__side">
+        <div class="dtabs__list" role="tablist" aria-label="Karten"></div>
+        <div class="dtabs__ctrl">
+          <span class="cnt" id="dcnt" aria-live="polite">01 / 04</span>
+          <div class="arrows">
+            <button class="arr" id="dprev" aria-label="Vorherige Karte">←</button>
+            <button class="arr" id="dnext" aria-label="Nächste Karte">→</button>
+          </div>
+        </div>
+      </div>
+      <div class="viewer" id="viewer" role="tabpanel">
+        <div class="sc" id="sc"><div class="sc__in" id="scin"></div></div>
+        <div class="viewer__bar">
+          <div class="sides" role="group" aria-label="Kartenseite">
+            <button type="button" data-side="0" aria-pressed="true">Vorderseite<span class="lg"> · Der Service</span></button>
+            <button type="button" data-side="1" aria-pressed="false">Rückseite<span class="lg"> · Das Produkt des Kunden</span></button>
+          </div>
+          <span class="eu" id="eu"></span>
+        </div>
+      </div>
+    </div>
+    <p class="note">Nach den Originalkarten nachgebaut. App-Namen und Beträge sind Beispiele.</p>
+    <h3 class="h3sub">Im Termin – und danach</h3>
+    <p class="lede">Vertrieb und Kunden legten die Karten im Termin gemeinsam aus und entwarfen so die Lösung des Kunden. Danach blieben die Karten als Broschüre beim Kunden – das half, sich zu erinnern und intern Zustimmung aufzubauen.</p>
+    <div class="event mt">
+      <figure><img src="/works/assets/openapi/ev-card.webp" width="728" height="336" alt="Eine Hand schreibt Notizen auf eine gedruckte Karte neben losen Lego-Steinen" loading="lazy" /></figure>
+      <figure><img src="/works/assets/openapi/ev-booth.webp" width="796" height="328" alt="Besucher am Finnotech-Stand bauen gemeinsam an einem Tisch mit Steinen" loading="lazy" /></figure>
+      <figure><img src="/works/assets/openapi/ev-bricks.webp" width="796" height="372" alt="Nahaufnahme: Hände setzen Steine auf eine grüne Bauplatte" loading="lazy" /></figure>
+      <figure><img src="/works/assets/openapi/ev-stand.webp" width="780" height="364" alt="Der Finnotech-Stand mit einer Wand aus großen Bausteinen" loading="lazy" /></figure>
+    </div>
+    <p class="note">Auf einer Branchenveranstaltung wurde die Bausteinidee greifbar: Besucher bauten mit echten Steinen und skizzierten auf den Karten.</p>
+  </div>
+</section>
+
+<!-- IMPACT -->
+<section class="sec">
+  <div class="wrap">
+    <div class="eyebrow">Wirkung</div>
+    <h2>Vertrauen ist ein Designproblem</h2>
+    <p class="lede">Wir haben die Materialien vor dem Rollout in zwei Stufen validiert: zuerst im Vertriebsprozess, dann im Markt.</p>
+    <div class="outs">
+      <div class="out"><span class="k">KOMMERZIELL</span><h3>70 % mehr Conversion</h3><p>Die Conversion bei Enterprise-Kunden stieg um 70 %.</p></div>
+      <div class="out"><span class="k">KOMMERZIELL</span><h3>Schnellere Pipeline</h3><p>Weniger frühe Abbrüche und ein spürbar schnellerer Weg durch die Pipeline.</p></div>
+      <div class="out"><span class="k">MARKT</span><h3>4 weitere Banken</h3><p>Vier Banken meldeten sich von selbst, um die APIs zu integrieren. Finnotech entwickelte sich vom einzelnen Anbieter in Richtung Branchenführer.</p></div>
+      <div class="out"><span class="k">MARKT</span><h3>Begeisterte Kunden</h3><p>Wir haben die Tools in echten Vertriebsterminen getestet. Kunden waren begeistert, als sie ihr eigenes, verbessertes Produkt sahen.</p></div>
+    </div>
+    <blockquote class="quote mt"><small>Strategisches Ergebnis</small>Vertrauen ist ein Designproblem. Ist es gelöst, treibt es Wachstum in der ganzen Branche.</blockquote>
+  </div>
+</section>
+
+<!-- WHAT HAPPENED NEXT -->
+<section class="sec">
+  <div class="wrap">
+    <div class="eyebrow">Wie es weiterging</div>
+    <h2>Die letzten Zweifel ausräumen</h2>
+    <p class="lede">Die ersten Interviews zeigten, dass Startups und KMU eigene Bedenken hatten. Wir haben uns zuerst auf Enterprise-Kunden konzentriert und dieses Segment für die nächste Phase eingeplant.</p>
+    <div class="grid3 mt">
+      <div class="card"><span class="k">UMSETZUNG</span><h3>Kostenlose Entwicklungshilfe</h3><p>Kunden befürchteten, die Integration sei zu komplex – also boten wir sechs Monate kostenlosen technischen Support an.</p></div>
+      <div class="card"><span class="k">SOZIALE VERANTWORTUNG</span><h3>Kostenlose APIs für Startups</h3><p>Neue Startups bekamen ausgewählte API-Pakete in den ersten sechs Monaten kostenlos.</p></div>
+      <div class="card"><span class="k">FUNKTION</span><h3>Eine kostenlose Sandbox</h3><p>Für Kunden, die unsicher waren, ob das Produkt zu ihnen passt, haben wir eine kostenlose Sandbox zum Testen eingeführt.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- DASHBOARD -->
+<section class="sec">
+  <div class="wrap">
+    <div class="eyebrow">Ebenfalls gestaltet</div>
+    <h2>Das Developer-Dashboard</h2>
+    <p class="lede">Ich habe UX und UI des Developer-Dashboards von Finnotech gestaltet: Hier melden sich Kunden an, registrieren ihre Apps, wählen Services und finden die Dokumentation. Diese überarbeitete Version nutzt heutige Muster: Nutzung auf einen Blick, Schlüssel zum Kopieren und Erneuern, von Nutzer:innen freigegebene Scopes pro Service und Doku mit Live-Codebeispielen.</p>
+    <div class="dash mt">
+      <div class="laptop">
+        <div class="laptop__screen">
+          <img id="dmain" src="/works/assets/openapi/dash-new-main.webp" width="1600" height="1000" alt="Überarbeitete Dashboard-Übersicht mit API-Nutzung, Apps, Go-live-Checkliste und Benachrichtigungen" />
+        </div>
+        <div class="laptop__base"></div>
+      </div>
+      <div class="dash__row" id="drow"></div>
+    </div>
+    <p class="note">Ein Konzept-Refresh. App-Namen, Personen und Zahlen sind Beispiele.</p>
+  </div>
+</section>
+
+</main>
+
+<!-- CARD OVERLAY -->
+
+
+<div class="wrap">
+  <a class="next" href="customerclub.html">
+    <div>
+      <small>Nächste Case Study</small>
+      <h3>Kundenbindung stärken</h3>
+      <p class="muted" style="margin-top:6px">03 · Fintech · Ein Kundenclub für eine Regionalbank</p>
+    </div>
+    <span class="arr-circle" aria-hidden="true">→</span>
+  </a>
+  <footer class="foot">
+    <span>© 2026 Amirmasoud Ebadi</span>
+    <a href="#" style="color:var(--ink-3)">Nach oben ↑</a>
+  </footer>
+</div>
+
+<script src="https://unpkg.com/lucide@1.49.0/dist/umd/lucide.min.js"></script>
+<script>
+lucide.createIcons();
+
+/* ── Nav scroll ── */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.style.background = window.scrollY > 40 ? 'rgba(10,10,10,.95)' : 'rgba(10,10,10,.88)';
+}, { passive: true });
+
+/* ── Brick SVG ── */
+const BRICK = (c, no) => {
+  const isWhite = c === '#fff';
+  const badgeFill = isWhite ? 'rgba(0,0,0,0.12)' : 'rgba(255,255,255,0.92)';
+  const badgeText = isWhite ? '#888' : '#1a1a1a';
+  const st = [[50,27],[29,38],[71,38],[50,49]].map(([x,y]) =>
+    `<path d="M${x-8} ${y}v-6a8 3.6 0 0 1 16 0v6a8 3.6 0 0 1-16 0z" fill="${c}"/>` +
+    `<path d="M${x-8} ${y}v-6a8 3.6 0 0 0 16 0v6a8 3.6 0 0 1-16 0z" fill="#000" opacity=".12"/>` +
+    `<ellipse cx="${x}" cy="${y-6}" rx="8" ry="3.6" fill="${c}"/>` +
+    `<ellipse cx="${x}" cy="${y-6}" rx="8" ry="3.6" fill="#fff" opacity=".22"/>`).join('');
+  return `<svg viewBox="0 0 100 96" aria-hidden="true">
+    <path d="M8 38 50 56v36L8 74z" fill="${c}"/>
+    <path d="M50 56 92 38v36L50 92z" fill="${c}"/>
+    <path d="M50 56 92 38v36L50 92z" fill="#000" opacity=".18"/>
+    <path d="M50 20 92 38 50 56 8 38z" fill="${c}"/>
+    <path d="M50 20 92 38 50 56 8 38z" fill="#fff" opacity=".14"/>
+    ${st}
+    ${no ? `<g transform="translate(71,65) skewX(-23)"><circle cx="0" cy="0" r="12" fill="${badgeFill}"/><text x="0" y="0.5" text-anchor="middle" dominant-baseline="middle" font-family="Space Grotesk,Arial,sans-serif" font-weight="700" font-size="12" fill="${badgeText}">${no}</text></g>` : ''}
+  </svg>`;
+};
+const ICON = { bank: `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M8 9.5h6.5l-1.8-1.8M16 14.5H9.5l1.8 1.8" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>` };
+const FAM = { bank: { name: 'Bankservice', c: '#5D5A84' }, pay: { name: 'Zahlungsservice', c: '#F6BB16' } };
+const APP = { taxito: { name: 'Taxito', c: '#F07A1A' }, abacus: { name: 'Abacus', c: '#24306B' } };
+
+const CARDS = [
+  { no:'01', fam:'bank', title:'Kontoeröffnung', eu:'Digitales Onboarding', app:'abacus',
+    desc:['Mit diesem Service eröffnest du online ein neues Konto bei deiner Bank – von überall und jederzeit.','Mit der Kontoeröffnung entstehen neue Konten bei den Partnerbanken von Finnotech in wenigen Minuten. Apps können denselben Service nutzen, um Konten für ihre Nutzer:innen zu eröffnen.','Du brauchst nur ein aktives Konto bei einer Partnerbank. Danach eröffnest du neue Konten online, schnell und sicher, ohne Filialbesuch.'],
+    use:'Abacus, eine Budget-App, nutzt diesen Service, um Sparkonten für ihre Nutzer:innen zu eröffnen, damit sie einen Teil ihres Einkommens zurücklegen können. Das Konto entsteht mit ihrer Zustimmung in ihrem eigenen Onlinebanking.' },
+  { no:'02', fam:'bank', title:'Lastschrift', eu:'SEPA-Lastschrift', app:'taxito',
+    desc:['Mit diesem Service erlauben dir deine Kund:innen online, Geld von ihrem Konto einzuziehen. Je nach Angebot gilt die Erlaubnis für eine Zahlung oder für regelmäßige Zahlungen.','Mit der Lastschrift ziehst du monatliche und wiederkehrende Zahlungen ein. Kund:innen sind zufriedener, weil sie nicht mehr an regelmäßige Zahlungen denken müssen.'],
+    use:'Taxito nutzt diesen Service, damit Fahrgäste ihr Fahrguthaben jeden Monat um einen festen Betrag aufladen – ohne Zahlungsschritt bei jeder Fahrt.' },
+  { no:'22', fam:'pay', title:'In-App-Zahlung', eu:'In-App-Checkout', app:'taxito',
+    desc:['Mit diesem Service baust du den Zahlungsschritt in deine eigene App ein. Nutzer:innen sehen ihre Karten, ohne auf eine externe Zahlungsseite zu wechseln, wählen eine aus, geben den Code ein und zahlen.','Der Checkout wird schneller und viel einfacher, und Kund:innen haben ein besseres Einkaufserlebnis.'],
+    use:'Das Management von Taxito wünscht sich einen einfacheren Checkout. Mit diesem Service zahlen Fahrgäste direkt in der App und werden nie zu einem Payment-Gateway weitergeleitet.' },
+  { no:'24', fam:'pay', title:'Treuhandkonto und Auszahlungsaufteilung', eu:'Marktplatz-Auszahlungen', app:'taxito',
+    desc:['Mit diesem Service landen alle Kundenzahlungen auf einem Treuhandkonto und werden automatisch zwischen Plattform und Partnern aufgeteilt.','Die Plattform verwaltet kein fremdes Geld mehr, und jeder Partner bekommt seinen Anteil zu festen Terminen.'],
+    use:'Nur ein Teil jedes Fahrpreises gehört Taxito, der Großteil gehört den Fahrer:innen. Alle Fahrpreise landen auf einem Treuhandkonto. Zu festen Terminen wird der Anteil jedes Fahrers ausgezahlt, der Rest geht an Taxito.' }
+];
+
+/* ── Card front ── */
+const front = (k) => {
+  const d = CARDS[k], f = FAM[d.fam];
+  return `<div class="cf cf--${d.fam}"><div class="cf__title">${BRICK(f.c,+d.no)}<h4>${d.title}</h4><span class="cf__ic">${ICON.bank}</span></div><div class="cf__desc">${d.desc.map(p=>`<p>${p}</p>`).join('')}</div></div>`;
+};
+
+/* ── Card back ── */
+const APPIC = {
+  abacus: `<svg viewBox="0 0 40 32" aria-hidden="true"><rect x="2" y="2" width="36" height="28" rx="2" fill="none" stroke="currentColor" stroke-width="3"/>${[8,16,24].map((y,i)=>`<line x1="4" y1="${y}" x2="36" y2="${y}" stroke="currentColor" stroke-width="1.5"/>${[0,1,2].map(j=>`<circle cx="${8+j*5+(i===1?14:0)}" cy="${y}" r="2.6" fill="currentColor"/>`).join('')}`).join('')}</svg>`,
+  taxito: `<svg viewBox="0 0 40 32" aria-hidden="true"><rect x="13" y="1" width="14" height="6" rx="1.5" fill="currentColor"/><path d="M8 14l4-6h16l4 6" fill="none" stroke="currentColor" stroke-width="3"/><rect x="4" y="14" width="32" height="11" rx="3" fill="currentColor"/><rect x="7" y="25" width="6" height="5" rx="1" fill="currentColor"/><rect x="27" y="25" width="6" height="5" rx="1" fill="currentColor"/><circle cx="11" cy="19.5" r="2.3" fill="#fff"/><circle cx="29" cy="19.5" r="2.3" fill="#fff"/></svg>`
+};
+const BANKIC = `<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="19" fill="#D9D9DC"/><path d="M9 16 20 9l11 7z" fill="#fff"/><rect x="11" y="17" width="3" height="10" fill="#fff"/><rect x="18.5" y="17" width="3" height="10" fill="#fff"/><rect x="26" y="17" width="3" height="10" fill="#fff"/><rect x="9" y="28" width="22" height="3" fill="#fff"/></svg>`;
+const ph = (inner, cls='') => `<div class="wp"><i class="wp__spk"></i><div class="wp__scr ${cls}">${inner}</div><i class="wp__home"></i></div>`;
+const logo = (a) => `<div class="wlogo" style="color:${APP[a].c}">${APPIC[a]}<b>${APP[a].name}</b></div>`;
+const bank = (t) => `<div class="wbank">${BANKIC}<b>${t||'BANK'}</b></div>`;
+const btn = (t, g) => `<span class="wbtn${g?' wbtn--g':''}">${t}</span>`;
+const fld = (t) => `<span class="wf">${t}</span>`;
+const msg = (t) => `<div class="wmsg">${t}</div><span class="wok">✓</span>`;
+const url = `<div class="wurl">‹ › internetbank.dashboard</div>`;
+const row = (a, b) => `<div class="wrow"><span>${a}</span><b>${b}</b></div>`;
+const login = ph(`<div class="wcard">${bank()}${fld('Kundennummer')}${fld('Passwort')}${btn('Anmelden →')}${btn('Registrieren',1)}</div>`);
+const FLOWS = [
+  [ph(`${logo('abacus')}<div class="wradio">Konto eröffnen</div>${btn('Bestätigen')}`), login,
+   ph(`${url}<div class="wcard"><b class="wh">Willkommen in deinem Onlinebanking</b>${bank()}<span class="wsm">Kontotyp wählen:</span><span class="wli">○ Tagesgeld</span><span class="wli">● Sparkonto</span>${btn('Bestätigen')}</div>`,'wp__scr--web'),
+   ph(`${logo('abacus')}${msg('Neues Konto eröffnet')}`)],
+  [ph(`${logo('taxito')}<div class="wmsg wmsg--q">Fahrten monatlich bezahlen?</div>${btn('Bestätigen')}`), login,
+   ph(`${url}<div class="wcard"><b class="wh">Monatliche Zahlung an Taxito freigeben</b>${bank()}${row('Betrag','40 €')}${row('Alle','Monat')}<div class="wduo">${btn('Nein',1)}${btn('Ja')}</div></div>`,'wp__scr--web'),
+   ph(`${logo('taxito')}${msg('Monatliche Zahlung freigegeben')}`)],
+  [ph(`${logo('taxito')}${row('Fahrpreis','12,40 €')}${row('Fahrer','727')}${btn('Bestätigen')}`),
+   ph(`${logo('taxito')}<div class="wcard"><b class="wh">Karte wählen</b>${row('Visa','•• 4417')}${row('Debit','•• 0832')}${row('Visa','•• 2290')}</div>`),
+   ph(`${logo('taxito')}<div class="wcard"><b class="wh">Card •• 4417</b>${fld('Sicherheitscode')}${btn('Bezahlen')}</div>`),
+   ph(`${logo('taxito')}${msg('Zahlung erfolgreich')}`)],
+  null
+];
+const SPLIT = () => {
+  const av = (i) => `<span class="av av--${i%3}"></span>`;
+  return `<div class="wsplit">
+    <div class="ws__col"><div class="ws__avs">${[0,1,2,3,4,5].map(av).join('')}</div><span class="wsm">Fahrgäste zahlen ihre Fahrten</span></div>
+    <div class="ws__arr" aria-hidden="true"></div>
+    <div class="ws__acct">${logo('taxito')}<b>Treuhandkonto</b><span class="wsm">Fahrpreise werden gesammelt und zu festen Terminen aufgeteilt</span></div>
+    <div class="ws__arr" aria-hidden="true"></div>
+    <div class="ws__col ws__out">${['Fahrer 17','Fahrer 18','Fahrer 19','Fahrer 51'].map(t=>`<div class="ws__row"><span class="wok wok--s">✓</span>${t}</div>`).join('')}<div class="ws__row ws__fee" style="background:${APP.taxito.c}">Taxito-Gebühr</div></div>
+  </div>
+  <div class="ws__labels"><span>Ein: Fahrpreise</span><span>Treuhandkonto</span><span>Aus: Auszahlungen</span></div>`;
+};
+const back = (k) => {
+  const d = CARDS[k], f = FAM[d.fam];
+  const flow = FLOWS[k] ? `<div class="cb__flow">${FLOWS[k].join('<span class="cb__arr" aria-hidden="true"></span>')}</div>` : SPLIT();
+  return `<div class="cbk cbk--${d.fam}"><i class="cbk__ring"></i><i class="cbk__blob" style="background:${f.c}"></i><div class="cbk__head"><span class="cbk__brick">${BRICK(f.c,+d.no)}</span><p>${d.use}</p></div>${flow}<span class="cbk__logo">finnotech</span></div>`;
+};
+
+/* ── Hero fan deck ── */
+const SHORT = [
+  'Online ein Konto bei einer Partnerbank eröffnen, von überall.',
+  '',
+  'Kartenzahlungen direkt in der eigenen App annehmen, ohne Weiterleitung.',
+  'Alle Zahlungen auf einem Konto sammeln und automatisch zwischen Plattform und Partnern aufteilen.'
+];
+const face = (k) => {
+  const d = CARDS[k], f = FAM[d.fam];
+  return `<div class="face face--${d.fam}"><div class="face__side">${BRICK(f.c)}<span class="no">N° ${d.no}</span></div><div class="face__body"><span class="fam">${f.name}</span><h4>${d.title}</h4><p>${SHORT[k]}</p><span class="eu">In Europa: ${d.eu}</span><span class="logo">finnotech</span></div></div>`;
+};
+
+/* ── Hero stacked deck ── */
+const STACK_Z = 32;
+const deckIn = document.getElementById('deck-in');
+const deckEl = document.getElementById('hero-deck');
+
+/* 3 cards: account opening, in-app payment, payout split */
+[0, 2, 3].forEach((k, i) => {
+  const d = CARDS[k], f = FAM[d.fam];
+  const pc = document.createElement('div');
+  pc.className = `pc pc--${d.fam}`;
+  pc.setAttribute('aria-hidden','true');
+  pc.innerHTML = `<div class="pc__band">${BRICK(f.c, +d.no)}</div>
+    <div class="pc__body"><h5>${d.title}</h5><span class="wm">finnotech</span></div>`;
+  const finalZ = i * STACK_Z;
+  pc.style.transform = `translateZ(${finalZ}px)`;
+  pc.style.opacity = '0';
+  deckIn.appendChild(pc);
+  setTimeout(() => {
+    pc.style.transition = 'opacity .5s';
+    pc.style.opacity = '1';
+  }, 80 + i * 100);
+});
+
+/* subtle float on top card */
+const topCard = () => deckIn.lastElementChild;
+setTimeout(() => {
+  let t = 0;
+  setInterval(() => {
+    t += 0.018;
+    const top = topCard();
+    if (top) top.style.transform = `translateZ(${2 * STACK_Z}px) translateY(${Math.sin(t)*7}px)`;
+  }, 16);
+}, 100 + 3 * 120 + 400);
+
+/* 3D parallax — shift the whole isometric deck */
+const BASE = 'rotateX(48deg) rotateZ(22deg)';
+deckIn.style.transform = BASE;
+if (deckEl && !matchMedia('(prefers-reduced-motion:reduce)').matches) {
+  deckEl.addEventListener('mousemove', e => {
+    const r = deckEl.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5;
+    const y = (e.clientY - r.top) / r.height - 0.5;
+    deckIn.style.transition = '';
+    deckIn.style.transform = `rotateX(${48 - y*8}deg) rotateZ(${22 + x*6}deg)`;
+  }, { passive: true });
+  deckEl.addEventListener('mouseleave', () => {
+    deckIn.style.transition = 'transform .8s cubic-bezier(.22,1,.36,1)';
+    deckIn.style.transform = BASE;
+  });
+}
+
+/* ── Viewer ── */
+const list = document.querySelector('.dtabs__list');
+list.innerHTML = CARDS.map((d,i) =>
+  `<button role="tab" id="t${i}" aria-controls="viewer" aria-selected="${i===0}" ${i?'tabindex="-1"':''}><span class="k">N° ${d.no} · ${FAM[d.fam].name}</span><b>${d.title}</b></button>`
+).join('');
+const tabs = [...list.querySelectorAll('[role=tab]')];
+const sc = document.getElementById('sc');
+const scin = document.getElementById('scin');
+const segs = [...document.querySelectorAll('.sides button')];
+let side = 0;
+function setSide(s) {
+  side = s;
+  sc.classList.toggle('is-back', !!s);
+  segs.forEach((b,j) => b.setAttribute('aria-pressed', j===s));
+  if (scin.children[0]) scin.children[0].setAttribute('aria-hidden', !!s);
+  if (scin.children[1]) scin.children[1].setAttribute('aria-hidden', !s);
+}
+function sel(i, focus) {
+  tabs.forEach((t,j) => { t.setAttribute('aria-selected', j===i); t.tabIndex = j===i ? 0 : -1; });
+  document.getElementById('viewer').setAttribute('aria-labelledby', 't'+i);
+  document.getElementById('dcnt').textContent = `0${i+1} / 0${tabs.length}`;
+  document.getElementById('eu').textContent = 'In Europa: ' + CARDS[i].eu;
+  scin.innerHTML = `<div class="sc__face">${front(i)}</div><div class="sc__face sc__back">${back(i)}</div>`;
+  setSide(side);
+  if (focus) tabs[i].focus();
+}
+const cur = () => tabs.findIndex(t => t.getAttribute('aria-selected') === 'true');
+tabs.forEach((t,i) => {
+  t.addEventListener('click', () => sel(i));
+  t.addEventListener('keydown', e => {
+    let n = null;
+    if (e.key==='ArrowDown'||e.key==='ArrowRight') n = (i+1) % tabs.length;
+    if (e.key==='ArrowUp'||e.key==='ArrowLeft') n = (i-1+tabs.length) % tabs.length;
+    if (n !== null) { e.preventDefault(); sel(n, true); }
+  });
+});
+document.getElementById('dprev').onclick = () => sel((cur()-1+tabs.length)%tabs.length);
+document.getElementById('dnext').onclick = () => sel((cur()+1)%tabs.length);
+segs.forEach((b,j) => b.addEventListener('click', () => setSide(j)));
+sc.addEventListener('click', () => setSide(side ? 0 : 1));
+sel(0);
+
+/* Desktop: size the card so it is exactly as tall as the card list */
+const viewer = document.getElementById('viewer');
+const dtabs = document.querySelector('.dtabs');
+const wide = matchMedia('(min-width:1001px)');
+function fitViewer() {
+  if (!wide.matches) { viewer.style.width = ''; return; }
+  const w = Math.min(list.offsetHeight * 1.414, dtabs.clientWidth * .62);
+  if (Math.abs(viewer.offsetWidth - w) > 1) viewer.style.width = Math.round(w) + 'px';
+}
+new ResizeObserver(fitViewer).observe(list);
+wide.addEventListener('change', fitViewer);
+fitViewer();
+
+/* ── Dashboard row ── */
+const drow = document.getElementById('drow');
+drow.innerHTML = [
+  ['dash-new-login.webp',1600,1000,'Überarbeiteter Anmeldescreen','Anmelden'],
+  ['dash-new-app.webp',1600,1000,'Überarbeitete App-Seite mit Zugangsdaten, Services und Scopes','Eine App, ihre Schlüssel und Scopes verwalten'],
+  ['dash-new-docs.webp',1600,1000,'Überarbeitete Doku-Seite mit Schritt-für-Schritt-Anleitung und Codebeispiel','Doku mit Codebeispielen']
+].map(([f,w,h,a,c]) =>
+  `<figure><div class="frame"><div class="frame__bar"><i></i><i></i><i></i></div><img src="/works/assets/openapi/${f}" width="${w}" height="${h}" alt="${a}" loading="lazy"></div><figcaption>${c}</figcaption></figure>`
+).join('');
+</script>
+</body>
+</html>

@@ -4,9 +4,14 @@
     { "source": "/works", "destination": "/#work", "permanent": true },
     { "source": "/works/configurator", "destination": "/works/configurator.html", "permanent": true },
     { "source": "/works/openapi", "destination": "/works/openapi.html", "permanent": true },
-    { "source": "/works/customerclub", "destination": "/works/customerclub.html", "permanent": true }
+    { "source": "/works/customerclub", "destination": "/works/customerclub.html", "permanent": true },
+    { "source": "/de/works", "destination": "/de/#work", "permanent": true },
+    { "source": "/de/works/configurator", "destination": "/de/works/configurator.html", "permanent": true },
+    { "source": "/de/works/openapi", "destination": "/de/works/openapi.html", "permanent": true },
+    { "source": "/de/works/customerclub", "destination": "/de/works/customerclub.html", "permanent": true }
   ],
   "rewrites": [
+    { "source": "/de", "destination": "/de/index.html" },
     { "source": "/:ref([a-z0-9-]+)", "destination": "/index.html" }
   ]
 }
