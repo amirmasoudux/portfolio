@@ -250,7 +250,7 @@ figcaption { font-size: 14px; color: var(--ink-3); margin-top: 14px; max-width: 
 .device.mobile .dframe { border-radius: 40px; border: 10px solid #1C1C1E; }
 .device:not(.desktop) .chrome { display: none; }
 .vp { position: absolute; left: 0; right: 0; bottom: 0; overflow: hidden; }
-.vp iframe, .vp .poster { position: absolute; top: 0; left: 0; border: 0; transform-origin: 0 0; background: #F6F6F6; }
+.vp iframe, .vp .poster { position: absolute; top: 0; left: 0; border: 0; transform-origin: 0 0; background: #F6F6F6; max-width: none; }
 .poster { object-fit: cover; object-position: top; }
 .cover { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(10,10,10,.35); }
 .start { font: inherit; font-size: 15px; font-weight: 600; background: var(--ink); color: var(--bg); border: 0; border-radius: 10px; padding: 13px 22px; display: flex; align-items: center; gap: 10px; cursor: pointer; }
@@ -601,7 +601,7 @@ figcaption { font-size: 14px; color: var(--ink-3); margin-top: 14px; max-width: 
         <div class="dframe">
           <div class="chrome" aria-hidden="true"><i></i><i></i><i></i><span>telvia.de/konfigurator</span></div>
           <div class="vp" id="vp">
-            <img class="poster" id="poster" src="/works/assets/configurator/hero-desktop.webp" alt="Vorschau des Konfigurators – klicke auf „Prototyp starten“, um ihn zu bedienen" />
+            <img class="poster" id="poster" src="/works/assets/configurator/preview-desktop.webp" alt="Vorschau des Konfigurators – klicke auf „Prototyp starten“, um ihn zu bedienen" />
             <div class="cover" id="cover">
               <button class="start" id="start">
                 <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg>
@@ -692,6 +692,7 @@ const DEV = {
   mobile:  { w:390,  h:844,  chrome:0, bezel:10 }
 };
 let cur = 'desktop', iframe = null;
+const POSTER = d => `/works/assets/configurator/preview-${d}.webp`;
 const stage  = document.getElementById('stage');
 const device = document.getElementById('device');
 const vp     = document.getElementById('vp');
@@ -711,6 +712,8 @@ function layout() {
   const df = device.querySelector('.dframe');
   df.style.borderWidth = c.bezel ? (c.bezel * s) + 'px' : '';
   vp.style.top = (c.chrome * s) + 'px';
+  const pst = document.getElementById('poster');
+  if (pst && !pst.src.endsWith(POSTER(d))) pst.src = POSTER(d);
   [iframe, document.getElementById('poster')].forEach(el => {
     if (!el) return;
     el.style.width     = c.w + 'px';
